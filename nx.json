@@ -1,5 +1,15 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "workspaceLayout": {
+    "libsDir": "packages"
+  },
+  "affected": {
+    "defaultBase": "main"
+  },
+  "cli": { "packageManager": "pnpm" },
+  "tasksRunnerOptions": {
+    "default": { "options": { "useLightClient": true } }
+  },
   "targetDefaults": {
     "build": {
       "cache": true,
@@ -17,11 +27,20 @@
     },
     "test": {
       "cache": true,
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "dependsOn": ["^build"]
     },
     "e2e": {
       "cache": true,
-      "inputs": ["default", "^production"]
+      "dependsOn": ["^build"]
+    },
+    "serve": {
+      "dependsOn": ["^build"]
+    },
+    "cypress": {
+      "inputs": ["production", "^production"]
+    },
+    "build-package": {
+      "cache": true
     }
   },
   "namedInputs": {
@@ -41,7 +60,7 @@
   "nxCloudAccessToken": "ZDFmNzM0ZTQtYmI4MC00YjRjLWJiOGMtMWY2M2M4MTNmODIwfHJlYWQtd3JpdGU=",
   "generators": {
     "@nx/angular:application": {
-      "style": "css",
+      "style": "scss",
       "linter": "eslint",
       "unitTestRunner": "jest",
       "e2eTestRunner": "none"
@@ -51,7 +70,8 @@
       "unitTestRunner": "jest"
     },
     "@nx/angular:component": {
-      "style": "css"
+      "style": "scss"
     }
-  }
+  },
+  "defaultProject": "angular-gsap-app"
 }

@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { DemoComponent } from './demo.component';
 
 @Component({
   standalone: true,
-  imports: [NxWelcomeComponent],
+  imports: [DemoComponent],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'angular-gsap-app';
+  title = 'Angular GSAP Demo';
 }
