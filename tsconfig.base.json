@@ -15,8 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@angular-gsap/core": ["packages/src/index.ts"],
-      "angular-gsap": ["src/index.ts"]
+      "@angular-gsap/core": ["packages/src/index.ts"]
     }
   }
 }
