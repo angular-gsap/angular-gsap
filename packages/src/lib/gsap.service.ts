@@ -1,4 +1,4 @@
-import { from } from 'rxjs';
+import { BehaviorSubject, from } from 'rxjs';
 import { gsap } from 'gsap';
 import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,7 +11,6 @@ import {
   PLATFORM_ID,
   inject,
   makeEnvironmentProviders,
-  signal,
 } from '@angular/core';
 
 @Injectable()
@@ -21,7 +20,7 @@ export class GsapService {
   private readonly config = inject(GSAP_CONFIG_TOKEN, { optional: true });
   private readonly defaults = inject(GSAP_DEFAULTS_TOKEN, { optional: true });
   private gsap!: typeof globalThis.gsap;
-  private loaded = signal<boolean>(false);
+  private readonly loaded$ = new BehaviorSubject<boolean>(false);
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -37,7 +36,7 @@ export class GsapService {
   }
 
   get getStatus() {
-    return this.loaded;
+    return this.loaded$;
   }
 
   //Expose the registerPlugin method
@@ -70,7 +69,7 @@ export class GsapService {
         .pipe(takeUntilDestroyed())
         .subscribe((plugin) => {
           this.gsap.registerPlugin(plugin.CSSPlugin);
-          this.loaded.set(true);
+          this.loaded$.next(true);
         })
     );
   }

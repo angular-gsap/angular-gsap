@@ -1,20 +1,20 @@
-import { Directive, ElementRef, Input, effect, inject } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit, inject } from '@angular/core';
 import { GsapService, TweenVars } from './gsap.service';
 
 @Directive({
   selector: '[ngsapAnimateFromTo]',
   standalone: true,
 })
-export default class GsapAnimateFromToDirective {
+export default class GsapAnimateFromToDirective implements OnInit {
   #GSAPService = inject(GsapService);
   #elementRef = inject(ElementRef, { host: true });
 
   @Input() animationConfigFrom!: TweenVars;
   @Input() animationConfigTo!: TweenVars;
 
-  constructor() {
-    effect(() => {
-      if (this.#GSAPService.getStatus()) {
+  ngOnInit(): void {
+    this.#GSAPService.getStatus.subscribe((isLoaded) => {
+      if (isLoaded) {
         this.startAnimation();
       }
     });
