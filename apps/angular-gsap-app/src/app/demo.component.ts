@@ -1,11 +1,20 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GsapAnimateToDirective } from '@angular-gsap/core';
+import {
+  GsapAnimateFromDirective,
+  GsapAnimateFromToDirective,
+  GsapAnimateToDirective,
+} from '@angular-gsap/core';
 
 @Component({
   selector: 'app-demo',
   standalone: true,
-  imports: [CommonModule, GsapAnimateToDirective],
+  imports: [
+    CommonModule,
+    GsapAnimateToDirective,
+    GsapAnimateFromDirective,
+    GsapAnimateFromToDirective,
+  ],
   template: `<nav class="bg-gray-800">
       <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div class="relative flex h-16 items-center justify-between">
@@ -142,8 +151,20 @@ import { GsapAnimateToDirective } from '@angular-gsap/core';
           To Demo
         </p>
       </div>
-      <div *ngIf="showDemo() === 'from'"><p>From Demo</p></div>
-      <div *ngIf="showDemo() === 'fromTo'"><p>FromTo Demo</p></div>
+      <div *ngIf="showDemo() === 'from'">
+        <p ngsapAnimateFrom [animationConfig]="{ duration: 1, x: 100 }">
+          From Demo
+        </p>
+      </div>
+      <div *ngIf="showDemo() === 'fromTo'">
+        <p
+          ngsapAnimateFromTo
+          [animationConfigFrom]="{ opacity: 0 }"
+          [animationConfigTo]="{ opacity: 0.8, duration: 2, ease: 'elastic' }"
+        >
+          FromTo Demo
+        </p>
+      </div>
     </main>`,
   styles: [],
 })
