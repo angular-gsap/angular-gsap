@@ -1,36 +1,43 @@
 import { TestBed } from '@angular/core/testing';
+import { GsapService, provideGsap } from './gsap.service';
 import { ElementRef } from '@angular/core';
-import { GsapService } from './gsap.service';
+import { gsap } from 'gsap';
 
 describe('GsapService', () => {
   let service: GsapService;
+  let target: ElementRef;
+  let vars: gsap.TweenVars;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [GsapService],
     });
     service = TestBed.inject(GsapService);
+    target = new ElementRef(document.createElement('div'));
+    vars = { duration: 1, x: 100 };
   });
 
-  it('should create a tween using the to() method', () => {
-    const target = new ElementRef(document.createElement('div'));
-    const tween = service.to(target, { duration: 1, x: 100 });
-    expect(tween).toBeDefined();
+  it('should have getStatus property', () => {
+    expect(service.getStatus).toBeDefined();
   });
 
-  it('should create a tween using the from() method', () => {
-    const target = new ElementRef(document.createElement('div'));
-    const tween = service.from(target, { duration: 1, x: 100 });
-    expect(tween).toBeDefined();
+  it('should have to method', () => {
+    const tween = service.to(target.nativeElement, vars);
+    expect(tween).toBeInstanceOf(gsap.core.Tween);
   });
 
-  it('should create a tween using the fromTo() method', () => {
-    const target = new ElementRef(document.createElement('div'));
-    const tween = service.fromTo(
-      target,
-      { duration: 1, x: 0 },
-      { duration: 1, x: 100 }
-    );
-    expect(tween).toBeDefined();
+  it('should have from method', () => {
+    const tween = service.from(target.nativeElement, vars);
+    expect(tween).toBeInstanceOf(gsap.core.Tween);
+  });
+
+  it('should have fromTo method', () => {
+    const tween = service.fromTo(target.nativeElement, vars, vars);
+    expect(tween).toBeInstanceOf(gsap.core.Tween);
+  });
+
+  it('should provide gsap', () => {
+    const providers = provideGsap({}, {});
+    expect(providers).toBeDefined();
   });
 });

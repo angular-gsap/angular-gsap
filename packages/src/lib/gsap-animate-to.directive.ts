@@ -1,25 +1,64 @@
-import { Directive, ElementRef, inject, Input, OnInit } from '@angular/core';
-import { GsapService, TweenVars } from './gsap.service';
+import { AfterViewInit, Directive, Input } from '@angular/core';
+import { EMPTY, switchMap, tap } from 'rxjs';
+import { NgsapAbstractDirective } from './ngsap-abstract.directive';
+import { TweenVars } from './gsap.service';
 
 @Directive({
   selector: '[ngsapAnimateTo]',
   standalone: true,
 })
-export default class GsapAnimateToDirective implements OnInit {
-  #GSAPService = inject(GsapService);
-  #elementRef = inject(ElementRef, { host: true });
-
+export default class GsapAnimateToDirective
+  extends NgsapAbstractDirective
+  implements AfterViewInit
+{
   @Input() animationConfig!: TweenVars;
+  @Input() animationEvent!: keyof HTMLElementEventMap;
 
-  ngOnInit(): void {
-    this.#GSAPService.getStatus.subscribe((isLoaded) => {
-      if (isLoaded) {
-        this.startAnimation();
-      }
-    });
+  ngAfterViewInit() {
+    this.GSAPService.getStatus
+      .pipe(
+        switchMap((isLoaded) => {
+          if (isLoaded) {
+            if (this.animateDirective) {
+              return this.animateDirective.animateChildren.pipe(
+                tap((timeline) => {
+                  timeline.to(
+                    this.elementRef.nativeElement,
+                    this.animationConfig
+                  );
+                })
+              );
+            } else {
+              if (this.animationEvent) {
+                this.unlistener = this.renderer.listen(
+                  this.elementRef.nativeElement,
+                  this.animationEvent,
+                  () => this.animate()
+                );
+              } else {
+                this.animate();
+              }
+              // If there is no `animateChildren`, we need to return an empty Observable
+              // since switchMap expects an Observable to be returned.
+              return EMPTY;
+            }
+          } else {
+            // If `isLoaded` is false, again, we return an empty Observable.
+            return EMPTY;
+          }
+        })
+      )
+      .subscribe({
+        error: (err) => {
+          throw `Error loading GSAP: ${err}`;
+        },
+      });
   }
 
-  private startAnimation() {
-    this.#GSAPService.to(this.#elementRef, this.animationConfig);
+  protected override animate(): void {
+    this.GSAPService.to(
+      this.eventElement ? this.eventElement : this.elementRef.nativeElement,
+      this.animationConfig
+    );
   }
 }

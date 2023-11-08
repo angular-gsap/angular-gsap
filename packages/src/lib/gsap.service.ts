@@ -3,7 +3,6 @@ import { gsap } from 'gsap';
 import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  ElementRef,
   EnvironmentProviders,
   Injectable,
   InjectionToken,
@@ -19,46 +18,53 @@ export class GsapService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly config = inject(GSAP_CONFIG_TOKEN, { optional: true });
   private readonly defaults = inject(GSAP_DEFAULTS_TOKEN, { optional: true });
-  private gsap!: typeof globalThis.gsap;
+  private gsapInstance!: typeof globalThis.gsap;
   private readonly loaded$ = new BehaviorSubject<boolean>(false);
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      this.gsap = gsap;
+      this.gsapInstance = gsap;
       if (this.config) {
-        this.gsap.config(this.config);
+        this.gsapInstance.config(this.config);
       }
       if (this.defaults) {
-        this.gsap.defaults(this.defaults);
+        this.gsapInstance.defaults(this.defaults);
       }
       this.loadGsapPlugins(import('gsap/CSSPlugin'));
     }
   }
 
+  /**
+   * Get the status of GSAP plugin
+   * @returns true if GSAP plugin is loaded
+   */
   get getStatus() {
     return this.loaded$;
   }
 
-  //Expose the registerPlugin method
-  get registerPlugin() {
-    return this.gsap.registerPlugin;
+  /**
+   * Gsap instance
+   * @returns GSAP instance
+   */
+  get gsap() {
+    return this.gsapInstance;
   }
 
   // Core GSAP APIs
-  to(target: ElementRef, vars: gsap.TweenVars): gsap.core.Tween {
-    return this.gsap.to(target.nativeElement, vars);
+  to(target: HTMLElement, vars: gsap.TweenVars): gsap.core.Tween {
+    return this.gsapInstance.to(target, vars);
   }
 
-  from(target: ElementRef, vars: gsap.TweenVars): gsap.core.Tween {
-    return this.gsap.from(target.nativeElement, vars);
+  from(target: HTMLElement, vars: gsap.TweenVars): gsap.core.Tween {
+    return this.gsapInstance.from(target, vars);
   }
 
   fromTo(
-    target: ElementRef,
+    target: HTMLElement,
     fromVars: gsap.TweenVars,
     toVars: gsap.TweenVars
   ): gsap.core.Tween {
-    return this.gsap.fromTo(target.nativeElement, fromVars, toVars);
+    return this.gsapInstance.fromTo(target, fromVars, toVars);
   }
 
   private loadGsapPlugins(
@@ -68,7 +74,7 @@ export class GsapService {
       from(gsapImport)
         .pipe(takeUntilDestroyed())
         .subscribe((plugin) => {
-          this.gsap.registerPlugin(plugin.CSSPlugin);
+          this.gsapInstance.registerPlugin(plugin.CSSPlugin);
           this.loaded$.next(true);
         })
     );
@@ -91,5 +97,6 @@ export const GSAP_DEFAULTS_TOKEN = new InjectionToken<gsap.TweenVars>(
   'defaults'
 );
 
-// export gsap.TweenVars as TweenVars;
 export type TweenVars = gsap.TweenVars;
+export type Tween = gsap.core.Tween;
+export type Timeline = gsap.core.Timeline;

@@ -24,7 +24,8 @@ import {
               type="button"
               class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               aria-controls="mobile-menu"
-              aria-expanded="false"
+              [ariaExpanded]="menuClosed()"
+              (click)="menuClosed.set(!menuClosed())"
             >
               <span class="absolute -inset-0.5"></span>
               <span class="sr-only">Open main menu</span>
@@ -34,7 +35,8 @@ import {
             Menu open: "hidden", Menu closed: "block"
           -->
               <svg
-                class="block h-6 w-6"
+                [ngClass]="{ block: menuClosed(), hidden: !menuClosed() }"
+                class="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
@@ -53,12 +55,13 @@ import {
             Menu open: "block", Menu closed: "hidden"
           -->
               <svg
-                class="hidden h-6 w-6"
+                [ngClass]="{ hidden: menuClosed(), block: !menuClosed() }"
+                class="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                aria-hidden="true"
+                [ariaHidden]="menuClosed()"
               >
                 <path
                   stroke-linecap="round"
@@ -73,14 +76,13 @@ import {
           >
             <div class="flex flex-shrink-0 items-center">
               <img
-                class="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                alt="Your Company"
+                src="assets/apple-touch-icon.png"
+                alt="Menu"
+                class="block h-8 w-auto"
               />
             </div>
             <div class="hidden sm:ml-6 sm:block">
               <div class="flex space-x-4">
-                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                 <a
                   href="#"
                   [ngClass]="{
@@ -122,22 +124,29 @@ import {
       </div>
 
       <!-- Mobile menu, show/hide based on menu state. -->
-      <div class="sm:hidden" id="mobile-menu">
+      <div
+        [ngClass]="{ block: !menuClosed(), hidden: menuClosed() }"
+        class="sm:hidden"
+        id="mobile-menu"
+      >
         <div class="space-y-1 px-2 pb-3 pt-2">
           <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
           <a
             href="#"
             class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            (click)="showDemo.set('to')"
             >To</a
           >
           <a
             href="#"
             class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            (click)="showDemo.set('from')"
             >From</a
           >
           <a
             href="#"
             class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            (click)="showDemo.set('fromTo')"
             >FromTo</a
           >
         </div>
@@ -147,27 +156,71 @@ import {
       class="flex flex-col items-center justify-center min-h-screen py-6 bg-gray-100"
     >
       <div *ngIf="showDemo() === 'to'">
-        <p ngsapAnimateTo [animationConfig]="{ duration: 1, x: 100 }">
-          To Demo
-        </p>
+        <div class="flex flex-col w-full gap-7">
+          <div
+            ngsapAnimateTo
+            [animationConfig]="{
+              duration: 5,
+              x: 150,
+              scale: 1.2,
+              ease: 'bounce'
+            }"
+            [animationEvent]="'mouseover'"
+            class="bg-slate-500 text-white w-56 h-56 flex items-center justify-center rounded-full"
+          >
+            Hover me to animate me
+          </div>
+          <button
+            ngsapAnimateTo
+            [eventElement]="demo"
+            [animationEvent]="'click'"
+            [animationConfig]="{
+              duration: 5,
+              x: 150,
+              scale: 1.2,
+              ease: 'bounce'
+            }"
+            class="bg-slate-500 text-white w-full h-auto flex items-center justify-center p-2"
+          >
+            Click me to animate the target
+          </button>
+          <div
+            #demo
+            class="w-full h-24 p-9 bg-gray-500 text-white flex justify-center items-center"
+          >
+            I Should Animate when you click the configured element
+          </div>
+          <div class="flex flex-col gap-5"></div>
+        </div>
       </div>
       <div *ngIf="showDemo() === 'from'">
-        <p ngsapAnimateFrom [animationConfig]="{ duration: 1, x: 100 }">
+        <div
+          ngsapAnimateFrom
+          [animationConfig]="{
+            duration: 5,
+            x: 150,
+            scale: 1.2,
+            ease: 'bounce'
+          }"
+          class="bg-red-800 text-white w-56 h-56 flex items-center justify-center"
+        >
           From Demo
-        </p>
+        </div>
       </div>
       <div *ngIf="showDemo() === 'fromTo'">
-        <p
+        <div
           ngsapAnimateFromTo
-          [animationConfigFrom]="{ opacity: 0 }"
-          [animationConfigTo]="{ opacity: 0.8, duration: 2, ease: 'elastic' }"
+          [animationFromConfig]="{ opacity: 0 }"
+          [animationToConfig]="{ opacity: 0.8, duration: 2, ease: 'bounce' }"
+          class="bg-lime-600 text-white w-56 h-56 flex items-center justify-center"
         >
           FromTo Demo
-        </p>
+        </div>
       </div>
     </main>`,
   styles: [],
 })
 export class DemoComponent {
   showDemo = signal<'to' | 'from' | 'fromTo'>('to');
+  menuClosed = signal<boolean>(true);
 }
