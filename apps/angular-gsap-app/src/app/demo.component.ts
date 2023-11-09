@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  GsapAnimateDirective,
   GsapAnimateFromDirective,
   GsapAnimateFromToDirective,
   GsapAnimateToDirective,
@@ -14,6 +15,7 @@ import {
     GsapAnimateToDirective,
     GsapAnimateFromDirective,
     GsapAnimateFromToDirective,
+    GsapAnimateDirective,
   ],
   template: `<nav class="bg-gray-800">
       <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -117,6 +119,17 @@ import {
                   (click)="showDemo.set('fromTo')"
                   >FromTo</a
                 >
+                <a
+                  href="#"
+                  [ngClass]="{
+                    'bg-gray-900 text-white': showDemo() === 'timeline',
+                    'text-gray-300 hover:bg-gray-700 hover:text-white':
+                      showDemo() !== 'timeline'
+                  }"
+                  class="rounded-md px-3 py-2 text-sm font-medium"
+                  (click)="showDemo.set('timeline')"
+                  >Timeline</a
+                >
               </div>
             </div>
           </div>
@@ -148,6 +161,12 @@ import {
             class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
             (click)="showDemo.set('fromTo')"
             >FromTo</a
+          >
+          <a
+            href="#"
+            class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            (click)="showDemo.set('timeline')"
+            >Timeline</a
           >
         </div>
       </div>
@@ -217,10 +236,51 @@ import {
           FromTo Demo
         </div>
       </div>
+      <div *ngIf="showDemo() === 'timeline'">
+        <div
+          ngsapAnimate
+          class="flex flex-col items-center justify-center gap-8"
+        >
+          <div
+            ngsapAnimateTo
+            [animationConfig]="{
+              duration: 2,
+              x: 15,
+              scale: 1.2,
+              ease: 'bounce'
+            }"
+            class="w-10 h-10 bg-slate-500"
+          ></div>
+          <div
+            ngsapAnimateFrom
+            [animationConfig]="{
+              duration: 2,
+              x: 150,
+              scale: 1.2,
+              ease: 'bounce'
+            }"
+            class="w-10 h-10 bg-blue-600"
+          ></div>
+          <div
+            ngsapAnimateFromTo
+            [animationFromConfig]="{ opacity: 0 }"
+            [animationToConfig]="{ opacity: 0.8, duration: 1, ease: 'bounce' }"
+            class="w-10 h-10 bg-fuchsia-400"
+          ></div>
+          <button
+            type="button"
+            (click)="animateParent.timeline.reverse()"
+            class="bg-slate-500 w-full text-white p-2 rounded-md"
+          >
+            Click Me to Animate
+          </button>
+        </div>
+      </div>
     </main>`,
-  styles: [],
 })
 export class DemoComponent {
-  showDemo = signal<'to' | 'from' | 'fromTo'>('to');
+  showDemo = signal<'to' | 'from' | 'fromTo' | 'timeline'>('to');
   menuClosed = signal<boolean>(true);
+
+  @ViewChild(GsapAnimateDirective) animateParent!: GsapAnimateDirective;
 }

@@ -30,9 +30,9 @@ export default class GsapAnimateDirective implements AfterViewInit, OnDestroy {
     this.#GSAPService.getStatus.subscribe({
       next: (isLoaded) => {
         if (isLoaded) {
+          this.timeline = this.#GSAPService.gsap.timeline({ paused: true });
+          this.animateChildren.emit(this.timeline);
           if (this.animationEvent) {
-            this.timeline = this.#GSAPService.gsap.timeline({ paused: true });
-            this.animateChildren.emit(this.timeline);
             this.unlistener = this.#renderer.listen(
               this.#elementRef.nativeElement,
               this.animationEvent,
