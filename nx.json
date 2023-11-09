@@ -6,9 +6,15 @@
   "affected": {
     "defaultBase": "main"
   },
-  "cli": { "packageManager": "pnpm" },
+  "cli": {
+    "packageManager": "pnpm"
+  },
   "tasksRunnerOptions": {
-    "default": { "options": { "useLightClient": true } }
+    "default": {
+      "options": {
+        "useLightClient": true
+      }
+    }
   },
   "targetDefaults": {
     "build": {
@@ -25,10 +31,6 @@
         "{workspaceRoot}/eslint.config.js"
       ]
     },
-    "test": {
-      "cache": true,
-      "dependsOn": ["^build"]
-    },
     "e2e": {
       "cache": true,
       "dependsOn": ["^build"]
@@ -36,11 +38,19 @@
     "serve": {
       "dependsOn": ["^build"]
     },
-    "cypress": {
-      "inputs": ["production", "^production"]
-    },
-    "build-package": {
-      "cache": true
+    "@nx/jest:jest": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
     }
   },
   "namedInputs": {

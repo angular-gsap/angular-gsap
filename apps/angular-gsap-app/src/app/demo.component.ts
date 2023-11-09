@@ -174,117 +174,111 @@ import {
     <main
       class="flex flex-col items-center justify-center min-h-screen py-6 bg-gray-100"
     >
-      <div *ngIf="showDemo() === 'to'">
-        <div class="flex flex-col w-full gap-7">
-          <div
-            ngsapAnimateTo
-            [animationConfig]="{
-              duration: 5,
-              x: 150,
-              scale: 1.2,
-              ease: 'bounce'
-            }"
-            [animationEvent]="'mouseover'"
-            class="bg-slate-500 text-white w-56 h-56 flex items-center justify-center rounded-full"
-          >
-            Hover me to animate me
-          </div>
-          <button
-            ngsapAnimateTo
-            [eventElement]="demo"
-            [animationEvent]="'click'"
-            [animationConfig]="{
-              duration: 5,
-              x: 150,
-              scale: 1.2,
-              ease: 'bounce'
-            }"
-            class="bg-slate-500 text-white w-full h-auto flex items-center justify-center p-2"
-          >
-            Click me to animate the target
-          </button>
-          <div
-            #demo
-            class="w-full h-24 p-9 bg-gray-500 text-white flex justify-center items-center"
-          >
-            I Should Animate when you click the configured element
-          </div>
-          <div class="flex flex-col gap-5"></div>
-        </div>
-      </div>
-      <div *ngIf="showDemo() === 'from'">
+      @if(showDemo() === 'to'){
+      <div class="flex flex-col w-96 gap-7">
         <div
-          ngsapAnimateFrom
+          ngsapAnimateTo
           [animationConfig]="{
             duration: 5,
             x: 150,
             scale: 1.2,
             ease: 'bounce'
           }"
-          class="bg-red-800 text-white w-56 h-56 flex items-center justify-center"
+          [animationEvent]="'mouseover'"
+          class="bg-slate-500 text-white w-56 h-56 flex items-center justify-center rounded-full"
         >
-          From Demo
+          Hover me to animate me
         </div>
+        <button
+          ngsapAnimateTo
+          [eventElement]="demo"
+          [animationEvent]="'click'"
+          [animationConfig]="{
+            duration: 5,
+            x: 150,
+            scale: 1.2,
+            ease: 'bounce'
+          }"
+          class="bg-slate-500 text-white w-full h-auto flex items-center justify-center p-2"
+        >
+          Click me to animate the target
+        </button>
+        <div
+          #demo
+          class="w-full h-24 p-9 bg-gray-500 text-white flex justify-center items-center"
+        >
+          I Should Animate when you click the configured element
+        </div>
+        <div class="flex flex-col gap-5"></div>
       </div>
-      <div *ngIf="showDemo() === 'fromTo'">
+      } @if(showDemo() === 'from'){
+      <div
+        ngsapAnimateFrom
+        [animationConfig]="{
+          duration: 5,
+          x: 150,
+          scale: 1.2,
+          ease: 'bounce'
+        }"
+        class="bg-red-800 text-white w-56 h-56 flex items-center justify-center"
+      >
+        From Demo
+      </div>
+      } @if(showDemo() === 'fromTo'){
+      <div
+        ngsapAnimateFromTo
+        [animationFromConfig]="{ opacity: 0 }"
+        [animationToConfig]="{ opacity: 0.8, duration: 2, ease: 'bounce' }"
+        class="bg-lime-600 text-white w-56 h-56 flex items-center justify-center"
+      >
+        FromTo Demo
+      </div>
+      } @if(showDemo() === 'timeline'){
+      <div ngsapAnimate class="flex flex-col items-center justify-center gap-8">
+        <div
+          ngsapAnimateTo
+          [animationConfig]="{
+            duration: 2,
+            x: 15,
+            scale: 1.2,
+            ease: 'bounce'
+          }"
+          class="w-10 h-10 bg-slate-500"
+        ></div>
+        <div
+          ngsapAnimateFrom
+          [animationConfig]="{
+            duration: 2,
+            x: 150,
+            scale: 1.2,
+            ease: 'bounce'
+          }"
+          class="w-10 h-10 bg-blue-600"
+        ></div>
         <div
           ngsapAnimateFromTo
           [animationFromConfig]="{ opacity: 0 }"
-          [animationToConfig]="{ opacity: 0.8, duration: 2, ease: 'bounce' }"
-          class="bg-lime-600 text-white w-56 h-56 flex items-center justify-center"
+          [animationToConfig]="{ opacity: 0.8, duration: 1, ease: 'bounce' }"
+          class="w-10 h-10 bg-fuchsia-400"
+        ></div>
+        <button
+          type="button"
+          (click)="
+            animateParent.timeline.reversed()
+              ? animateParent.timeline.play()
+              : animateParent.timeline.reverse()
+          "
+          class="bg-slate-500 w-full text-white p-2 rounded-md"
         >
-          FromTo Demo
-        </div>
+          Click here to
+          {{
+            animateParent && animateParent.timeline.reversed()
+              ? 'play'
+              : 'reverse'
+          }}
+        </button>
       </div>
-      <div *ngIf="showDemo() === 'timeline'">
-        <div
-          ngsapAnimate
-          class="flex flex-col items-center justify-center gap-8"
-        >
-          <div
-            ngsapAnimateTo
-            [animationConfig]="{
-              duration: 2,
-              x: 15,
-              scale: 1.2,
-              ease: 'bounce'
-            }"
-            class="w-10 h-10 bg-slate-500"
-          ></div>
-          <div
-            ngsapAnimateFrom
-            [animationConfig]="{
-              duration: 2,
-              x: 150,
-              scale: 1.2,
-              ease: 'bounce'
-            }"
-            class="w-10 h-10 bg-blue-600"
-          ></div>
-          <div
-            ngsapAnimateFromTo
-            [animationFromConfig]="{ opacity: 0 }"
-            [animationToConfig]="{ opacity: 0.8, duration: 1, ease: 'bounce' }"
-            class="w-10 h-10 bg-fuchsia-400"
-          ></div>
-          <button
-            type="button"
-            (click)="
-              animateParent.timeline.reversed()
-                ? animateParent.timeline.play()
-                : animateParent.timeline.reverse()
-            "
-            class="bg-slate-500 w-full text-white p-2 rounded-md"
-          >
-            Click here to
-            {{
-              animateParent && animateParent.timeline.reversed()
-                ? 'play'
-                : 'reverse'
-            }}
-          </button>
-        </div>
-      </div>
+      }
     </main>`,
 })
 export class DemoComponent {
