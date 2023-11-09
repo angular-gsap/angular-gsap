@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject, signal } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   GsapAnimateDirective,
@@ -269,10 +269,19 @@ import {
           ></div>
           <button
             type="button"
-            (click)="animateParent.timeline.reverse()"
+            (click)="
+              animateParent.timeline.reversed()
+                ? animateParent.timeline.play()
+                : animateParent.timeline.reverse()
+            "
             class="bg-slate-500 w-full text-white p-2 rounded-md"
           >
-            Click Me to Animate
+            Click here to
+            {{
+              animateParent && animateParent.timeline.reversed()
+                ? 'play'
+                : 'reverse'
+            }}
           </button>
         </div>
       </div>

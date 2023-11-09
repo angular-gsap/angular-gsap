@@ -24,6 +24,7 @@ export default class GsapAnimateDirective implements AfterViewInit, OnDestroy {
   private unlistener!: () => void;
 
   @Input() animationEvent!: keyof HTMLElementEventMap;
+  @Input() paused = false;
   @Output() animateChildren = new EventEmitter<Timeline>();
 
   ngAfterViewInit() {
@@ -41,7 +42,9 @@ export default class GsapAnimateDirective implements AfterViewInit, OnDestroy {
               }
             );
           } else {
-            this.timeline.play();
+            if (!this.paused) {
+              this.timeline.play();
+            }
           }
         }
       },
