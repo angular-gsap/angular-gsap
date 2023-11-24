@@ -1,13 +1,21 @@
-import { getGreeting } from '../support/app.po';
+// cypress/integration/demo.component.spec.ts
 
-describe('angular-gsap-app-e2e', () => {
-  beforeEach(() => cy.visit('/'));
+describe('Demo Component', () => {
+  beforeEach(() => {
+    cy.visit('/', { timeout: 3000 }); // replace with the actual route to the demo component
+  });
 
-  it('should display welcome message', () => {
-    // Custom command example, see `../support/commands.ts` file
-    cy.login('my-email@something.com', 'myPassword');
+  it('should open the menu when the button is clicked', () => {
+    cy.get('button[aria-controls="mobile-menu"]').click();
+    cy.get(
+      'svg[ngClass="{ hidden: menuClosed(), block: !menuClosed() }"]'
+    ).should('be.visible');
+  });
 
-    // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains(/Welcome/);
+  it('should close the menu when the button is clicked again', () => {
+    cy.get('button[aria-controls="mobile-menu"]').click();
+    cy.get(
+      'svg[ngClass="{ block: menuClosed(), hidden: !menuClosed() }"]'
+    ).should('be.visible');
   });
 });

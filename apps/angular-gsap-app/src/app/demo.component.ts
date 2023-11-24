@@ -1,5 +1,5 @@
 import { Component, ViewChild, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import {
   GsapAnimateDirective,
   GsapAnimateFromDirective,
@@ -11,7 +11,7 @@ import {
   selector: 'app-demo',
   standalone: true,
   imports: [
-    CommonModule,
+    NgClass,
     GsapAnimateToDirective,
     GsapAnimateFromDirective,
     GsapAnimateFromToDirective,
@@ -31,11 +31,7 @@ import {
             >
               <span class="absolute -inset-0.5"></span>
               <span class="sr-only">Open main menu</span>
-              <!--
-            Icon when menu is closed.
-
-            Menu open: "hidden", Menu closed: "block"
-          -->
+              <!-- Icon when menu is closed. Menu open: "hidden", Menu closed: "block" -->
               <svg
                 [ngClass]="{ block: menuClosed(), hidden: !menuClosed() }"
                 class="h-6 w-6"
@@ -51,11 +47,7 @@ import {
                   d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
                 />
               </svg>
-              <!--
-            Icon when menu is open.
-
-            Menu open: "block", Menu closed: "hidden"
-          -->
+              <!-- Icon when menu is open. Menu open: "block", Menu closed: "hidden" -->
               <svg
                 [ngClass]="{ hidden: menuClosed(), block: !menuClosed() }"
                 class="h-6 w-6"
@@ -143,7 +135,6 @@ import {
         id="mobile-menu"
       >
         <div class="space-y-1 px-2 pb-3 pt-2">
-          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
           <a
             href="#"
             class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
