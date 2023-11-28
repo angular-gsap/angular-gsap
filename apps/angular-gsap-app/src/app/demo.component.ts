@@ -87,6 +87,7 @@ import {
                   class="rounded-md px-3 py-2 text-sm font-medium"
                   aria-current="page"
                   (click)="showDemo.set('to')"
+                  data-cy="demo-to"
                   >To</a
                 >
                 <a
@@ -98,6 +99,7 @@ import {
                   }"
                   class="rounded-md px-3 py-2 text-sm font-medium"
                   (click)="showDemo.set('from')"
+                  data-cy="demo-from"
                   >From</a
                 >
                 <a
@@ -109,6 +111,7 @@ import {
                   }"
                   class="rounded-md px-3 py-2 text-sm font-medium"
                   (click)="showDemo.set('fromTo')"
+                  data-cy="demo-fromTo"
                   >FromTo</a
                 >
                 <a
@@ -120,6 +123,7 @@ import {
                   }"
                   class="rounded-md px-3 py-2 text-sm font-medium"
                   (click)="showDemo.set('timeline')"
+                  data-cy="demo-timeline"
                   >Timeline</a
                 >
               </div>
@@ -177,6 +181,7 @@ import {
           }"
           [animationEvent]="'mouseover'"
           class="bg-slate-500 text-white w-56 h-56 flex items-center justify-center rounded-full"
+          data-cy="demo-circle"
         >
           Hover me to animate me
         </div>
@@ -191,12 +196,14 @@ import {
             ease: 'bounce'
           }"
           class="bg-slate-500 text-white w-full h-auto flex items-center justify-center p-2"
+          data-cy="demo-button"
         >
           Click me to animate the target
         </button>
         <div
           #demo
           class="w-full h-24 p-9 bg-gray-500 text-white flex justify-center items-center"
+          data-cy="demo-target"
         >
           I Should Animate when you click the configured element
         </div>
@@ -212,6 +219,7 @@ import {
           ease: 'bounce'
         }"
         class="bg-red-800 text-white w-56 h-56 flex items-center justify-center"
+        data-cy="demo-from-square"
       >
         From Demo
       </div>
@@ -221,6 +229,7 @@ import {
         [animationFromConfig]="{ opacity: 0 }"
         [animationToConfig]="{ opacity: 0.8, duration: 2, ease: 'bounce' }"
         class="bg-lime-600 text-white w-56 h-56 flex items-center justify-center"
+        data-cy="demo-from-to-square"
       >
         FromTo Demo
       </div>
@@ -235,6 +244,7 @@ import {
             ease: 'bounce'
           }"
           class="w-10 h-10 bg-slate-500"
+          data-cy="demo-timeline-1"
         ></div>
         <div
           ngsapAnimateFrom
@@ -245,12 +255,14 @@ import {
             ease: 'bounce'
           }"
           class="w-10 h-10 bg-blue-600"
+          data-cy="demo-timeline-2"
         ></div>
         <div
           ngsapAnimateFromTo
           [animationFromConfig]="{ opacity: 0 }"
           [animationToConfig]="{ opacity: 0.8, duration: 1, ease: 'bounce' }"
           class="w-10 h-10 bg-fuchsia-400"
+          data-cy="demo-timeline-3"
         ></div>
         <button
           type="button"
@@ -260,6 +272,7 @@ import {
               : animateParent.timeline.reverse()
           "
           class="bg-slate-500 w-full text-white p-2 rounded-md"
+          data-cy="demo-timeline-button"
         >
           Click here to
           {{
