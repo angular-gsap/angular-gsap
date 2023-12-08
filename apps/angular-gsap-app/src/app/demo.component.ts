@@ -72,10 +72,12 @@ import {
               <img
                 src="assets/apple-touch-icon.png"
                 alt="Menu"
-                class="block h-8 w-auto"
+                class="block h-11 w-auto"
               />
             </div>
-            <div class="hidden sm:ml-6 sm:block">
+            <div
+              class="hidden sm:ml-6 sm:flex sm:justify-center sm:items-center"
+            >
               <div class="flex space-x-4">
                 <a
                   href="#"

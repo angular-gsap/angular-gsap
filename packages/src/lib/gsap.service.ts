@@ -2,15 +2,7 @@ import { gsap } from 'gsap';
 import { isPlatformBrowser } from '@angular/common';
 import { PLUGIN_IMPORTS_ARRAY, SupportedPlugin } from './plugins-types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  BehaviorSubject,
-  catchError,
-  concat,
-  filter,
-  from,
-  map,
-  mergeMap,
-} from 'rxjs';
+import { BehaviorSubject, catchError, from, map, mergeMap } from 'rxjs';
 import {
   EnvironmentProviders,
   Injectable,
@@ -41,7 +33,7 @@ export class GsapService {
         this.gsapInstance.defaults(this.defaults);
       }
       // Load CSSPlugin first, then any additional plugins
-      this.loadGsapPlugins(['CSSPlugin', ...(this.plugins || [])]);
+      this.loadGsapPlugins([...(this.plugins || [])]);
     }
   }
 
@@ -80,27 +72,14 @@ export class GsapService {
 
   // Method to load and register plugins
   private loadGsapPlugins(plugins: SupportedPlugin[]) {
-    // Observable for loading CSSPlugin
-    const loadCSSPlugin$ = from(PLUGIN_IMPORTS_ARRAY['CSSPlugin']()).pipe(
-      catchError((error) => {
-        console.error('Error loading CSSPlugin:', error);
-        return from([]); // Emit an empty array to continue the observable chain.
-      })
-    );
-
     // Observable for loading other plugins
-    const loadOtherPlugins$ = from(plugins).pipe(
-      filter((plugin) => plugin !== 'CSSPlugin'), // Exclude CSSPlugin to prevent double loading.
+    const loadPlugins$ = from(plugins).pipe(
       mergeMap((plugin) => PLUGIN_IMPORTS_ARRAY[plugin]()),
+      map((pluginModule) => pluginModule.default),
       catchError((error, caught) => {
         console.error('Error loading additional plugins:', error);
         return caught; // Continue the observable chain.
       })
-    );
-
-    // Concatenate the two observables to ensure order
-    const loadPlugins$ = concat(loadCSSPlugin$, loadOtherPlugins$).pipe(
-      map((pluginModule) => pluginModule.default) // Assuming each plugin has a default export
     );
 
     // Subscribe to the concatenated observable to execute the loading process
