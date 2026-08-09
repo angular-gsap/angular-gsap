@@ -3,26 +3,29 @@
 **Write vanilla GSAP inside Angular.** An Angular-managed `gsap.context()` (host-scoped, signal-reactive, SSR-safe, auto-cleaned) without wrapping a single GSAP API. The Angular equivalent of `@gsap/react`'s `useGSAP()`.
 
 ```ts
-import { Component, signal } from '@angular/core';
-import { injectGsap } from '@angular-gsap/core';
+import { Component, ElementRef, signal, viewChild } from '@angular/core';
+import { injectGsap, target } from '@angular-gsap/core';
 import { gsap } from 'gsap';
 
 @Component({
   template: `
-    <div class="box"></div>
+    <div #box class="box"></div>
     <button (click)="spin()">Spin</button>
   `,
 })
 export class Hero {
+  box = viewChild.required<ElementRef>('box');
   x = signal(0);
 
-  // Vanilla GSAP, scoped to this component. Reading x() makes it
-  // reactive. Cleaned up on destroy. Never runs on the server.
+  // Vanilla GSAP. Reading x() makes it reactive. Cleaned up on
+  // destroy. Never runs on the server.
   ctx = injectGsap(({ gsap }) => {
-    gsap.to('.box', { x: this.x(), duration: 1 });
+    gsap.to(target(this.box), { x: this.x(), duration: 1 });
   });
 
-  spin = this.ctx.contextSafe(() => gsap.to('.box', { rotation: 360 }));
+  spin = this.ctx.contextSafe(() =>
+    gsap.to(target(this.box), { rotation: 360 })
+  );
 }
 ```
 
