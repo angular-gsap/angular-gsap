@@ -1,6 +1,6 @@
 import { Directive, ElementRef, inject, input, numberAttribute, output } from '@angular/core';
 import { injectGsap } from './inject-gsap';
-import { GsapRevealPreset, prefersReducedMotion, presetFromVars } from './presets';
+import { RevealPreset, prefersReducedMotion, presetFromVars } from './presets';
 import type { Gsap, GsapTweenVars } from './types';
 
 function staggerAttribute(value: number | string): number {
@@ -10,7 +10,7 @@ function staggerAttribute(value: number | string): number {
 interface EntranceConfig {
   gsap: Gsap;
   trigger: Element;
-  preset: GsapRevealPreset | '';
+  preset: RevealPreset | '';
   on: 'init' | 'scroll';
   delay: number;
   duration: number;
@@ -48,20 +48,20 @@ function entranceVars(config: EntranceConfig): GsapTweenVars {
  * the common case — anything beyond a preset entrance belongs in `injectGsap`.
  *
  * ```html
- * <h1 gsapReveal>Fades up on init</h1>
- * <section gsapReveal="fade-right" on="scroll" [delay]="0.2">…</section>
+ * <h1 reveal>Fades up on init</h1>
+ * <section reveal="fade-right" on="scroll" [delay]="0.2">…</section>
  * ```
  *
  * Inputs are signals: changing any of them reverts and replays the entrance.
  * Respects `prefers-reduced-motion` (no animation). `on="scroll"` requires
  * ScrollTrigger via `provideGsap({ plugins: [ScrollTrigger] })`.
  */
-@Directive({ selector: '[gsapReveal]' })
-export class GsapReveal {
+@Directive({ selector: '[reveal]' })
+export class Reveal {
   private readonly host = inject<ElementRef<Element>>(ElementRef);
 
   /** Entrance preset; empty attribute means `fade-up`. */
-  readonly preset = input<GsapRevealPreset | ''>('', { alias: 'gsapReveal' });
+  readonly preset = input<RevealPreset | ''>('', { alias: 'reveal' });
   /** `init` plays after first render; `scroll` when the element enters the viewport. */
   readonly on = input<'init' | 'scroll'>('init');
   readonly delay = input(0, { transform: numberAttribute });
@@ -99,7 +99,7 @@ export class GsapReveal {
  * Staggered entrance for an element's children.
  *
  * ```html
- * <ul gsapStagger="0.08" preset="scale-in" on="scroll">
+ * <ul stagger="0.08" preset="scale-in" on="scroll">
  *   <li>…</li>
  *   <li>…</li>
  * </ul>
@@ -107,15 +107,15 @@ export class GsapReveal {
  *
  * Targets direct children by default; pass `items` (a CSS selector, resolved
  * within the host) to target something deeper. Same reduced-motion and
- * ScrollTrigger behavior as {@link GsapReveal}.
+ * ScrollTrigger behavior as {@link Reveal}.
  */
-@Directive({ selector: '[gsapStagger]' })
-export class GsapStagger {
+@Directive({ selector: '[stagger]' })
+export class Stagger {
   private readonly host = inject<ElementRef<Element>>(ElementRef);
 
   /** Seconds between each child; empty attribute means `0.08`. */
-  readonly each = input(0.08, { alias: 'gsapStagger', transform: staggerAttribute });
-  readonly preset = input<GsapRevealPreset | ''>('');
+  readonly each = input(0.08, { alias: 'stagger', transform: staggerAttribute });
+  readonly preset = input<RevealPreset | ''>('');
   readonly on = input<'init' | 'scroll'>('init');
   readonly delay = input(0, { transform: numberAttribute });
   readonly duration = input(0.7, { transform: numberAttribute });
@@ -156,6 +156,6 @@ export class GsapStagger {
 }
 
 /** Everything template-facing, for one-line imports. */
-export const GSAP_DIRECTIVES = [GsapReveal, GsapStagger] as const;
+export const GSAP_DIRECTIVES = [Reveal, Stagger] as const;
 
 declare const ngDevMode: boolean | undefined;

@@ -25,14 +25,10 @@ export default [
   {
     files: ['**/*.ts'],
     rules: {
-      '@angular-eslint/directive-selector': [
-        'error',
-        {
-          type: 'attribute',
-          prefix: 'gsap',
-          style: 'camelCase',
-        },
-      ],
+      // Public directives use natural, intention-first selectors (reveal,
+      // stagger) — standalone directives are opt-in per component, so a
+      // prefix adds ceremony without preventing real collisions.
+      '@angular-eslint/directive-selector': 'off',
       '@angular-eslint/component-selector': [
         'error',
         {

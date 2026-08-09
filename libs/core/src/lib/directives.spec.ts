@@ -1,20 +1,20 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { gsap } from 'gsap';
-import { GsapReveal, GsapStagger } from './directives';
+import { Reveal, Stagger } from './directives';
 
 @Component({
-  imports: [GsapReveal],
-  template: `<h1 [gsapReveal]="preset()" [duration]="2">Hello</h1>`,
+  imports: [Reveal],
+  template: `<h1 [reveal]="preset()" [duration]="2">Hello</h1>`,
 })
 class RevealHost {
   preset = signal<'fade-up' | 'scale-in' | ''>('');
 }
 
 @Component({
-  imports: [GsapStagger],
+  imports: [Stagger],
   template: `
-    <ul gsapStagger [duration]="2">
+    <ul stagger [duration]="2">
       <li>one</li>
       <li>two</li>
       <li>three</li>
@@ -34,7 +34,7 @@ async function settle(fixture: ComponentFixture<unknown>) {
 }
 
 describe('sugar directives', () => {
-  describe('gsapReveal', () => {
+  describe('reveal', () => {
     it('applies the entrance start values after first render', async () => {
       const fixture = TestBed.createComponent(RevealHost);
       await settle(fixture);
@@ -79,7 +79,7 @@ describe('sugar directives', () => {
     });
   });
 
-  describe('gsapStagger', () => {
+  describe('stagger', () => {
     it('applies entrance start values to every child', async () => {
       const fixture = TestBed.createComponent(StaggerHost);
       await settle(fixture);

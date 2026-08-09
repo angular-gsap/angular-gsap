@@ -1,7 +1,7 @@
 import type { GsapTweenVars } from './types';
 
 /** Entrance presets shared by the sugar directives. */
-export type GsapRevealPreset =
+export type RevealPreset =
   | 'fade'
   | 'fade-up'
   | 'fade-down'
@@ -11,7 +11,7 @@ export type GsapRevealPreset =
 
 /** `gsap.from()` vars for a preset. `distance` is the travel in px. */
 export function presetFromVars(
-  preset: GsapRevealPreset,
+  preset: RevealPreset,
   distance: number
 ): GsapTweenVars {
   switch (preset) {
