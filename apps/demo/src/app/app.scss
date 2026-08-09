@@ -1,0 +1,72 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.5rem;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-stretch: 120%;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-tick {
+  color: var(--kinetic);
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+
+  a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--ink);
+    }
+
+    &.on {
+      color: var(--ink);
+      font-weight: 600;
+    }
+  }
+
+  .gh {
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.25rem 0.85rem;
+    color: var(--ink);
+  }
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}

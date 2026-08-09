@@ -1,1 +1,201 @@
-/* You can add global styles to this file, and also import other style files */
+/* angular-gsap demo — "color belongs to motion".
+   Static chrome is ink on porcelain; saturated color is reserved for
+   elements the library animates. */
+
+:root {
+  --paper: #f6f6f3;
+  --ink: #17171c;
+  --ink-soft: #4c4c55;
+  --hairline: #d9d9d2;
+  --card: #ffffff;
+
+  /* motion palette — only ever applied to animated elements */
+  --pulse: #e23b80; /* angular side */
+  --kinetic: #0ae448; /* gsap side */
+  --arc: #5b4be8; /* the bridge; also interactive text */
+  --ember: #ffb627;
+
+  --font-display: 'Archivo', sans-serif;
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-mono: 'Spline Sans Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-stretch: 115%;
+  line-height: 1.05;
+  margin: 0;
+}
+
+a {
+  color: var(--arc);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--arc);
+  outline-offset: 2px;
+}
+
+/* ---- shared demo furniture ---- */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 0.75rem;
+}
+
+.page {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 5rem;
+}
+
+.page-head {
+  max-width: 44rem;
+  margin-bottom: 2.5rem;
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+  }
+
+  p {
+    color: var(--ink-soft);
+    margin: 1rem 0 0;
+  }
+}
+
+.api-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+
+  span {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.2rem 0.7rem;
+    background: var(--card);
+  }
+}
+
+.example {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 56rem) {
+  .example {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* the stage: where motion (and therefore color) lives */
+.stage {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  min-height: 22rem;
+  overflow: hidden;
+  background-image: radial-gradient(var(--hairline) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.stage-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.code {
+  background: var(--ink);
+  color: #e9e9ef;
+  border-radius: 12px;
+  padding: 1.25rem 1.4rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  margin: 0;
+
+  code {
+    font-family: inherit;
+  }
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 0.5rem 1.15rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn--quiet {
+  border-color: var(--hairline);
+}
+
+label.range {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+input[type='range'] {
+  accent-color: var(--arc);
+  width: 11rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
