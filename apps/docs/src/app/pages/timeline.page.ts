@@ -61,23 +61,20 @@ export const routeMeta: RouteMeta = {
       </div>
 
       <section class="explain">
-        <h2>What the library is doing here</h2>
+        <h2>How this works</h2>
         <ul>
           <li>
-            <strong>The timeline is plain GSAP.</strong> Position parameters,
-            staggers, <code>repeat: -1</code>: none of it is wrapped, so the
-            timeline API from the GSAP docs applies verbatim.
+            The timeline is straight from the GSAP docs: position parameters,
+            staggers, <code>repeat: -1</code>. Nothing here is wrapped.
           </li>
           <li>
-            <strong>Transport controls stay out of change detection.</strong>
-            <code>play()</code>/<code>pause()</code>/<code>timeScale()</code>
-            run through <code>contextSafe</code>, so a 60fps animation never
-            schedules Angular work.
+            Play, pause, and the speed slider go through
+            <code>contextSafe</code>, so driving a 60fps loop never touches
+            change detection.
           </li>
           <li>
-            <strong>Navigating away stops it.</strong> Leave this page and
-            the context reverts the looping timeline, so no tween keeps
-            running against a detached DOM node.
+            Navigate away and the context reverts the loop. No timeline keeps
+            ticking against a DOM node that no longer exists.
           </li>
         </ul>
       </section>

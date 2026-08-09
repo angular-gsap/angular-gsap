@@ -32,23 +32,21 @@ export const routeMeta: RouteMeta = {
       </div>
 
       <section class="explain">
-        <h2>What the library is doing here</h2>
+        <h2>How this works</h2>
         <ul>
           <li>
-            <strong>ScrollTrigger, exactly as documented.</strong> The
-            <code>scrollTrigger</code> config is passed straight to GSAP. The
-            library adds nothing and hides nothing.
+            The <code>scrollTrigger</code> config goes straight to GSAP,
+            unchanged.
           </li>
           <li>
-            <strong>The usual leak can't happen.</strong> A ScrollTrigger that
-            outlives its component keeps measuring and firing on every scroll
-            after you leave the page. This one is registered in the context,
-            so navigating away reverts it.
+            The trigger is registered in the component's context, so navigating
+            away reverts it. Without that it would keep measuring and firing
+            on every scroll after the page is gone, which is probably the most
+            common GSAP-in-a-SPA bug.
           </li>
           <li>
-            <strong>Scrubbing never touches Angular.</strong> The tween is
-            bound to the scrollbar and runs outside change detection, so a
-            scroll event costs the framework nothing.
+            The scrubbing runs on GSAP's ticker. Angular does no work while you
+            scroll.
           </li>
         </ul>
       </section>

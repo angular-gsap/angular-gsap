@@ -17,6 +17,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         <a routerLink="/text" routerLinkActive="on">SplitText</a>
         <a routerLink="/flip" routerLinkActive="on">Flip</a>
         <a routerLink="/pointer" routerLinkActive="on">quickTo</a>
+        <a routerLink="/reference" routerLinkActive="on">API</a>
         <a
           class="gh"
           href="https://github.com/angular-gsap/angular-gsap"

@@ -47,23 +47,20 @@ export const routeMeta: RouteMeta = {
       </div>
 
       <section class="explain">
-        <h2>What the library is doing here</h2>
+        <h2>How this works</h2>
         <ul>
           <li>
-            <strong>One tween, thousands of updates.</strong> A naive handler
-            calls <code>gsap.to()</code> per event and allocates a tween each
-            time. <code>quickTo()</code> is built once in the callback and
-            reused for every pointer event.
+            <code>gsap.to()</code> inside a pointermove handler would allocate
+            a new tween on every event. <code>quickTo()</code> builds the
+            tween once; the handler just feeds it coordinates.
           </li>
           <li>
-            <strong><code>viewChild</code> + <code>target()</code>.</strong>
-            The chaser element comes from a typed signal query; no selector
-            strings involved.
+            The chaser and the stage come from <code>viewChild</code> queries.
+            <code>target()</code> unwraps them for GSAP.
           </li>
           <li>
-            <strong>Cleanup still applies.</strong> The quickTo tweens were
-            created inside the context, so leaving the page reverts them like
-            everything else.
+            The quickTo tweens live in the context like everything else, so
+            they're cleaned up when you leave the page.
           </li>
         </ul>
       </section>

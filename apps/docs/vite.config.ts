@@ -33,6 +33,7 @@ export default defineConfig(() => {
             '/text',
             '/flip',
             '/pointer',
+            '/reference',
           ],
         },
         content: {

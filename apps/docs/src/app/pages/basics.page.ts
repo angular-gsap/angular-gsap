@@ -68,31 +68,27 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
       </div>
 
       <section class="explain">
-        <h2>What the library is doing here</h2>
+        <h2>How this works</h2>
         <ul>
           <li>
-            <strong>The query is the reactivity.</strong>
-            <code>viewChildren('dot')</code> is a signal. When the slider
-            changes <code>count()</code>, the <code>&#64;for</code> renders new
-            dots, the query updates, and the callback re-runs with the fresh
-            elements already in the DOM. Nothing else to wire up.
+            <code>viewChildren('dot')</code> is a signal. Move the slider,
+            <code>count()</code> changes, the <code>&#64;for</code> renders new
+            dots, the query updates, and the callback runs again with the new
+            elements already in the DOM.
           </li>
           <li>
-            <strong>Each re-run starts clean.</strong> The previous cycle is
-            <code>revert()</code>ed before the next one plays, so half-finished
-            tweens never stack inline styles on top of each other.
+            Every re-run starts from a <code>revert()</code>, so there are no
+            leftover inline styles from the previous entrance.
           </li>
           <li>
-            <strong><code>contextSafe</code> keeps handlers in the family.</strong>
-            The Burst tween is created outside the callback, but it's recorded
-            in the same context: it runs outside change detection and dies with
-            the component.
+            Burst is a normal event handler wrapped in
+            <code>contextSafe</code>: its tween joins the same context and dies
+            with the component.
           </li>
           <li>
-            <strong>Selectors work too.</strong> Prefer
-            <code>gsap.from('.dot', …)</code>? Selector text is scoped to this
-            component's host, so another component using the same class is
-            untouched.
+            Selector strings work too. <code>gsap.from('.dot', …)</code> is
+            scoped to this component, so the same class elsewhere on the page
+            isn't touched.
           </li>
         </ul>
       </section>

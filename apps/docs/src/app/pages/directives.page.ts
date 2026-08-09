@@ -69,25 +69,22 @@ export const routeMeta: RouteMeta = {
       </div>
 
       <section class="explain">
-        <h2>What the library is doing here</h2>
+        <h2>How this works</h2>
         <ul>
           <li>
-            <strong>Sugar, not a second API.</strong> <code>reveal</code> and
-            <code>stagger</code> are presets over the same
-            <code>injectGsap</code> engine, with the same scoping, cleanup,
-            and reactive inputs. The moment you need more than an entrance,
-            drop to the composable.
+            <code>reveal</code> and <code>stagger</code> are presets on top of
+            <code>injectGsap</code>: same scoping, same cleanup, same signal
+            inputs. They only cover entrances, on purpose. Anything richer
+            goes in the composable.
           </li>
           <li>
-            <strong>Inputs are signals.</strong> Switching the preset reverts
-            the previous entrance and replays the new one; Replay just
+            Change any input and the entrance replays. The Replay button just
             recreates the subtree.
           </li>
           <li>
-            <strong>Accessibility is built in.</strong> When the OS asks for
-            reduced motion, these directives do nothing at all and the content
-            stays fully visible. (If nothing animates on this page, check your
-            system's Reduce Motion setting.)
+            With Reduce Motion turned on in the OS, these directives don't
+            animate and the content simply shows. If this page looks static,
+            check that setting.
           </li>
         </ul>
       </section>

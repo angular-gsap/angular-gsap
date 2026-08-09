@@ -65,24 +65,21 @@ const STAGGER: Record<SplitMode, number> = {
       </div>
 
       <section class="explain">
-        <h2>What the library is doing here</h2>
+        <h2>How this works</h2>
         <ul>
           <li>
-            <strong>Two signals, two behaviors, one mechanism.</strong>
-            <code>mode()</code> changes the split granularity;
-            <code>run()</code> exists only to be bumped. Either one re-runs the
-            callback; replay is just <code>run.update(n => n + 1)</code>.
+            <code>mode()</code> and <code>run()</code> are both read in the
+            callback. Change either one and it re-runs. That's the entire
+            replay mechanism.
           </li>
           <li>
-            <strong>SplitText is cleaned up too.</strong>
-            <code>SplitText.create()</code> inside the context is reverted with
-            it: leave the page and the paragraph's original DOM is restored
-            exactly, with no leftover wrapper spans.
+            SplitText created inside the context is reverted with it: leave the
+            page and the paragraph is back to its original markup, no leftover
+            spans.
           </li>
           <li>
-            <strong>Re-splitting starts from pristine markup.</strong> Because
-            each re-run reverts first, the new split operates on the original
-            paragraph, not on the previous run's spans.
+            Each re-split works on the restored paragraph, not on the previous
+            run's spans, because the re-run reverts first.
           </li>
         </ul>
       </section>

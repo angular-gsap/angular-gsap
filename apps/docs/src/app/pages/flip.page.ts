@@ -80,26 +80,24 @@ const CARDS: Card[] = [
       </div>
 
       <section class="explain">
-        <h2>What the library is doing here</h2>
+        <h2>How this works</h2>
         <ul>
           <li>
-            <strong>Two moments, both handled.</strong>
+            Flip needs two snapshots: the layout before the change and after.
             <code>Flip.getState()</code> runs in the click handler, before the
-            signal changes anything. The callback re-runs after the
-            <code>&#64;for</code> has re-rendered, so <code>Flip.from()</code>
-            measures the settled layout. Getting that second moment right by
-            hand means fighting change detection timing.
+            signal updates. The callback runs after Angular renders, so
+            <code>Flip.from()</code> measures the new layout. That ordering is
+            the hard part, and it falls out of how <code>injectGsap</code>
+            works.
           </li>
           <li>
-            <strong><code>track card.id</code> is doing real work.</strong>
-            Angular reuses the DOM nodes for surviving cards, so Flip can match
-            old and new positions by element identity;
-            <code>data-flip-id</code> covers the cards that enter.
+            <code>track card.id</code> keeps the DOM nodes of surviving cards,
+            so Flip matches them by identity. <code>data-flip-id</code> covers
+            the ones that enter.
           </li>
           <li>
-            <strong>Rapid clicks are safe.</strong> Each re-run reverts the
-            previous cycle first, so quick filter changes never stack
-            half-finished transforms.
+            Click filters as fast as you want; each re-run reverts the previous
+            one first.
           </li>
         </ul>
       </section>
