@@ -54,7 +54,10 @@ export const routeMeta: RouteMeta = {
             </label>
           </div>
         </div>
-        <app-code [code]="snippet" />
+        <div class="panels">
+          <app-code [code]="tplSnippet" lang="html" label="equalizer.html" />
+          <app-code [code]="snippet" label="equalizer.ts" />
+        </div>
       </div>
 
       <section class="explain">
@@ -129,6 +132,18 @@ export default class TimelinePage {
   protected reverse = this.ref.contextSafe(() => this.tl?.reverse());
   protected restart = this.ref.contextSafe(() => this.tl?.restart());
   protected speed = this.ref.contextSafe((v: number) => this.tl?.timeScale(v));
+
+  protected readonly tplSnippet = [
+    `@for (bar of bars; track bar.i) {`,
+    `  <span class="bar"></span>`,
+    `}`,
+    ``,
+    `<button (click)="play()">Play</button>`,
+    `<button (click)="pause()">Pause</button>`,
+    `<button (click)="restart()">Restart</button>`,
+    `<input type="range" min="0.25" max="2.5"`,
+    `  (input)="speed(+$event.target.value)" />`,
+  ].join('\n');
 
   protected readonly snippet = [
     `export default class TimelinePage {`,

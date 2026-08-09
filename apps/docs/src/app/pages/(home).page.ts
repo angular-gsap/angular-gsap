@@ -28,50 +28,27 @@ export const routeMeta: RouteMeta = {
 
     <section class="how">
       <div class="how-inner">
-        <p class="eyebrow">Why not just GSAP?</p>
-        <h2>The animation is GSAP's. The lifecycle is the hard part.</h2>
-        <p class="how-lede">
-          GSAP doesn't know when Angular has rendered, what your component
-          owns, or when it's destroyed. Hand-rolling that glue looks like the
-          left column, and you get to repeat it in every animated component.
-        </p>
-        <div class="compare">
-          <figure>
-            <figcaption>gsap alone in a component</figcaption>
-            <app-code [code]="vanillaSnippet" />
-          </figure>
-          <figure>
-            <figcaption>with &#64;angular-gsap/core</figcaption>
-            <app-code [code]="snippet" />
-          </figure>
+        <div class="how-grid">
+          <div class="how-copy">
+            <p class="eyebrow">The whole idea</p>
+            <h2>One composable. Vanilla GSAP inside.</h2>
+            <p>
+              <code>injectGsap()</code> runs your GSAP code in a context that
+              belongs to the component. Target elements with
+              <code>viewChild</code> queries or component-scoped selectors,
+              read signals to make it reactive, and the context reverts
+              everything when the component is destroyed. On the server it
+              never runs.
+            </p>
+            <a routerLink="/basics">Start with the basics →</a>
+          </div>
+          <app-code [code]="snippet" />
         </div>
-        <ul class="wins">
-          <li>
-            <strong>Nothing to forget.</strong> Cleanup, host scoping, and SSR
-            guards are the library's job instead of a code-review checklist. A
-            forgotten <code>revert()</code> is the bug most Angular + GSAP
-            threads end in: ScrollTriggers that keep firing after you navigate
-            away.
-          </li>
-          <li>
-            <strong>Reactivity you can't easily hand-roll.</strong> Signals
-            read in the callback re-run it <em>after</em> the DOM has updated
-            (<code>afterRenderEffect</code>). A plain <code>effect()</code>
-            fires before the template applies the change, so it animates stale
-            elements.
-          </li>
-          <li>
-            <strong>Still 100% GSAP.</strong> No wrapper API to learn or to go
-            stale. Timelines, staggers, position parameters, and every plugin
-            work exactly as the GSAP docs describe.
-          </li>
-        </ul>
-        <a routerLink="/basics">Start with the basics →</a>
       </div>
     </section>
 
     <section class="features">
-      <p class="eyebrow">Why it exists</p>
+      <p class="eyebrow">What it handles for you</p>
       <ul stagger="0.08" on="scroll" preset="fade-up">
         <li class="feature">
           <h3>Scoped by default</h3>
@@ -103,6 +80,21 @@ export const routeMeta: RouteMeta = {
           <p>
             It's the real GSAP API, plus optional sugar directives for the
             common entrances.
+          </p>
+        </li>
+        <li class="feature">
+          <h3>Tree-shakeable</h3>
+          <p>
+            <code>sideEffects: false</code> and a tiny surface: unused exports
+            drop out of your bundle, and GSAP plugins are only bundled when
+            you import them.
+          </p>
+        </li>
+        <li class="feature">
+          <h3>Cheap at runtime</h3>
+          <p>
+            Tweens run on GSAP's ticker outside change detection. No rxjs, no
+            zone.js, zoneless-ready.
           </p>
         </li>
       </ul>
@@ -158,61 +150,31 @@ export const routeMeta: RouteMeta = {
       max-width: 72rem;
       margin: 0 auto;
       padding: 4rem 1.5rem;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .how-copy {
+      max-width: 30rem;
 
       h2 {
         font-size: 1.9rem;
         font-weight: 800;
         margin-bottom: 1rem;
-        max-width: 38rem;
+      }
+
+      p {
+        color: var(--ink-soft);
       }
 
       code {
         font-family: var(--font-mono);
         font-size: 0.85em;
-      }
-    }
-
-    .how-lede {
-      color: var(--ink-soft);
-      max-width: 38rem;
-      margin: 0 0 2rem;
-    }
-
-    .compare {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-      gap: 1.25rem;
-      align-items: start;
-
-      figure {
-        margin: 0;
-      }
-
-      figcaption {
-        font-family: var(--font-mono);
-        font-size: 0.78rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--ink-soft);
-        margin-bottom: 0.6rem;
-      }
-    }
-
-    .wins {
-      list-style: none;
-      padding: 0;
-      margin: 2rem 0 1.5rem;
-      display: grid;
-      gap: 0.9rem;
-      max-width: 44rem;
-
-      li {
-        color: var(--ink-soft);
-        font-size: 0.95rem;
-      }
-
-      strong {
-        color: var(--ink);
       }
     }
 
@@ -254,46 +216,24 @@ export const routeMeta: RouteMeta = {
 export default class HomePage {
   private intro?: GsapTimeline;
 
-  protected readonly vanillaSnippet = [
-    `@Component({ template: '<div class="box"></div>' })`,
-    `export class Hero implements AfterViewInit, OnDestroy {`,
-    `  private ctx?: gsap.Context;`,
-    `  private platformId = inject(PLATFORM_ID);`,
-    `  private host = inject(ElementRef);`,
+  protected readonly snippet = [
+    `@Component({`,
+    `  template: '<div #box class="box"></div>',`,
+    `})`,
+    `export class Hero {`,
+    `  box = viewChild.required<ElementRef>('box');`,
+    `  x = signal(0);`,
     ``,
-    `  ngAfterViewInit() {`,
-    `    // SSR guard, or the server build crashes`,
-    `    if (!isPlatformBrowser(this.platformId)) return;`,
-    `    // scope it yourself, or '.box' matches`,
-    `    // every .box on the page`,
-    `    this.ctx = gsap.context(() => {`,
-    `      gsap.to('.box', { x: 100, duration: 1 });`,
-    `    }, this.host.nativeElement);`,
-    `  }`,
+    `  ctx = injectGsap(({ gsap }) => {`,
+    `    // vanilla GSAP; box and x() are tracked`,
+    `    gsap.to(target(this.box), { x: this.x() });`,
+    `  });`,
     ``,
-    `  ngOnDestroy() {`,
-    `    // forget this and ScrollTriggers keep`,
-    `    // firing after the route changes`,
-    `    this.ctx?.revert();`,
-    `  }`,
+    `  spin = this.ctx.contextSafe(() =>`,
+    `    gsap.to(target(this.box), { rotation: 360 })`,
+    `  );`,
     `}`,
   ].join('\n');
-
-  protected readonly snippet = [
-      `@Component({ template: '<div class="box"></div>' })`,
-      `export class Hero {`,
-      `  x = signal(0);`,
-      ``,
-      `  gsap = injectGsap(({ gsap }) => {`,
-      `    // plain GSAP: scoped, cleaned up, reactive`,
-      `    gsap.to('.box', { x: this.x(), duration: 1 });`,
-      `  });`,
-      ``,
-      `  spin = this.gsap.contextSafe(() =>`,
-      `    gsap.to('.box', { rotation: 360 })`,
-      `  );`,
-      `}`,
-    ].join('\n');
 
   protected readonly ref = injectGsap(({ gsap }) => {
     const reduce = window.matchMedia(

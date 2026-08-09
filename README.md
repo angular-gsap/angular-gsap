@@ -6,29 +6,31 @@
 [![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
 ```ts
-import { Component, signal } from '@angular/core';
-import { injectGsap } from '@angular-gsap/core';
+import { Component, ElementRef, signal, viewChild } from '@angular/core';
+import { injectGsap, target } from '@angular-gsap/core';
 import { gsap } from 'gsap';
 
 @Component({
   template: `
-    <div class="box"></div>
+    <div #box class="box"></div>
     <button (click)="spin()">Spin</button>
   `,
 })
 export class Hero {
+  box = viewChild.required<ElementRef>('box');
   x = signal(0);
 
-  // Vanilla GSAP, scoped to this component's host element.
-  // Reading x() makes it reactive: change the signal and the
-  // animation reverts and re-runs. Cleaned up on destroy.
-  // Never runs on the server.
+  // Vanilla GSAP. Reading x() makes it reactive: change the
+  // signal and the animation reverts and re-runs. Cleaned up
+  // on destroy. Never runs on the server.
   ctx = injectGsap(({ gsap }) => {
-    gsap.to('.box', { x: this.x(), duration: 1 });
+    gsap.to(target(this.box), { x: this.x(), duration: 1 });
   });
 
   // Event handlers stay in the context (and its cleanup) too.
-  spin = this.ctx.contextSafe(() => gsap.to('.box', { rotation: 360 }));
+  spin = this.ctx.contextSafe(() =>
+    gsap.to(target(this.box), { rotation: 360 })
+  );
 }
 ```
 
@@ -36,33 +38,7 @@ export class Hero {
 
 GSAP's surface is enormous: tweens, timelines, position parameters, staggers, ScrollTrigger, SplitText, getters, utilities. Wrappers that re-expose it as directives or per-tween helpers cover a fraction of it awkwardly and go stale as GSAP evolves. What Angular actually makes hard is **lifecycle**: create animations after the DOM exists, scope selectors to your component, react to state, and clean everything up.
 
-That is the approach GSAP itself endorses with [`@gsap/react`'s `useGSAP()`](https://gsap.com/resources/React/). `injectGsap()` is its Angular equivalent, with signals replacing React's dependency arrays.
-
-## Why not just use GSAP directly?
-
-You can. GSAP works in any framework. But in Angular the glue is on you, in every animated component:
-
-```ts
-// plain GSAP in an Angular component
-export class Hero implements AfterViewInit, OnDestroy {
-  private ctx?: gsap.Context;
-  private platformId = inject(PLATFORM_ID);
-  private host = inject(ElementRef);
-
-  ngAfterViewInit() {
-    if (!isPlatformBrowser(this.platformId)) return; // SSR guard
-    this.ctx = gsap.context(() => {
-      gsap.to('.box', { x: 100 }); // scope it yourself, or '.box'
-    }, this.host.nativeElement);   // matches every .box on the page
-  }
-
-  ngOnDestroy() {
-    this.ctx?.revert(); // forget this and ScrollTriggers keep
-  }                     // firing after the route changes
-}
-```
-
-`injectGsap()` replaces all of that, and adds something you can't easily hand-roll: **signal reactivity with correct timing**. Signals read in the callback re-run it *after* the DOM has updated (`afterRenderEffect`), so animations always see fresh `@if`/`@for` output. A hand-written `effect()` fires before the template applies the change and ends up animating stale elements. The [Flip example](https://github.com/angular-gsap/angular-gsap/blob/main/apps/docs/src/app/pages/flip.page.ts) leans on this hard: capture layout before a signal changes the DOM, FLIP-animate after Angular renders.
+That is the approach GSAP itself endorses with [`@gsap/react`'s `useGSAP()`](https://gsap.com/resources/React/). `injectGsap()` is its Angular equivalent, with signals replacing React's dependency arrays. It also adds something hard to hand-roll: signals read in the callback re-run it *after* the DOM has updated (`afterRenderEffect`), so animations always see fresh `@if`/`@for` output. The [Flip example](https://github.com/angular-gsap/angular-gsap/blob/main/apps/docs/src/app/pages/flip.page.ts) leans on this hard: capture layout before a signal changes the DOM, FLIP-animate after Angular renders.
 
 ## Install
 
@@ -108,6 +84,25 @@ injectGsap(cb, {
   scope: someElement,   // override the selector scope (default: host element; false = unscoped)
   reactive: false,      // run exactly once, ignore signal changes
   injector: myInjector, // use outside an injection context
+});
+```
+
+### Targeting elements
+
+Two styles, freely mixed. `viewChild`/`viewChildren` signal queries with the `target()`/`targets()` unwrap helpers are the most Angular way; query signals are tracked, so when `viewChildren` picks up new elements the animation re-runs on its own:
+
+```ts
+dots = viewChildren<ElementRef>('dot');
+ref = injectGsap(({ gsap }) => {
+  gsap.from(targets(this.dots), { scale: 0, stagger: 0.04 });
+});
+```
+
+Selector strings also work and are scoped to the component's host, so `'.dot'` can't reach another component:
+
+```ts
+ref = injectGsap(({ gsap }) => {
+  gsap.from('.dot', { scale: 0, stagger: 0.04 });
 });
 ```
 
@@ -166,13 +161,12 @@ tween wrappers: anything beyond a preset entrance belongs in `injectGsap`.
 
 ### Patterns
 
-**State-driven choreography.** Read a signal and the animation replays when it changes. The DOM is already updated when the callback re-runs:
+**State-driven choreography.** A `viewChildren` query is a signal: when state adds or removes elements, the query updates and the animation replays, with the DOM already rendered:
 
 ```ts
-count = signal(8);
+dots = viewChildren<ElementRef>('dot');
 ref = injectGsap(({ gsap }) => {
-  this.count(); // tracked
-  gsap.from('.dot', { scale: 0, stagger: 0.04, ease: 'back.out(2)' });
+  gsap.from(targets(this.dots), { scale: 0, stagger: 0.04, ease: 'back.out(2)' });
 });
 ```
 
@@ -205,6 +199,12 @@ The [`apps/docs`](./apps/docs) app is a live tour built with [Analog](https://an
 pnpm install
 pnpm nx serve docs
 ```
+
+## Small and fast
+
+- The package is about 6 kB (FESM + types) with no dependencies beyond Angular, GSAP, and tslib. No rxjs, no zone.js.
+- `sideEffects: false`: exports you don't use (the directives, the helpers) tree-shake away, and GSAP plugins are bundled only when you import them.
+- Animations are created outside Angular's change detection and run on GSAP's ticker. A 60 fps tween schedules no Angular work, and the whole library is zoneless-ready.
 
 ## Compatibility
 

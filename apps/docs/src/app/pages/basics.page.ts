@@ -1,5 +1,11 @@
-import { Component, computed, signal } from '@angular/core';
-import { injectGsap } from '@angular-gsap/core';
+import {
+  Component,
+  ElementRef,
+  computed,
+  signal,
+  viewChildren,
+} from '@angular/core';
+import { injectGsap, targets } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
 import { RouteMeta } from '@analogjs/router';
 
@@ -18,12 +24,13 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
         <p class="eyebrow">Example · core</p>
         <h1>Signals drive the choreography</h1>
         <p>
-          The callback reads <code>count()</code>. Move the slider and the
-          context reverts, the ring re-renders, and the entrance replays. It's
-          the same mental model as any other signal-driven view.
+          The dots come from a <code>viewChildren()</code> query, read inside
+          the callback. Move the slider and the query updates, the context
+          reverts, and the entrance replays. It's the same mental model as any
+          other signal-driven view.
         </p>
         <div class="api-chips">
-          <span>injectGsap</span><span>contextSafe</span><span>signal</span>
+          <span>injectGsap</span><span>viewChildren</span><span>targets</span>
         </div>
       </header>
 
@@ -32,6 +39,7 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
           <div class="stage ring-stage">
             @for (dot of dots(); track dot.i) {
               <span
+                #dot
                 class="dot"
                 [style.left.%]="dot.x"
                 [style.top.%]="dot.y"
@@ -53,19 +61,21 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
             <button class="btn" (click)="burst()">Burst</button>
           </div>
         </div>
-        <app-code [code]="snippet" />
+        <div class="panels">
+          <app-code [code]="tplSnippet" lang="html" label="basics.html" />
+          <app-code [code]="snippet" label="basics.ts" />
+        </div>
       </div>
 
       <section class="explain">
         <h2>What the library is doing here</h2>
         <ul>
           <li>
-            <strong>The callback re-runs after the DOM updates.</strong>
-            Moving the slider changes <code>count()</code>; the
-            <code>&#64;for</code> renders the new dots first, then the callback
-            re-runs, so <code>gsap.from('.dot', …)</code> sees the fresh
-            elements. A hand-written <code>effect()</code> would fire before
-            the template applies the change.
+            <strong>The query is the reactivity.</strong>
+            <code>viewChildren('dot')</code> is a signal. When the slider
+            changes <code>count()</code>, the <code>&#64;for</code> renders new
+            dots, the query updates, and the callback re-runs with the fresh
+            elements already in the DOM. Nothing else to wire up.
           </li>
           <li>
             <strong>Each re-run starts clean.</strong> The previous cycle is
@@ -79,9 +89,10 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
             the component.
           </li>
           <li>
-            <strong><code>'.dot'</code> can't leak.</strong> Selector text is
-            scoped to this component's host. Another component using the same
-            class is untouched.
+            <strong>Selectors work too.</strong> Prefer
+            <code>gsap.from('.dot', …)</code>? Selector text is scoped to this
+            component's host, so another component using the same class is
+            untouched.
           </li>
         </ul>
       </section>
@@ -117,9 +128,11 @@ export default class BasicsPage {
     });
   });
 
+  protected readonly dotEls = viewChildren<ElementRef<HTMLElement>>('dot');
+
   protected readonly ref = injectGsap(({ gsap }) => {
-    this.count(); // the DOM for the new count exists before this re-runs
-    gsap.from('.dot', {
+    // the query is a signal: new dots re-run this, after they exist in the DOM
+    gsap.from(targets(this.dotEls), {
       scale: 0,
       opacity: 0,
       duration: 0.5,
@@ -129,7 +142,7 @@ export default class BasicsPage {
   });
 
   protected burst = this.ref.contextSafe(() =>
-    this.ref.gsap.to('.dot', {
+    this.ref.gsap.to(targets(this.dotEls), {
       scale: 1.7,
       duration: 0.18,
       yoyo: true,
@@ -139,25 +152,39 @@ export default class BasicsPage {
     })
   );
 
+  protected readonly tplSnippet = [
+    `<div class="stage">`,
+    `  @for (dot of dots(); track dot.i) {`,
+    `    <span #dot class="dot"></span>`,
+    `  }`,
+    `</div>`,
+    ``,
+    `<input type="range" min="3" max="24"`,
+    `  [value]="count()"`,
+    `  (input)="count.set(+$event.target.value)" />`,
+    `<button (click)="burst()">Burst</button>`,
+  ].join('\n');
+
   protected readonly snippet = [
-      `export class Basics {`,
-      `  count = signal(8);`,
-      ``,
-      `  ref = injectGsap(({ gsap }) => {`,
-      `    this.count(); // tracked: re-runs on change`,
-      `    gsap.from('.dot', {`,
-      `      scale: 0, opacity: 0,`,
-      `      ease: 'back.out(2)',`,
-      `      stagger: 0.04,`,
-      `    });`,
-      `  });`,
-      ``,
-      `  burst = this.ref.contextSafe(() =>`,
-      `    this.ref.gsap.to('.dot', {`,
-      `      scale: 1.7, yoyo: true, repeat: 1,`,
-      `      stagger: { each: 0.02, from: 'random' },`,
-      `    })`,
-      `  );`,
-      `}`,
-    ].join('\n');
+    `export class Basics {`,
+    `  count = signal(8);`,
+    `  dots = viewChildren<ElementRef>('dot');`,
+    ``,
+    `  ref = injectGsap(({ gsap }) => {`,
+    `    // the query is tracked: new dots re-run this`,
+    `    gsap.from(targets(this.dots), {`,
+    `      scale: 0, opacity: 0,`,
+    `      ease: 'back.out(2)',`,
+    `      stagger: 0.04,`,
+    `    });`,
+    `  });`,
+    ``,
+    `  burst = this.ref.contextSafe(() =>`,
+    `    this.ref.gsap.to(targets(this.dots), {`,
+    `      scale: 1.7, yoyo: true, repeat: 1,`,
+    `      stagger: { each: 0.02, from: 'random' },`,
+    `    })`,
+    `  );`,
+    `}`,
+  ].join('\n');
 }

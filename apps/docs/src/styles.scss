@@ -142,7 +142,28 @@ a:hover {
   margin-top: 1rem;
 }
 
-/* shiki-highlighted markdown snippets (analog-markdown output) */
+/* labeled snippet panels: template + component side by side or stacked */
+.snippet-panel {
+  margin: 0;
+
+  figcaption {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 0.45rem;
+  }
+}
+
+.panels {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  min-width: 0;
+}
+
+/* shiki-highlighted snippets */
 .snippet pre {
   background: var(--ink) !important;
   border-radius: 12px;

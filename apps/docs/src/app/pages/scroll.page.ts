@@ -26,7 +26,10 @@ export const routeMeta: RouteMeta = {
           ><span>injectGsap</span>
         </div>
       </header>
-      <app-code [code]="snippet" />
+      <div class="panels">
+        <app-code [code]="tplSnippet" lang="html" label="scroll.html" />
+        <app-code [code]="snippet" label="scroll.ts" />
+      </div>
 
       <section class="explain">
         <h2>What the library is doing here</h2>
@@ -151,6 +154,17 @@ export default class ScrollPage {
       })
       .to('.meter-fill', { scaleX: 1 }, 0);
   });
+
+  protected readonly tplSnippet = [
+    `<div class="track">        <!-- tall runway -->`,
+    `  <div class="pin">        <!-- position: sticky -->`,
+    `    <span class="shape"></span>`,
+    `    <div class="meter">`,
+    `      <span class="meter-fill"></span>`,
+    `    </div>`,
+    `  </div>`,
+    `</div>`,
+  ].join('\n');
 
   protected readonly snippet = [
     `// app.config.ts`,

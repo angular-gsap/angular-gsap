@@ -32,6 +32,7 @@ export default defineConfig(() => {
             '/scroll',
             '/text',
             '/flip',
+            '/pointer',
           ],
         },
         content: {

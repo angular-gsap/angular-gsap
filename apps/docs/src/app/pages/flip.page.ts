@@ -73,7 +73,10 @@ const CARDS: Card[] = [
             }
           </div>
         </div>
-        <app-code [code]="snippet" />
+        <div class="panels">
+          <app-code [code]="tplSnippet" lang="html" label="grid.html" />
+          <app-code [code]="snippet" label="grid.ts" />
+        </div>
       </div>
 
       <section class="explain">
@@ -177,6 +180,19 @@ export default class FlipPage {
     this.flipState = Flip.getState('.flip-card');
     this.filter.set(tag);
   }
+
+  protected readonly tplSnippet = [
+    `@for (card of cards(); track card.id) {`,
+    `  <div class="flip-card"`,
+    `    [attr.data-flip-id]="card.id">`,
+    `    {{ card.label }}`,
+    `  </div>`,
+    `}`,
+    ``,
+    `@for (t of tags; track t) {`,
+    `  <button (click)="setFilter(t)">{{ t }}</button>`,
+    `}`,
+  ].join('\n');
 
   protected readonly snippet = [
     `filter = signal<'all' | 'core' | 'plugin'>('all');`,

@@ -58,7 +58,10 @@ const STAGGER: Record<SplitMode, number> = {
             <button class="btn" (click)="replay()">Replay</button>
           </div>
         </div>
-        <app-code [code]="snippet" />
+        <div class="panels">
+          <app-code [code]="tplSnippet" lang="html" label="passage.html" />
+          <app-code [code]="snippet" label="passage.ts" />
+        </div>
       </div>
 
       <section class="explain">
@@ -122,6 +125,15 @@ export default class TextPage {
   });
 
   protected replay = () => this.run.update((n) => n + 1);
+
+  protected readonly tplSnippet = [
+    `<p class="passage">Great interfaces move…</p>`,
+    ``,
+    `@for (m of modes; track m) {`,
+    `  <button (click)="mode.set(m)">{{ m }}</button>`,
+    `}`,
+    `<button (click)="replay()">Replay</button>`,
+  ].join('\n');
 
   protected readonly snippet = [
     `export default class TextPage {`,

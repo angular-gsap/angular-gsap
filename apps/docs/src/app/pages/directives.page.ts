@@ -62,7 +62,10 @@ export const routeMeta: RouteMeta = {
             <button class="btn" (click)="replay()">Replay</button>
           </div>
         </div>
-        <app-code [code]="snippet" lang="html" />
+        <div class="panels">
+          <app-code [code]="snippet" lang="html" label="hero.html" />
+          <app-code [code]="tsSnippet" label="hero.ts" />
+        </div>
       </div>
 
       <section class="explain">
@@ -165,6 +168,18 @@ export default class DirectivesPage {
   protected readonly cards = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
 
   protected replay = () => this.runId.update((n) => n + 1);
+
+  protected readonly tsSnippet = [
+    `import { Reveal, Stagger } from '@angular-gsap/core';`,
+    ``,
+    `@Component({`,
+    `  imports: [Reveal, Stagger],`,
+    `  templateUrl: './hero.html',`,
+    `})`,
+    `export class Hero {}`,
+    `// no animation code: the entrances`,
+    `// live entirely in the template`,
+  ].join('\n');
 
   protected readonly snippet = [
       `<!-- entrance on init; inputs are signals -->`,

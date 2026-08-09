@@ -2,17 +2,25 @@ import { Component, inject, input, resource } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /**
- * Shiki-highlighted source snippet. Analog's content pipeline renders
- * markdown at build time for `.md` content files only, so inline snippets
- * in interactive pages call Shiki directly (lazily, code-split).
+ * Shiki-highlighted source snippet with an optional filename-style caption.
+ * Analog's content pipeline renders markdown at build time for `.md` content
+ * files only, so inline snippets call Shiki directly (lazily, code-split).
  */
 @Component({
   selector: 'app-code',
-  template: `<div class="snippet" [innerHTML]="html.value() ?? ''"></div>`,
+  template: `
+    <figure class="snippet-panel">
+      @if (label()) {
+        <figcaption>{{ label() }}</figcaption>
+      }
+      <div class="snippet" [innerHTML]="html.value() ?? ''"></div>
+    </figure>
+  `,
 })
 export class CodeSnippet {
   readonly code = input.required<string>();
   readonly lang = input('ts');
+  readonly label = input('');
 
   private readonly sanitizer = inject(DomSanitizer);
 
