@@ -2,7 +2,12 @@
   "name": "angular-gsap",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start": "nx serve demo",
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test",
+    "lint": "nx run-many -t lint"
+  },
   "private": true,
   "dependencies": {
     "@angular-devkit/build-angular": "22.0.6",

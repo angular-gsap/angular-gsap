@@ -1,282 +1,163 @@
-# Nx Angular Repository
+# angular-gsap
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+**Write vanilla GSAP inside Angular.** `@angular-gsap/core` gives your GSAP code an Angular-managed context — host-scoped, signal-reactive, SSR-safe, and cleaned up automatically — without wrapping a single GSAP API.
 
-✨ A repository showcasing key [Nx](https://nx.dev) features for Angular monorepos ✨
-🚀 If you haven't connected to Nx Cloud yet, [complete your setup here](https://cloud.nx.app/get-started). Get faster builds with remote caching, distributed task execution, and self-healing CI. [See how your workspace can benefit](#nx-cloud).
-## 📦 Project Overview
+[![npm](https://img.shields.io/npm/v/%40angular-gsap%2Fcore)](https://www.npmjs.com/package/@angular-gsap/core)
+[![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
-This repository demonstrates a production-ready Angular monorepo with:
+```ts
+import { Component, signal } from '@angular/core';
+import { injectGsap } from '@angular-gsap/core';
+import { gsap } from 'gsap';
 
-- **2 Applications**
+@Component({
+  template: `
+    <div class="box"></div>
+    <button (click)="spin()">Spin</button>
+  `,
+})
+export class Hero {
+  x = signal(0);
 
-  - `shop` - Angular e-commerce application with product listings and detail views
-  - `api` - Backend API with Docker support serving product data
+  // Vanilla GSAP, scoped to this component's host element.
+  // Reading x() makes it reactive: change the signal and the
+  // animation reverts and re-runs. Cleaned up on destroy.
+  // Never runs on the server.
+  ctx = injectGsap(({ gsap }) => {
+    gsap.to('.box', { x: this.x(), duration: 1 });
+  });
 
-- **6 Libraries**
-
-  - `@org/feature-products` - Product listing feature (Angular)
-  - `@org/feature-product-detail` - Product detail feature (Angular)
-  - `@org/data` - Data access layer for shop features
-  - `@org/shared-ui` - Shared UI components
-  - `@org/models` - Shared data models
-  - `@org/products` - API product service library
-
-- **E2E Testing**
-  - `shop-e2e` - Playwright tests for the shop application
-
-## 🚀 Quick Start
-
-```bash
-# Clone the repository
-git clone <your-fork-url>
-cd <your-repository-name>
-
-# Install dependencies
-# (Note: You may need --legacy-peer-deps)
-npm install
-
-# Serve the Angular shop application (this will simultaneously serve the API backend)
-npx nx run shop:serve
-
-# ...or you can serve the API separately
-npx nx run api:serve
-
-# Build all projects
-npx nx run-many -t build
-
-# Run tests
-npx nx run-many -t test
-
-# Lint all projects
-npx nx run-many -t lint
-
-# Run e2e tests
-npx nx run shop-e2e:e2e
-
-# Run tasks in parallel
-
-npx nx run-many -t lint test build e2e --parallel=3
-
-# Visualize the project graph
-npx nx graph
+  // Event handlers stay in the context (and its cleanup) too.
+  spin = this.ctx.contextSafe(() => gsap.to('.box', { rotation: 360 }));
+}
 ```
 
-## ⭐ Featured Nx Capabilities
+## Why not wrap GSAP?
 
-This repository showcases several powerful Nx features:
+GSAP's surface is enormous — tweens, timelines, position parameters, staggers, ScrollTrigger, SplitText, getters, utilities. Wrappers that re-expose it as directives or per-tween helpers cover a fraction of it awkwardly and go stale as GSAP evolves. What Angular actually makes hard is **lifecycle**: create animations after the DOM exists, scope selectors to your component, react to state, and clean everything up.
 
-### 1. 🔒 Module Boundaries
+That is the approach GSAP itself endorses with [`@gsap/react`'s `useGSAP()`](https://gsap.com/resources/React/), and `injectGsap()` is its Angular equivalent — with Angular signals replacing React's dependency arrays.
 
-Enforces architectural constraints using tags. Each project has specific dependencies it can use:
+## Install
 
-- `scope:shared` - Can be used by all projects
-- `scope:shop` - Shop-specific libraries
-- `scope:api` - API-specific libraries
-- `type:feature` - Feature libraries
-- `type:data` - Data access libraries
-- `type:ui` - UI component libraries
-
-**Try it out:**
-
-```bash
-# See the current project graph and boundaries
-npx nx graph
-
-# View a specific project's details
-npx nx show project shop --web
+```sh
+pnpm add @angular-gsap/core gsap
+# or: npm i @angular-gsap/core gsap
 ```
 
-[Learn more about module boundaries →](https://nx.dev/docs/features/enforce-module-boundaries)
+Since GSAP 3.13, the entire toolset — including formerly paid plugins like ScrollTrigger, SplitText, and MorphSVG — is [100% free](https://gsap.com/pricing/), and ships in the `gsap` npm package.
 
-### 2. 🐳 Docker Integration
+## Usage
 
-The API project includes Docker support with automated targets and release management:
+### `injectGsap(callback?, options?)`
 
-```bash
-# Build Docker image
-npx nx run api:docker:build
+Runs your callback inside a [`gsap.context()`](https://gsap.com/docs/v3/GSAP/gsap.context()) that is:
 
-# Run Docker container
-npx nx run api:docker:run
+| Guarantee       | Meaning                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| Scoped          | Selector text (`'.box'`) only matches elements inside the component's host                   |
+| DOM-ready       | Runs after the first render (`afterRenderEffect`), so `@if`/`@for` output exists             |
+| Signal-reactive | Signals read in the callback re-run it — previous cycle is `revert()`ed first                |
+| SSR-safe        | On the server the callback never runs; no platform checks in your code                       |
+| Zone-free       | Animations are created outside Angular's change detection; works in zoneless apps            |
+| Auto-cleaned    | Tweens, timelines, ScrollTriggers, and SplitText instances revert when the component dies    |
 
-# Release with automatic Docker image versioning
-npx nx release
+Returns a `GsapRef`:
+
+```ts
+const ref = injectGsap(({ gsap, context }) => { /* vanilla GSAP */ });
+
+ref.gsap;               // the GSAP instance
+ref.context;            // the live gsap.Context (undefined on the server)
+ref.ready;              // Signal<boolean> — true once the context exists
+ref.contextSafe(fn);    // wrap event handlers; their animations join the cleanup
+ref.revert();           // manually revert everything
+ref.kill();             // kill without reverting inline styles
 ```
 
-**Nx Release for Docker:** The repository is configured to use Nx Release for managing Docker image versioning and publishing. When running `nx release`, Docker images for the API project are automatically versioned and published based on the release configuration in `nx.json`. This integrates seamlessly with semantic versioning and changelog generation.
+Options:
 
-[Learn more about Docker integration →](https://nx.dev/docs/guides/nx-release/release-docker-images)
-
-### 3. 🎭 Playwright E2E Testing
-
-End-to-end testing with Playwright is pre-configured:
-
-```bash
-# Run e2e tests
-npx nx run shop-e2e:e2e
-
-# Run e2e tests in CI mode
-npx nx run shop-e2e:e2e-ci
+```ts
+injectGsap(cb, {
+  scope: someElement,   // override the selector scope (default: host element; false = unscoped)
+  reactive: false,      // run exactly once, ignore signal changes
+  injector: myInjector, // use outside an injection context
+});
 ```
 
-[Learn more about E2E testing →](https://nx.dev/docs/technologies/test-tools/playwright)
+### `provideGsap(options?)`
 
-### 4. ⚡ Vitest for Unit Testing
+Optional global setup — register plugins once, set defaults:
 
-Fast unit testing with Vite for Angular libraries:
+```ts
+import { provideGsap } from '@angular-gsap/core';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
 
-```bash
-# Test a specific library
-npx nx run data:test
-
-# Test all projects
-npx nx run-many -t test
+bootstrapApplication(App, {
+  providers: [
+    provideGsap({
+      plugins: [ScrollTrigger, SplitText],
+      defaults: { ease: 'power3.out' },
+    }),
+  ],
+});
 ```
 
-[Learn more about Vite testing →](https://nx.dev/docs/technologies/build-tools/vite)
+Plugin registration is skipped on the server automatically.
 
-### 5. 🔧 Self-Healing CI
+### Patterns
 
-The CI pipeline includes `nx fix-ci` which automatically identifies and suggests fixes for common issues:
+**State-driven choreography** — read a signal, and the animation replays when it changes (the DOM is already updated when the callback re-runs):
 
-```bash
-# In CI, this command provides automated fixes
-npx nx fix-ci
+```ts
+count = signal(8);
+ref = injectGsap(({ gsap }) => {
+  this.count(); // tracked
+  gsap.from('.dot', { scale: 0, stagger: 0.04, ease: 'back.out(2)' });
+});
 ```
 
-This feature helps maintain a healthy CI pipeline by automatically detecting and suggesting solutions for:
+**Timeline transport** — build in the callback, drive from `contextSafe` handlers:
 
-- Missing dependencies
-- Incorrect task configurations
-- Cache invalidation issues
-- Common build failures
-
-[Learn more about self-healing CI →](https://nx.dev/docs/features/ci-features/self-healing-ci)
-
-## 📁 Project Structure
-
-```
-├── apps/
-│   ├── shop/           [scope:shop]    - Angular e-commerce app
-│   ├── shop-e2e/                       - E2E tests for shop
-│   └── api/            [scope:api]     - Backend API with Docker
-├── packages/
-│   ├── shop/
-│   │   ├── feature-products/        [scope:shop,type:feature] - Product listing
-│   │   ├── feature-product-detail/  [scope:shop,type:feature] - Product details
-│   │   ├── data/                    [scope:shop,type:data]    - Data access
-│   │   └── shared-ui/               [scope:shop,type:ui]      - UI components
-│   ├── api/
-│   │   └── products/    [scope:api]    - Product service
-│   └── shared/
-│       └── models/      [scope:shared,type:data] - Shared models
-├── nx.json             - Nx configuration
-├── tsconfig.json       - TypeScript configuration
-└── eslint.config.mjs   - ESLint with module boundary rules
+```ts
+private tl?: GsapTimeline;
+ref = injectGsap(({ gsap }) => {
+  this.tl = gsap.timeline({ repeat: -1 }).to('.bar', { scaleY: 4, stagger: 0.1 });
+});
+play = this.ref.contextSafe(() => this.tl?.play());
 ```
 
-## 🏷️ Understanding Tags
+**Replay** — bump a signal:
 
-This repository uses tags to enforce module boundaries:
-
-| Project            | Tags                         | Can Import From              |
-| ------------------ | ---------------------------- | ---------------------------- |
-| `shop`             | `scope:shop`                 | `scope:shop`, `scope:shared` |
-| `api`              | `scope:api`                  | `scope:api`, `scope:shared`  |
-| `feature-products` | `scope:shop`, `type:feature` | `scope:shop`, `scope:shared` |
-| `data`             | `scope:shop`, `type:data`    | `scope:shared`               |
-| `models`           | `scope:shared`, `type:data`  | Nothing (base library)       |
-
-## 📚 Useful Commands
-
-```bash
-# Project exploration
-npx nx graph                                    # Interactive dependency graph
-npx nx list                                     # List installed plugins
-npx nx show project shop --web                 # View project details
-
-# Development
-npx nx run shop:serve                              # Serve Angular app
-npx nx run api:serve                               # Serve backend API
-npx nx run shop:build                              # Build Angular app
-npx nx run data:test                               # Test a specific library
-npx nx run feature-products:lint                   # Lint a specific library
-
-# Running multiple tasks
-npx nx run-many -t build                       # Build all projects
-npx nx run-many -t test --parallel=3          # Test in parallel
-npx nx run-many -t lint test build            # Run multiple targets
-
-# Affected commands (great for CI)
-npx nx affected -t build                       # Build only affected projects
-npx nx affected -t test                        # Test only affected projects
-
-# Docker operations
-npx nx run api:docker:build                        # Build Docker image
-npx nx run api:docker:run                          # Run Docker container
+```ts
+run = signal(0);
+ref = injectGsap(({ gsap }) => {
+  this.run();
+  gsap.from('.item', { y: 24, opacity: 0, stagger: 0.05 });
+});
+replay = () => this.run.update((n) => n + 1);
 ```
 
-## 🎯 Adding New Features
+## Examples
 
-### Generate a new Angular application:
+The [`apps/demo`](./apps/demo) app in this repo is a live tour: SplitText hero, signal-driven staggers, timeline controls, and a scroll-scrubbed ScrollTrigger section.
 
-```bash
-npx nx g @nx/angular:app my-app
+```sh
+pnpm install
+pnpm nx serve demo
 ```
 
-### Generate a new Angular library:
+## Compatibility
 
-```bash
-npx nx g @nx/angular:lib my-lib
-```
+- Angular `>= 21` (built and tested against Angular 22, zoneless by default)
+- GSAP `>= 3.12`
+- SSR / prerendering supported out of the box
 
-### Generate a new Angular component:
+## Contributing
 
-```bash
-npx nx g @nx/angular:component my-component --project=my-lib
-```
+See [CONTRIBUTING.md](./CONTRIBUTING.md). Issues and PRs welcome.
 
-### Generate a new API library:
+## License
 
-```bash
-npx nx g @nx/node:lib my-api-lib
-```
-
-You can use `npx nx list` to see all available plugins and `npx nx list <plugin-name>` to see all generators for a specific plugin.
-
-## Nx Cloud
-
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/docs/features/ci-features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/docs/features/ci-features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/docs/features/ci-features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/docs/features/ci-features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/docs/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## 🔗 Learn More
-
-- [Nx Documentation](https://nx.dev/docs)
-- [Angular Monorepo Tutorial](https://nx.dev/docs/getting-started/tutorials/angular-monorepo-tutorial)
-- [Module Boundaries](https://nx.dev/docs/features/enforce-module-boundaries)
-- [Docker Integration](https://nx.dev/docs/guides/nx-release/release-docker-images)
-- [Playwright Testing](https://nx.dev/docs/technologies/test-tools/playwright)
-- [Vite with Angular](https://nx.dev/docs/technologies/build-tools/vite)
-- [Nx Cloud](https://nx.dev/nx-cloud)
-- [Releasing Packages](https://nx.dev/docs/features/manage-releases)
-
-## 💬 Community
-
-Join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [X (Twitter)](https://twitter.com/nxdevtools)
-- [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [YouTube](https://www.youtube.com/@nxdevtools)
-- [Blog](https://nx.dev/blog)
+[MIT](./LICENSE) — GSAP itself is licensed under its own [Standard License](https://gsap.com/community/standard-license/), free including for commercial use.
