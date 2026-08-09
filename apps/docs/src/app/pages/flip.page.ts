@@ -34,7 +34,7 @@ const CARDS: Card[] = [
     <div class="page">
       <header class="page-head">
         <p class="eyebrow">Advanced · plugin: Flip</p>
-        <h1>FLIP a signal-driven layout</h1>
+        <h1>FLIP layout transitions</h1>
         <p>
           Filter the grid and the reflow is FLIP-animated. The whole trick is
           ordering: capture the layout <em>before</em> the signal changes the

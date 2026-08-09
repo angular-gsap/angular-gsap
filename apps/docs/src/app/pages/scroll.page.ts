@@ -14,7 +14,7 @@ export const routeMeta: RouteMeta = {
     <div class="page">
       <header class="page-head">
         <p class="eyebrow">Example · plugin: ScrollTrigger</p>
-        <h1>Scrub a timeline with scroll</h1>
+        <h1>Scroll-scrubbed timelines</h1>
         <p>
           ScrollTrigger is registered once with
           <code>provideGsap({{ '{' }} plugins: [ScrollTrigger] {{ '}' }})</code>

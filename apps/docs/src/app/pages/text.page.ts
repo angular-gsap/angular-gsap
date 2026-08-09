@@ -23,7 +23,7 @@ const STAGGER: Record<SplitMode, number> = {
     <div class="page">
       <header class="page-head">
         <p class="eyebrow">Example · plugin: SplitText</p>
-        <h1>Split, animate, stitch back</h1>
+        <h1>Text splitting</h1>
         <p>
           <code>mode()</code> and <code>run()</code> are both read in the
           callback, so switching the split granularity (or hitting replay)

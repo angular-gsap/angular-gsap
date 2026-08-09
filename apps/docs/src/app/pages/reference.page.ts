@@ -149,13 +149,17 @@ export const routeMeta: RouteMeta = {
       </section>
 
       <section class="api-section">
-        <h2>Directives: reveal and stagger</h2>
+        <h2>Directives</h2>
         <p>
-          Preset entrances for templates, built on the
-          <code>injectGsap</code> engine. Import <code>Reveal</code> and
-          <code>Stagger</code> (or <code>GSAP_DIRECTIVES</code> for both).
-          Every input is a signal: change one and the entrance replays. When
-          the OS asks for reduced motion, they don't animate at all.
+          Five preset directives, all built on the <code>injectGsap</code>
+          engine: <code>reveal</code>, <code>stagger</code>,
+          <code>splitReveal</code>, <code>counter</code>, and
+          <code>parallax</code>. Import the classes you use
+          (<code>Reveal</code>, <code>Stagger</code>, <code>SplitReveal</code>,
+          <code>Counter</code>, <code>Parallax</code>) or
+          <code>GSAP_DIRECTIVES</code> for all of them. Every input is a
+          signal: change one and the animation replays. Under reduced motion
+          they don't animate (<code>counter</code> shows the final value).
         </p>
         <app-code [code]="directiveSig" lang="html" label="usage" />
         <table>
@@ -220,10 +224,37 @@ export const routeMeta: RouteMeta = {
               staggered items.
             </td>
           </tr>
+          <tr>
+            <td><code>splitReveal</code> / <code>kind</code></td>
+            <td><code>words</code></td>
+            <td>
+              SplitReveal only: <code>chars</code>, <code>words</code>, or
+              <code>lines</code>. Needs SplitText in
+              <code>provideGsap</code>; the stagger defaults per kind and
+              <code>each</code> overrides it.
+            </td>
+          </tr>
+          <tr>
+            <td><code>counter</code> / <code>from</code> / <code>decimals</code></td>
+            <td><code>0</code></td>
+            <td>
+              Counter only: the target number, the starting number, and the
+              fraction digits. Formatted with the user's locale.
+            </td>
+          </tr>
+          <tr>
+            <td><code>parallax</code></td>
+            <td><code>0.15</code></td>
+            <td>
+              Parallax only: fraction of the viewport height the element
+              drifts while crossing it; negative moves against the scroll.
+              Needs ScrollTrigger.
+            </td>
+          </tr>
         </table>
         <p>
-          Both emit a <code>completed</code> output when the entrance
-          finishes.
+          The entrance directives and <code>counter</code> emit a
+          <code>completed</code> output when they finish.
         </p>
       </section>
 
@@ -332,10 +363,9 @@ export default class ReferencePage {
 
   protected readonly directiveSig = [
     `<h1 reveal>Fades up</h1>`,
-    `<p reveal="fade-right" on="scroll" [delay]="0.2">…</p>`,
-    ``,
-    `<ul stagger="0.08" preset="scale-in">`,
-    `  <li>…</li>`,
-    `</ul>`,
+    `<ul stagger="0.08" preset="scale-in"><li>…</li></ul>`,
+    `<p splitReveal="chars" on="scroll">…</p>`,
+    `<span [counter]="12500" [decimals]="0"></span>`,
+    `<img parallax="0.3" src="…" />`,
   ].join('\n');
 }

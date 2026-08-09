@@ -22,7 +22,7 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
     <div class="page">
       <header class="page-head">
         <p class="eyebrow">Example · core</p>
-        <h1>Signals drive the choreography</h1>
+        <h1>Signal-driven animations</h1>
         <p>
           The dots come from a <code>viewChildren()</code> query, read inside
           the callback. Move the slider and the query updates, the context

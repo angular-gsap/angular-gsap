@@ -14,7 +14,7 @@ export const routeMeta: RouteMeta = {
     <div class="page">
       <header class="page-head">
         <p class="eyebrow">Example · core</p>
-        <h1>Timelines stay in your hands</h1>
+        <h1>Timelines</h1>
         <p>
           Build the timeline in the callback, keep the reference on the
           component, and drive it from event handlers wrapped with

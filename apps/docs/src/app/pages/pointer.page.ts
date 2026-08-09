@@ -14,7 +14,7 @@ export const routeMeta: RouteMeta = {
     <div class="page">
       <header class="page-head">
         <p class="eyebrow">Advanced · gsap.quickTo</p>
-        <h1>A cursor follower at input rate</h1>
+        <h1>Pointer tracking with quickTo</h1>
         <p>
           <code>quickTo()</code> builds one reusable tween per property, so a
           pointermove handler can feed it coordinates hundreds of times per

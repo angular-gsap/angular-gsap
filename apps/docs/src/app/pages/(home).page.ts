@@ -78,8 +78,8 @@ export const routeMeta: RouteMeta = {
         <li class="feature">
           <h3>Nothing wrapped</h3>
           <p>
-            It's the real GSAP API, plus optional sugar directives for the
-            common entrances.
+            It's the real GSAP API, plus five preset directives for the
+            common template cases.
           </p>
         </li>
         <li class="feature">
