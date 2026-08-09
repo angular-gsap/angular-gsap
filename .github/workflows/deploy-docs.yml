@@ -1,4 +1,4 @@
-name: Deploy demo
+name: Deploy docs
 
 on:
   push:
@@ -31,15 +31,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build demo
-        run: pnpm nx build demo --base-href=/angular-gsap/
+      - name: Build docs
+        run: pnpm nx build docs
+        env:
+          DOCS_BASE: /angular-gsap/
 
       - name: SPA fallback
-        run: cp dist/apps/demo/browser/index.html dist/apps/demo/browser/404.html
+        run: cp dist/apps/docs/analog/public/index.html dist/apps/docs/analog/public/404.html
 
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: dist/apps/demo/browser
+          path: dist/apps/docs/analog/public
 
   deploy:
     needs: build

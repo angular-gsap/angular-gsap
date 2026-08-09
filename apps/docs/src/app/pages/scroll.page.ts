@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { CodeSnippet } from '../code-snippet';
 import { injectGsap } from '@angular-gsap/core';
 
 @Component({
+  imports: [CodeSnippet],
   selector: 'app-scroll',
   template: `
     <div class="page">
@@ -19,7 +21,7 @@ import { injectGsap } from '@angular-gsap/core';
           ><span>injectGsap</span>
         </div>
       </header>
-      <pre class="code"><code>{{ snippet }}</code></pre>
+      <app-code [code]="snippet" />
     </div>
 
     <div class="track">
@@ -102,7 +104,7 @@ import { injectGsap } from '@angular-gsap/core';
     }
   `,
 })
-export class Scroll {
+export default class ScrollPage {
   protected readonly ref = injectGsap(({ gsap }) => {
     gsap
       .timeline({

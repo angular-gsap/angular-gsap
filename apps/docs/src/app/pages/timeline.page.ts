@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { CodeSnippet } from '../code-snippet';
 import { injectGsap, type GsapTimeline } from '@angular-gsap/core';
 
 @Component({
+  imports: [CodeSnippet],
   selector: 'app-timeline',
   template: `
     <div class="page">
@@ -47,7 +49,7 @@ import { injectGsap, type GsapTimeline } from '@angular-gsap/core';
             </label>
           </div>
         </div>
-        <pre class="code"><code>{{ snippet }}</code></pre>
+        <app-code [code]="snippet" />
       </div>
     </div>
   `,
@@ -72,7 +74,7 @@ import { injectGsap, type GsapTimeline } from '@angular-gsap/core';
     }
   `,
 })
-export class Timeline {
+export default class TimelinePage {
   protected readonly bars = [
     '#e23b80',
     '#5b4be8',
@@ -102,7 +104,7 @@ export class Timeline {
   protected speed = this.ref.contextSafe((v: number) => this.tl?.timeScale(v));
 
   protected readonly snippet = [
-    `export class Timeline {`,
+    `export default class TimelinePage {`,
     `  private tl?: GsapTimeline;`,
     ``,
     `  ref = injectGsap(({ gsap }) => {`,

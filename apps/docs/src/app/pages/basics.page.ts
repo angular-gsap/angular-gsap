@@ -1,10 +1,12 @@
 import { Component, computed, signal } from '@angular/core';
 import { injectGsap } from '@angular-gsap/core';
+import { CodeSnippet } from '../code-snippet';
 
 const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
 
 @Component({
   selector: 'app-basics',
+  imports: [CodeSnippet],
   template: `
     <div class="page">
       <header class="page-head">
@@ -46,7 +48,7 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
             <button class="btn" (click)="burst()">Burst</button>
           </div>
         </div>
-        <pre class="code"><code>{{ snippet }}</code></pre>
+        <app-code [code]="snippet" />
       </div>
     </div>
   `,
@@ -64,7 +66,7 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
     }
   `,
 })
-export class Basics {
+export default class BasicsPage {
   protected readonly count = signal(8);
 
   protected readonly dots = computed(() => {
@@ -103,24 +105,24 @@ export class Basics {
   );
 
   protected readonly snippet = [
-    `export class Basics {`,
-    `  count = signal(8);`,
-    ``,
-    `  ref = injectGsap(({ gsap }) => {`,
-    `    this.count(); // tracked: re-runs on change`,
-    `    gsap.from('.dot', {`,
-    `      scale: 0, opacity: 0,`,
-    `      ease: 'back.out(2)',`,
-    `      stagger: 0.04,`,
-    `    });`,
-    `  });`,
-    ``,
-    `  burst = this.ref.contextSafe(() =>`,
-    `    this.ref.gsap.to('.dot', {`,
-    `      scale: 1.7, yoyo: true, repeat: 1,`,
-    `      stagger: { each: 0.02, from: 'random' },`,
-    `    })`,
-    `  );`,
-    `}`,
-  ].join('\n');
+      `export class Basics {`,
+      `  count = signal(8);`,
+      ``,
+      `  ref = injectGsap(({ gsap }) => {`,
+      `    this.count(); // tracked: re-runs on change`,
+      `    gsap.from('.dot', {`,
+      `      scale: 0, opacity: 0,`,
+      `      ease: 'back.out(2)',`,
+      `      stagger: 0.04,`,
+      `    });`,
+      `  });`,
+      ``,
+      `  burst = this.ref.contextSafe(() =>`,
+      `    this.ref.gsap.to('.dot', {`,
+      `      scale: 1.7, yoyo: true, repeat: 1,`,
+      `      stagger: { each: 0.02, from: 'random' },`,
+      `    })`,
+      `  );`,
+      `}`,
+    ].join('\n');
 }

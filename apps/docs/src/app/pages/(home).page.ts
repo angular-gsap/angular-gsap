@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { injectGsap, type GsapTimeline } from '@angular-gsap/core';
+import { Stagger, injectGsap, type GsapTimeline } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
+import { CodeSnippet } from '../code-snippet';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, CodeSnippet, Stagger],
   template: `
     <section class="hero">
       <p class="eyebrow">gsap × angular · every plugin, free</p>
@@ -34,13 +35,13 @@ import { SplitText } from 'gsap/SplitText';
           </p>
           <a routerLink="/basics">Start with the basics →</a>
         </div>
-        <pre class="code"><code>{{ snippet }}</code></pre>
+        <app-code [code]="snippet" />
       </div>
     </section>
 
     <section class="features">
       <p class="eyebrow">Why it exists</p>
-      <ul>
+      <ul stagger="0.08" on="scroll" preset="fade-up">
         <li class="feature">
           <h3>Scoped by default</h3>
           <p>Selectors match inside your component's host and nowhere else.</p>
@@ -69,8 +70,8 @@ import { SplitText } from 'gsap/SplitText';
         <li class="feature">
           <h3>Nothing wrapped</h3>
           <p>
-            It's the real GSAP API — no directive dialect to learn, nothing to
-            go stale.
+            It's the real GSAP API — plus optional sugar directives for the
+            common entrances.
           </p>
         </li>
       </ul>
@@ -183,27 +184,29 @@ import { SplitText } from 'gsap/SplitText';
     }
   `,
 })
-export class Home {
+export default class HomePage {
   private intro?: GsapTimeline;
 
   protected readonly snippet = [
-    `@Component({ template: '<div class="box"></div>' })`,
-    `export class Hero {`,
-    `  x = signal(0);`,
-    ``,
-    `  gsap = injectGsap(({ gsap }) => {`,
-    `    // plain GSAP — scoped, cleaned up, reactive`,
-    `    gsap.to('.box', { x: this.x(), duration: 1 });`,
-    `  });`,
-    ``,
-    `  spin = this.gsap.contextSafe(() =>`,
-    `    gsap.to('.box', { rotation: 360 })`,
-    `  );`,
-    `}`,
-  ].join('\n');
+      `@Component({ template: '<div class="box"></div>' })`,
+      `export class Hero {`,
+      `  x = signal(0);`,
+      ``,
+      `  gsap = injectGsap(({ gsap }) => {`,
+      `    // plain GSAP — scoped, cleaned up, reactive`,
+      `    gsap.to('.box', { x: this.x(), duration: 1 });`,
+      `  });`,
+      ``,
+      `  spin = this.gsap.contextSafe(() =>`,
+      `    gsap.to('.box', { rotation: 360 })`,
+      `  );`,
+      `}`,
+    ].join('\n');
 
   protected readonly ref = injectGsap(({ gsap }) => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduce = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
     const split = SplitText.create('.logotype', { type: 'chars' });
     const flightColors = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
     const tick = split.chars.find((c) => c.textContent === '-');
@@ -240,15 +243,6 @@ export class Home {
         delay: 1.4,
       });
     }
-
-    gsap.from('.feature', {
-      y: 24,
-      opacity: 0,
-      stagger: 0.08,
-      duration: 0.6,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.features', start: 'top 80%' },
-    });
   });
 
   protected replay = this.ref.contextSafe(() => this.intro?.restart());

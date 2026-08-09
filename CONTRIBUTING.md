@@ -14,12 +14,12 @@ pnpm install
 | Path        | What it is                                      |
 | ----------- | ----------------------------------------------- |
 | `libs/core` | The published package, `@angular-gsap/core`     |
-| `apps/demo` | The example/showcase app (`pnpm nx serve demo`) |
+| `apps/docs` | Docs & examples app, built with Analog (`pnpm nx serve docs`) |
 
 ## Everyday commands
 
 ```sh
-pnpm nx serve demo              # run the example app
+pnpm nx serve docs              # run the docs/examples app (Analog)
 pnpm nx test core               # unit tests (vitest)
 pnpm nx build core              # build the publishable package
 pnpm nx run-many -t lint test build   # what CI runs
@@ -33,7 +33,7 @@ pnpm nx run-many -t lint test build   # what CI runs
 - Keep `libs/core` free of dependencies beyond `@angular/*`, `gsap`, and `tslib`.
 - Every behavior change needs a spec in `libs/core/src/lib/*.spec.ts`.
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org)
-  (`feat(core): …`, `fix(demo): …`) — releases and changelogs are generated from them.
+  (`feat(core): …`, `fix(docs): …`) — releases and changelogs are generated from them.
 
 ## Releasing (maintainers)
 

@@ -106,6 +106,38 @@ bootstrapApplication(App, {
 
 Plugin registration is skipped on the server automatically.
 
+### Sugar directives: `reveal` and `stagger`
+
+For the common 90% — an element or list entering the view — two preset-based
+directives keep the animation in the template. They're built on the
+`injectGsap` engine (same scoping, cleanup, reduced-motion handling), with
+natural, intention-first selectors:
+
+```html
+<!-- entrance on init; inputs are signals -->
+<h1 reveal>Fades up</h1>
+<section reveal="fade-right" [delay]="0.2">…</section>
+
+<!-- when scrolled into view (needs ScrollTrigger in provideGsap) -->
+<p reveal="fade-up" on="scroll">…</p>
+
+<!-- staggered children -->
+<ul stagger="0.08" preset="scale-in">
+  <li>…</li>
+  <li>…</li>
+</ul>
+```
+
+```ts
+import { Reveal, Stagger } from '@angular-gsap/core';
+```
+
+Presets: `fade`, `fade-up`, `fade-down`, `fade-left`, `fade-right`, `scale-in`.
+Inputs (`preset`, `on`, `delay`, `duration`, `distance`, `ease`, `start`) are
+signals — change one and the entrance replays. `prefers-reduced-motion`
+disables them entirely. They are deliberately **not** general-purpose tween
+wrappers: anything beyond a preset entrance belongs in `injectGsap`.
+
 ### Patterns
 
 **State-driven choreography** — read a signal, and the animation replays when it changes (the DOM is already updated when the callback re-runs):
@@ -139,13 +171,13 @@ ref = injectGsap(({ gsap }) => {
 replay = () => this.run.update((n) => n + 1);
 ```
 
-## Examples
+## Docs & examples
 
-The [`apps/demo`](./apps/demo) app in this repo is a live tour: SplitText hero, signal-driven staggers, timeline controls, and a scroll-scrubbed ScrollTrigger section.
+The [`apps/docs`](./apps/docs) app — built with [Analog](https://analogjs.org) and Shiki-highlighted source panels — is a live tour: SplitText hero, signal-driven staggers, the sugar directives, timeline controls, and a scroll-scrubbed ScrollTrigger section.
 
 ```sh
 pnpm install
-pnpm nx serve demo
+pnpm nx serve docs
 ```
 
 ## Compatibility

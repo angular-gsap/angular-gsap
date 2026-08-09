@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { CodeSnippet } from '../code-snippet';
 import { injectGsap } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
 
@@ -11,6 +12,7 @@ const STAGGER: Record<SplitMode, number> = {
 };
 
 @Component({
+  imports: [CodeSnippet],
   selector: 'app-text',
   template: `
     <div class="page">
@@ -51,7 +53,7 @@ const STAGGER: Record<SplitMode, number> = {
             <button class="btn" (click)="replay()">Replay</button>
           </div>
         </div>
-        <pre class="code"><code>{{ snippet }}</code></pre>
+        <app-code [code]="snippet" />
       </div>
     </div>
   `,
@@ -73,7 +75,7 @@ const STAGGER: Record<SplitMode, number> = {
     }
   `,
 })
-export class Text {
+export default class TextPage {
   protected readonly modes: SplitMode[] = ['chars', 'words', 'lines'];
   protected readonly mode = signal<SplitMode>('words');
   protected readonly run = signal(0);
@@ -94,7 +96,7 @@ export class Text {
   protected replay = () => this.run.update((n) => n + 1);
 
   protected readonly snippet = [
-    `export class Text {`,
+    `export default class TextPage {`,
     `  mode = signal<'chars' | 'words' | 'lines'>('words');`,
     `  run = signal(0);`,
     ``,
