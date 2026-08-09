@@ -1,5 +1,13 @@
 import { Directive, ElementRef, inject, input, numberAttribute, output } from '@angular/core';
+import { Counter } from './counter';
 import { injectGsap } from './inject-gsap';
+import { Parallax } from './parallax';
+import { SplitReveal } from './split-reveal';
+import {
+  entranceScrollTrigger,
+  hasScrollTrigger,
+  warnMissingPlugin,
+} from './internal';
 import { RevealPreset, prefersReducedMotion, presetFromVars } from './presets';
 import type { Gsap, GsapTweenVars } from './types';
 
@@ -29,22 +37,10 @@ function entranceVars(config: EntranceConfig): GsapTweenVars {
     onComplete: config.onComplete,
   };
   if (config.on === 'scroll') {
-    const globals = (
-      config.gsap.core as unknown as { globals(): Record<string, unknown> }
-    ).globals();
-    if (globals['ScrollTrigger']) {
-      // 'reset' on leave-back makes the reveal self-correct when the trigger
-      // is created already past its start (tall viewports, SPA navigation
-      // while scrolled): it rewinds above the start and replays on entry.
-      vars['scrollTrigger'] = {
-        trigger: config.trigger,
-        start: config.start,
-        toggleActions: 'play none none reset',
-      };
-    } else if (typeof ngDevMode === 'undefined' || ngDevMode) {
-      console.warn(
-        '[angular-gsap] on="scroll" needs ScrollTrigger. Add provideGsap({ plugins: [ScrollTrigger] }); falling back to reveal on init.'
-      );
+    if (hasScrollTrigger(config.gsap)) {
+      Object.assign(vars, entranceScrollTrigger(config.trigger, config.start));
+    } else {
+      warnMissingPlugin('on="scroll"', 'ScrollTrigger');
     }
   }
   return vars;
@@ -162,7 +158,12 @@ export class Stagger {
   });
 }
 
-/** Everything template-facing, for one-line imports. */
-export const GSAP_DIRECTIVES = [Reveal, Stagger] as const;
 
-declare const ngDevMode: boolean | undefined;
+/** Everything template-facing, for one-line imports. */
+export const GSAP_DIRECTIVES = [
+  Counter,
+  Parallax,
+  Reveal,
+  SplitReveal,
+  Stagger,
+] as const;
