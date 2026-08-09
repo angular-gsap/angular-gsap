@@ -1,6 +1,11 @@
 import { Component, computed, signal } from '@angular/core';
 import { injectGsap } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
+import { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = {
+  title: 'Basics · angular-gsap',
+};
 
 const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
 
@@ -14,8 +19,8 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
         <h1>Signals drive the choreography</h1>
         <p>
           The callback reads <code>count()</code>. Move the slider and the
-          context reverts, the ring re-renders, and the entrance replays — the
-          same mental model as any other signal-driven view.
+          context reverts, the ring re-renders, and the entrance replays. It's
+          the same mental model as any other signal-driven view.
         </p>
         <div class="api-chips">
           <span>injectGsap</span><span>contextSafe</span><span>signal</span>
@@ -50,6 +55,36 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
         </div>
         <app-code [code]="snippet" />
       </div>
+
+      <section class="explain">
+        <h2>What the library is doing here</h2>
+        <ul>
+          <li>
+            <strong>The callback re-runs after the DOM updates.</strong>
+            Moving the slider changes <code>count()</code>; the
+            <code>&#64;for</code> renders the new dots first, then the callback
+            re-runs, so <code>gsap.from('.dot', …)</code> sees the fresh
+            elements. A hand-written <code>effect()</code> would fire before
+            the template applies the change.
+          </li>
+          <li>
+            <strong>Each re-run starts clean.</strong> The previous cycle is
+            <code>revert()</code>ed before the next one plays, so half-finished
+            tweens never stack inline styles on top of each other.
+          </li>
+          <li>
+            <strong><code>contextSafe</code> keeps handlers in the family.</strong>
+            The Burst tween is created outside the callback, but it's recorded
+            in the same context: it runs outside change detection and dies with
+            the component.
+          </li>
+          <li>
+            <strong><code>'.dot'</code> can't leak.</strong> Selector text is
+            scoped to this component's host. Another component using the same
+            class is untouched.
+          </li>
+        </ul>
+      </section>
     </div>
   `,
   styles: `

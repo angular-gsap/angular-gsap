@@ -9,22 +9,23 @@ import {
 } from '@angular/common/http';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
-import { provideContent, withMarkdownRenderer } from '@analogjs/content';
-import { withShikiHighlighter } from '@analogjs/content/shiki-highlighter';
+import { withInMemoryScrolling } from '@angular/router';
 import { provideGsap } from '@angular-gsap/core';
+import { Flip } from 'gsap/Flip';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideFileRouter(),
+    provideFileRouter(
+      withInMemoryScrolling({ scrollPositionRestoration: 'top' })
+    ),
     provideClientHydration(),
     provideHttpClient(
       withFetch(),
       withInterceptors([requestContextInterceptor]),
     ),
-    provideContent(withMarkdownRenderer(), withShikiHighlighter()),
-    provideGsap({ plugins: [ScrollTrigger, SplitText] }),
+    provideGsap({ plugins: [Flip, ScrollTrigger, SplitText] }),
   ],
 };

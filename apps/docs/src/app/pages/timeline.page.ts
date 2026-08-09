@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import { CodeSnippet } from '../code-snippet';
 import { injectGsap, type GsapTimeline } from '@angular-gsap/core';
+import { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = {
+  title: 'Timeline · angular-gsap',
+};
 
 @Component({
   imports: [CodeSnippet],
@@ -51,6 +56,28 @@ import { injectGsap, type GsapTimeline } from '@angular-gsap/core';
         </div>
         <app-code [code]="snippet" />
       </div>
+
+      <section class="explain">
+        <h2>What the library is doing here</h2>
+        <ul>
+          <li>
+            <strong>The timeline is plain GSAP.</strong> Position parameters,
+            staggers, <code>repeat: -1</code>: none of it is wrapped, so the
+            timeline API from the GSAP docs applies verbatim.
+          </li>
+          <li>
+            <strong>Transport controls stay out of change detection.</strong>
+            <code>play()</code>/<code>pause()</code>/<code>timeScale()</code>
+            run through <code>contextSafe</code>, so a 60fps animation never
+            schedules Angular work.
+          </li>
+          <li>
+            <strong>Navigating away stops it.</strong> Leave this page and
+            the context reverts the looping timeline, so no tween keeps
+            running against a detached DOM node.
+          </li>
+        </ul>
+      </section>
     </div>
   `,
   styles: `

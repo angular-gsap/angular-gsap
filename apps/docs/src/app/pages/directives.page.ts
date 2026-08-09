@@ -1,6 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { Reveal, Stagger, type RevealPreset } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
+import { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = {
+  title: 'Directives · angular-gsap',
+};
 
 @Component({
   selector: 'app-directives',
@@ -11,9 +16,9 @@ import { CodeSnippet } from '../code-snippet';
         <p class="eyebrow">Example · sugar directives</p>
         <h1>Template-level entrances</h1>
         <p>
-          For the common 90% — an element or a list entering the view —
-          <code>reveal</code> and <code>stagger</code> keep the
-          animation in the template. They're presets built on the
+          For the common 90% (an element or a list entering the view),
+          <code>reveal</code> and <code>stagger</code> keep the animation in
+          the template. They're presets built on the
           <code>injectGsap</code> engine, not general-purpose wrappers: for
           anything richer, drop to the composable.
         </p>
@@ -60,6 +65,30 @@ import { CodeSnippet } from '../code-snippet';
         <app-code [code]="snippet" lang="html" />
       </div>
 
+      <section class="explain">
+        <h2>What the library is doing here</h2>
+        <ul>
+          <li>
+            <strong>Sugar, not a second API.</strong> <code>reveal</code> and
+            <code>stagger</code> are presets over the same
+            <code>injectGsap</code> engine, with the same scoping, cleanup,
+            and reactive inputs. The moment you need more than an entrance,
+            drop to the composable.
+          </li>
+          <li>
+            <strong>Inputs are signals.</strong> Switching the preset reverts
+            the previous entrance and replays the new one; Replay just
+            recreates the subtree.
+          </li>
+          <li>
+            <strong>Accessibility is built in.</strong> When the OS asks for
+            reduced motion, these directives do nothing at all and the content
+            stays fully visible. (If nothing animates on this page, check your
+            system's Reduce Motion setting.)
+          </li>
+        </ul>
+      </section>
+
       <section class="scroll-tail">
         <p class="eyebrow">And on scroll</p>
         <p
@@ -69,8 +98,8 @@ import { CodeSnippet } from '../code-snippet';
           [distance]="40"
         >
           This paragraph used
-          <code>reveal="fade-up" on="scroll"</code> — ScrollTrigger under
-          the hood, registered once in <code>provideGsap</code>.
+          <code>reveal="fade-up" on="scroll"</code>. Under the hood that's
+          ScrollTrigger, registered once in <code>provideGsap</code>.
         </p>
       </section>
     </div>
@@ -107,8 +136,9 @@ import { CodeSnippet } from '../code-snippet';
     }
 
     .scroll-tail {
-      margin-top: 40vh;
-      padding-bottom: 20vh;
+      /* a full viewport of runway so the reveal is below the fold on any screen */
+      margin-top: 100vh;
+      padding-bottom: 40vh;
       max-width: 34rem;
     }
 

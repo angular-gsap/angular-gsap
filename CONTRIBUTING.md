@@ -29,11 +29,11 @@ pnpm nx run-many -t lint test build   # what CI runs
 
 - The core principle of this library: **own lifecycle, never wrap GSAP's API.**
   PRs that re-expose `gsap.to`/`from`/`timeline` as directives or wrappers will
-  be declined — that pattern goes stale against GSAP's release cadence.
+  be declined; that pattern goes stale against GSAP's release cadence.
 - Keep `libs/core` free of dependencies beyond `@angular/*`, `gsap`, and `tslib`.
 - Every behavior change needs a spec in `libs/core/src/lib/*.spec.ts`.
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org)
-  (`feat(core): …`, `fix(docs): …`) — releases and changelogs are generated from them.
+  (`feat(core): …`, `fix(docs): …`). Releases and changelogs are generated from them.
 
 ## Releasing (maintainers)
 

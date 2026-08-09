@@ -2,6 +2,11 @@ import { Component, signal } from '@angular/core';
 import { CodeSnippet } from '../code-snippet';
 import { injectGsap } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
+import { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = {
+  title: 'SplitText · angular-gsap',
+};
 
 type SplitMode = 'chars' | 'words' | 'lines';
 
@@ -21,7 +26,7 @@ const STAGGER: Record<SplitMode, number> = {
         <h1>Split, animate, stitch back</h1>
         <p>
           <code>mode()</code> and <code>run()</code> are both read in the
-          callback, so switching the split granularity — or hitting replay —
+          callback, so switching the split granularity (or hitting replay)
           reverts the previous split and starts over. On destroy the paragraph
           is restored exactly as it was.
         </p>
@@ -35,7 +40,7 @@ const STAGGER: Record<SplitMode, number> = {
           <div class="stage text-stage">
             <p class="passage">
               Great interfaces move with intent. Split this paragraph into
-              characters, words, or lines — then choreograph the pieces with
+              characters, words, or lines, then choreograph the pieces with
               the full GSAP toolbox. Leave the page, and every piece is
               stitched back together exactly as it was.
             </p>
@@ -55,6 +60,29 @@ const STAGGER: Record<SplitMode, number> = {
         </div>
         <app-code [code]="snippet" />
       </div>
+
+      <section class="explain">
+        <h2>What the library is doing here</h2>
+        <ul>
+          <li>
+            <strong>Two signals, two behaviors, one mechanism.</strong>
+            <code>mode()</code> changes the split granularity;
+            <code>run()</code> exists only to be bumped. Either one re-runs the
+            callback; replay is just <code>run.update(n => n + 1)</code>.
+          </li>
+          <li>
+            <strong>SplitText is cleaned up too.</strong>
+            <code>SplitText.create()</code> inside the context is reverted with
+            it: leave the page and the paragraph's original DOM is restored
+            exactly, with no leftover wrapper spans.
+          </li>
+          <li>
+            <strong>Re-splitting starts from pristine markup.</strong> Because
+            each re-run reverts first, the new split operates on the original
+            paragraph, not on the previous run's spans.
+          </li>
+        </ul>
+      </section>
     </div>
   `,
   styles: `

@@ -3,6 +3,11 @@ import { RouterLink } from '@angular/router';
 import { Stagger, injectGsap, type GsapTimeline } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
 import { CodeSnippet } from '../code-snippet';
+import { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = {
+  title: 'angular-gsap · GSAP for Angular',
+};
 
 @Component({
   selector: 'app-home',
@@ -12,8 +17,8 @@ import { CodeSnippet } from '../code-snippet';
       <p class="eyebrow">gsap × angular · every plugin, free</p>
       <h1 class="logotype" aria-label="angular-gsap">angular-gsap</h1>
       <p class="lede">
-        Write vanilla GSAP. The Angular part — host scoping, cleanup, signal
-        reactivity, SSR — is handled for you.
+        Write vanilla GSAP. The library handles the Angular part: host
+        scoping, cleanup, signal reactivity, and SSR.
       </p>
       <div class="hero-actions">
         <code class="install">pnpm add &#64;angular-gsap/core gsap</code>
@@ -22,20 +27,46 @@ import { CodeSnippet } from '../code-snippet';
     </section>
 
     <section class="how">
-      <div class="example">
-        <div class="how-copy">
-          <p class="eyebrow">The whole idea</p>
-          <h2>One composable. Vanilla GSAP inside.</h2>
-          <p>
-            <code>injectGsap()</code> runs your GSAP code in a
-            <code>gsap.context()</code> scoped to the component. Selector text
-            like <code>'.box'</code> can't reach outside the host. Signals you
-            read re-run the animation. Everything reverts when the component is
-            destroyed — and nothing runs on the server.
-          </p>
-          <a routerLink="/basics">Start with the basics →</a>
+      <div class="how-inner">
+        <p class="eyebrow">Why not just GSAP?</p>
+        <h2>The animation is GSAP's. The lifecycle is the hard part.</h2>
+        <p class="how-lede">
+          GSAP doesn't know when Angular has rendered, what your component
+          owns, or when it's destroyed. Hand-rolling that glue looks like the
+          left column, and you get to repeat it in every animated component.
+        </p>
+        <div class="compare">
+          <figure>
+            <figcaption>gsap alone in a component</figcaption>
+            <app-code [code]="vanillaSnippet" />
+          </figure>
+          <figure>
+            <figcaption>with &#64;angular-gsap/core</figcaption>
+            <app-code [code]="snippet" />
+          </figure>
         </div>
-        <app-code [code]="snippet" />
+        <ul class="wins">
+          <li>
+            <strong>Nothing to forget.</strong> Cleanup, host scoping, and SSR
+            guards are the library's job instead of a code-review checklist. A
+            forgotten <code>revert()</code> is the bug most Angular + GSAP
+            threads end in: ScrollTriggers that keep firing after you navigate
+            away.
+          </li>
+          <li>
+            <strong>Reactivity you can't easily hand-roll.</strong> Signals
+            read in the callback re-run it <em>after</em> the DOM has updated
+            (<code>afterRenderEffect</code>). A plain <code>effect()</code>
+            fires before the template applies the change, so it animates stale
+            elements.
+          </li>
+          <li>
+            <strong>Still 100% GSAP.</strong> No wrapper API to learn or to go
+            stale. Timelines, staggers, position parameters, and every plugin
+            work exactly as the GSAP docs describe.
+          </li>
+        </ul>
+        <a routerLink="/basics">Start with the basics →</a>
       </div>
     </section>
 
@@ -70,7 +101,7 @@ import { CodeSnippet } from '../code-snippet';
         <li class="feature">
           <h3>Nothing wrapped</h3>
           <p>
-            It's the real GSAP API — plus optional sugar directives for the
+            It's the real GSAP API, plus optional sugar directives for the
             common entrances.
           </p>
         </li>
@@ -123,29 +154,65 @@ import { CodeSnippet } from '../code-snippet';
       background: var(--card);
     }
 
-    .how .example {
+    .how-inner {
       max-width: 72rem;
       margin: 0 auto;
       padding: 4rem 1.5rem;
-      align-items: center;
-    }
-
-    .how-copy {
-      max-width: 30rem;
 
       h2 {
         font-size: 1.9rem;
         font-weight: 800;
         margin-bottom: 1rem;
-      }
-
-      p {
-        color: var(--ink-soft);
+        max-width: 38rem;
       }
 
       code {
         font-family: var(--font-mono);
         font-size: 0.85em;
+      }
+    }
+
+    .how-lede {
+      color: var(--ink-soft);
+      max-width: 38rem;
+      margin: 0 0 2rem;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      gap: 1.25rem;
+      align-items: start;
+
+      figure {
+        margin: 0;
+      }
+
+      figcaption {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        margin-bottom: 0.6rem;
+      }
+    }
+
+    .wins {
+      list-style: none;
+      padding: 0;
+      margin: 2rem 0 1.5rem;
+      display: grid;
+      gap: 0.9rem;
+      max-width: 44rem;
+
+      li {
+        color: var(--ink-soft);
+        font-size: 0.95rem;
+      }
+
+      strong {
+        color: var(--ink);
       }
     }
 
@@ -187,13 +254,38 @@ import { CodeSnippet } from '../code-snippet';
 export default class HomePage {
   private intro?: GsapTimeline;
 
+  protected readonly vanillaSnippet = [
+    `@Component({ template: '<div class="box"></div>' })`,
+    `export class Hero implements AfterViewInit, OnDestroy {`,
+    `  private ctx?: gsap.Context;`,
+    `  private platformId = inject(PLATFORM_ID);`,
+    `  private host = inject(ElementRef);`,
+    ``,
+    `  ngAfterViewInit() {`,
+    `    // SSR guard, or the server build crashes`,
+    `    if (!isPlatformBrowser(this.platformId)) return;`,
+    `    // scope it yourself, or '.box' matches`,
+    `    // every .box on the page`,
+    `    this.ctx = gsap.context(() => {`,
+    `      gsap.to('.box', { x: 100, duration: 1 });`,
+    `    }, this.host.nativeElement);`,
+    `  }`,
+    ``,
+    `  ngOnDestroy() {`,
+    `    // forget this and ScrollTriggers keep`,
+    `    // firing after the route changes`,
+    `    this.ctx?.revert();`,
+    `  }`,
+    `}`,
+  ].join('\n');
+
   protected readonly snippet = [
       `@Component({ template: '<div class="box"></div>' })`,
       `export class Hero {`,
       `  x = signal(0);`,
       ``,
       `  gsap = injectGsap(({ gsap }) => {`,
-      `    // plain GSAP — scoped, cleaned up, reactive`,
+      `    // plain GSAP: scoped, cleaned up, reactive`,
       `    gsap.to('.box', { x: this.x(), duration: 1 });`,
       `  });`,
       ``,

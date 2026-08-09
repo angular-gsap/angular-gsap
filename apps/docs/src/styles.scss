@@ -1,4 +1,4 @@
-/* angular-gsap demo — "color belongs to motion".
+/* angular-gsap docs: "color belongs to motion".
    Static chrome is ink on porcelain; saturated color is reserved for
    elements the library animates. */
 
@@ -9,7 +9,7 @@
   --hairline: #d9d9d2;
   --card: #ffffff;
 
-  /* motion palette — only ever applied to animated elements */
+  /* motion palette, only ever applied to animated elements */
   --pulse: #e23b80; /* angular side */
   --kinetic: #0ae448; /* gsap side */
   --arc: #5b4be8; /* the bridge; also interactive text */
@@ -194,6 +194,47 @@ label.range {
 input[type='range'] {
   accent-color: var(--arc);
   width: 11rem;
+}
+
+/* per-example "what the library is doing" block */
+.explain {
+  margin-top: 2.75rem;
+  max-width: 46rem;
+  border-top: 1px solid var(--hairline);
+  padding-top: 1.5rem;
+
+  h2 {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 0.9rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  li {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+
+  strong {
+    color: var(--ink);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--ink);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

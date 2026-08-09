@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import { CodeSnippet } from '../code-snippet';
 import { injectGsap } from '@angular-gsap/core';
+import { RouteMeta } from '@analogjs/router';
+
+export const routeMeta: RouteMeta = {
+  title: 'ScrollTrigger · angular-gsap',
+};
 
 @Component({
   imports: [CodeSnippet],
@@ -22,6 +27,28 @@ import { injectGsap } from '@angular-gsap/core';
         </div>
       </header>
       <app-code [code]="snippet" />
+
+      <section class="explain">
+        <h2>What the library is doing here</h2>
+        <ul>
+          <li>
+            <strong>ScrollTrigger, exactly as documented.</strong> The
+            <code>scrollTrigger</code> config is passed straight to GSAP. The
+            library adds nothing and hides nothing.
+          </li>
+          <li>
+            <strong>The usual leak can't happen.</strong> A ScrollTrigger that
+            outlives its component keeps measuring and firing on every scroll
+            after you leave the page. This one is registered in the context,
+            so navigating away reverts it.
+          </li>
+          <li>
+            <strong>Scrubbing never touches Angular.</strong> The tween is
+            bound to the scrollbar and runs outside change detection, so a
+            scroll event costs the framework nothing.
+          </li>
+        </ul>
+      </section>
     </div>
 
     <div class="track">
@@ -29,15 +56,15 @@ import { injectGsap } from '@angular-gsap/core';
         <div class="stage scroll-stage">
           <span class="shape"></span>
           <div class="meter"><span class="meter-fill"></span></div>
-          <p class="hint">keep scrolling — the tween is bound to the scrollbar</p>
+          <p class="hint">keep scrolling: the tween is bound to the scrollbar</p>
         </div>
       </div>
     </div>
 
     <div class="page outro">
       <p>
-        The square became a circle, turned Angular pink to GSAP green, and did a
-        full rotation — all scrubbed, nothing on a clock.
+        The square became a circle, turned Angular pink to GSAP green, and did
+        a full rotation, all scrubbed by the scrollbar rather than a clock.
       </p>
     </div>
   `,
@@ -129,7 +156,7 @@ export default class ScrollPage {
     `// app.config.ts`,
     `provideGsap({ plugins: [ScrollTrigger] });`,
     ``,
-    `// scroll.ts — plain GSAP, nothing special`,
+    `// scroll.ts: plain GSAP, nothing special`,
     `ref = injectGsap(({ gsap }) => {`,
     `  gsap`,
     `    .timeline({`,

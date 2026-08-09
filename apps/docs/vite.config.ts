@@ -31,6 +31,7 @@ export default defineConfig(() => {
             '/timeline',
             '/scroll',
             '/text',
+            '/flip',
           ],
         },
         content: {
