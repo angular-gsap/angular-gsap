@@ -87,7 +87,7 @@ export const routeMeta: RouteMeta = {
       margin: -14px 0 0 -14px;
       border-radius: 50%;
       background: var(--kinetic);
-      mix-blend-mode: multiply;
+      border: 2px solid var(--ink);
       pointer-events: none;
     }
 
@@ -111,6 +111,21 @@ export default class PointerPage {
 
   protected readonly ref = injectGsap(({ gsap }) => {
     const el = target(this.chaser);
+    const stage = target(this.stage);
+    // park it in the middle so the stage is visibly alive before any input
+    if (stage) {
+      gsap.set(el, {
+        x: stage.clientWidth / 2,
+        y: stage.clientHeight / 2,
+      });
+    }
+    gsap.to(el, {
+      scale: 1.25,
+      repeat: -1,
+      yoyo: true,
+      duration: 0.9,
+      ease: 'sine.inOut',
+    });
     this.moveX = gsap.quickTo(el, 'x', { duration: 0.35, ease: 'power3' });
     this.moveY = gsap.quickTo(el, 'y', { duration: 0.35, ease: 'power3' });
   });
@@ -122,8 +137,11 @@ export default class PointerPage {
   });
 
   protected onLeave = this.ref.contextSafe(() => {
-    this.moveX?.(0);
-    this.moveY?.(0);
+    const stage = target(this.stage);
+    if (stage) {
+      this.moveX?.(stage.clientWidth / 2);
+      this.moveY?.(stage.clientHeight / 2);
+    }
   });
 
   protected readonly tplSnippet = [
