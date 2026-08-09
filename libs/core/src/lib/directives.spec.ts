@@ -29,8 +29,14 @@ async function settle(fixture: ComponentFixture<unknown>) {
   fixture.detectChanges();
   await fixture.whenStable();
   // gsap.from() defers its first style write to the next ticker tick (lazy
-  // rendering) — force one so start values are observable synchronously.
+  // rendering); force one so start values are observable synchronously.
   gsap.ticker.tick();
+}
+
+function q(fixture: ComponentFixture<unknown>, sel: string): HTMLElement {
+  const el = (fixture.nativeElement as HTMLElement).querySelector(sel);
+  if (!el) throw new Error(`${sel} not found`);
+  return el as HTMLElement;
 }
 
 describe('sugar directives', () => {
@@ -38,7 +44,7 @@ describe('sugar directives', () => {
     it('applies the entrance start values after first render', async () => {
       const fixture = TestBed.createComponent(RevealHost);
       await settle(fixture);
-      const h1 = (fixture.nativeElement as HTMLElement).querySelector('h1')!;
+      const h1 = q(fixture, 'h1');
       // gsap.from() renders the start state immediately; default preset is fade-up
       expect(Number(h1.style.opacity)).toBeLessThan(1);
       expect(h1.style.transform).toContain('translate');
@@ -49,14 +55,14 @@ describe('sugar directives', () => {
       await settle(fixture);
       fixture.componentInstance.preset.set('scale-in');
       await settle(fixture);
-      const h1 = (fixture.nativeElement as HTMLElement).querySelector('h1')!;
+      const h1 = q(fixture, 'h1');
       expect(h1.style.transform).toContain('scale');
     });
 
     it('reverts on destroy', async () => {
       const fixture = TestBed.createComponent(RevealHost);
       await settle(fixture);
-      const h1 = (fixture.nativeElement as HTMLElement).querySelector('h1')!;
+      const h1 = q(fixture, 'h1');
       fixture.destroy();
       expect(h1.style.transform).toBe('');
       expect(h1.style.opacity).toBe('');
@@ -70,7 +76,7 @@ describe('sugar directives', () => {
       try {
         const fixture = TestBed.createComponent(RevealHost);
         await settle(fixture);
-        const h1 = (fixture.nativeElement as HTMLElement).querySelector('h1')!;
+        const h1 = q(fixture, 'h1');
         expect(h1.style.opacity).toBe('');
         expect(h1.style.transform).toBe('');
       } finally {

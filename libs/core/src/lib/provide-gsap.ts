@@ -13,13 +13,13 @@ import type { GsapConfig, GsapTweenVars } from './types';
 export interface GsapOptions {
   /**
    * GSAP plugins to register globally, e.g. `[ScrollTrigger, SplitText]`.
-   * Import them statically from the `gsap` package — since GSAP 3.13 every
+   * Import them statically from the `gsap` package; since GSAP 3.13 every
    * plugin (including the former Club plugins) ships free in the npm package.
    */
   plugins?: object[];
   /** Passed to `gsap.config()`. */
   config?: GsapConfig;
-  /** Passed to `gsap.defaults()` — default vars for every tween. */
+  /** Passed to `gsap.defaults()`: default vars for every tween. */
   defaults?: GsapTweenVars;
 }
 
@@ -29,7 +29,7 @@ export const GSAP_OPTIONS = new InjectionToken<GsapOptions>('GSAP_OPTIONS');
  * Configures GSAP for the application: registers plugins and applies global
  * config/defaults. Registration is skipped on the server.
  *
- * `provideGsap()` is optional — `injectGsap()` works without it. Use it when
+ * `provideGsap()` is optional; `injectGsap()` works without it. Use it when
  * you need plugins or global configuration:
  *
  * ```ts

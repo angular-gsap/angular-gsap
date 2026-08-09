@@ -33,10 +33,17 @@ function entranceVars(config: EntranceConfig): GsapTweenVars {
       config.gsap.core as unknown as { globals(): Record<string, unknown> }
     ).globals();
     if (globals['ScrollTrigger']) {
-      vars['scrollTrigger'] = { trigger: config.trigger, start: config.start };
+      // 'reset' on leave-back makes the reveal self-correct when the trigger
+      // is created already past its start (tall viewports, SPA navigation
+      // while scrolled): it rewinds above the start and replays on entry.
+      vars['scrollTrigger'] = {
+        trigger: config.trigger,
+        start: config.start,
+        toggleActions: 'play none none reset',
+      };
     } else if (typeof ngDevMode === 'undefined' || ngDevMode) {
       console.warn(
-        '[angular-gsap] on="scroll" needs ScrollTrigger — add provideGsap({ plugins: [ScrollTrigger] }). Falling back to reveal on init.'
+        '[angular-gsap] on="scroll" needs ScrollTrigger. Add provideGsap({ plugins: [ScrollTrigger] }); falling back to reveal on init.'
       );
     }
   }
@@ -45,7 +52,7 @@ function entranceVars(config: EntranceConfig): GsapTweenVars {
 
 /**
  * Entrance animation for a single element. Sugar over {@link injectGsap} for
- * the common case — anything beyond a preset entrance belongs in `injectGsap`.
+ * the common case; anything beyond a preset entrance belongs in `injectGsap`.
  *
  * ```html
  * <h1 reveal>Fades up on init</h1>

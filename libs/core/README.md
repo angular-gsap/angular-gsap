@@ -1,6 +1,6 @@
 # @angular-gsap/core
 
-**Write vanilla GSAP inside Angular.** An Angular-managed `gsap.context()` — host-scoped, signal-reactive, SSR-safe, auto-cleaned — without wrapping a single GSAP API. The Angular equivalent of `@gsap/react`'s `useGSAP()`.
+**Write vanilla GSAP inside Angular.** An Angular-managed `gsap.context()` (host-scoped, signal-reactive, SSR-safe, auto-cleaned) without wrapping a single GSAP API. The Angular equivalent of `@gsap/react`'s `useGSAP()`.
 
 ```ts
 import { Component, signal } from '@angular/core';
@@ -43,7 +43,7 @@ bootstrapApplication(App, {
 });
 ```
 
-Every GSAP plugin — ScrollTrigger, SplitText, MorphSVG, and the rest — is free and ships in the `gsap` npm package.
+Every GSAP plugin is free and ships in the `gsap` npm package: ScrollTrigger, SplitText, MorphSVG, and the rest.
 
 ## Documentation
 

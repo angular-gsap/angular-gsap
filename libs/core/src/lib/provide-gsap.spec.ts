@@ -49,7 +49,7 @@ describe('provideGsap', () => {
     expect(registerPlugin).not.toHaveBeenCalled();
   });
 
-  it('is optional configuration — an empty call provides without side effects', () => {
+  it('is optional configuration: an empty call provides without side effects', () => {
     const registerPlugin = vi
       .spyOn(gsap, 'registerPlugin')
       .mockImplementation(() => void 0);

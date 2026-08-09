@@ -73,11 +73,11 @@ export interface GsapRef {
  * - **scoped** to the component's host element (selector text like `'.box'`
  *   only matches elements inside the component),
  * - **created after the first render** (`afterRenderEffect`), so the DOM exists,
- * - **skipped on the server** — SSR-safe with no branching in user code,
+ * - **skipped on the server**: SSR-safe with no branching in user code,
  * - **run outside Angular's change detection**,
- * - **signal-reactive** — signals read in the callback re-run it (with a
+ * - **signal-reactive**: signals read in the callback re-run it (with a
  *   `revert()` of the previous cycle) when they change,
- * - **auto-cleaned** — the context is reverted when the component is destroyed.
+ * - **auto-cleaned**: the context is reverted when the component is destroyed.
  *
  * ```ts
  * ⁣@Component({ template: `<div class="box"></div>` })
@@ -129,7 +129,7 @@ export function injectGsap(
     let ctx: GsapContext | undefined;
 
     // afterRenderEffect tracks signal reads like effect(), but always runs
-    // AFTER the render that applied the change — so when a signal alters the
+    // AFTER the render that applied the change, so when a signal alters the
     // template (e.g. @for adds elements), the callback sees the updated DOM.
     // gsap.context() invokes its function synchronously, so reads inside the
     // callback are tracked; runOutsideAngular only changes the zone, not the
