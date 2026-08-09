@@ -29,7 +29,7 @@ export default [
         'error',
         {
           type: 'attribute',
-          prefix: 'lib',
+          prefix: 'gsap',
           style: 'camelCase',
         },
       ],
