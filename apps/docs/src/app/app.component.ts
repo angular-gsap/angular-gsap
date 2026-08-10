@@ -96,7 +96,7 @@ const NAV = {
         <button
           type="button"
           class="pill theme"
-          (click)="toggleTheme()"
+          (click)="toggleTheme($event)"
           [attr.aria-label]="t().theme"
         >
           ◐
@@ -279,7 +279,7 @@ export class AppComponent {
       : `/es${u === '/' ? '' : u}`;
   });
 
-  protected toggleTheme(): void {
+  protected toggleTheme(event: MouseEvent): void {
     const root = this.document.documentElement;
     const view = this.document.defaultView;
     const current =
@@ -288,11 +288,46 @@ export class AppComponent {
         ? 'dark'
         : 'light');
     const next = current === 'dark' ? 'light' : 'dark';
-    root.dataset['theme'] = next;
-    try {
-      view?.localStorage.setItem('theme', next);
-    } catch {
-      /* private mode */
+    const apply = () => {
+      root.dataset['theme'] = next;
+      try {
+        view?.localStorage.setItem('theme', next);
+      } catch {
+        /* private mode */
+      }
+    };
+
+    const reduce = view?.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    const doc = this.document as Document & {
+      startViewTransition?: (cb: () => void) => { ready: Promise<void> };
+    };
+    if (reduce || !doc.startViewTransition || !view) {
+      apply();
+      return;
     }
+
+    // circular reveal of the new theme, expanding from the toggle button
+    const { clientX: x, clientY: y } = event;
+    const radius = Math.hypot(
+      Math.max(x, view.innerWidth - x),
+      Math.max(y, view.innerHeight - y)
+    );
+    doc.startViewTransition(apply).ready.then(() => {
+      root.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${radius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 550,
+          easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+          pseudoElement: '::view-transition-new(root)',
+        }
+      );
+    });
   }
 }

@@ -15,6 +15,7 @@ uniform float u_time;
 uniform float u_warp;
 uniform float u_hue;
 uniform float u_zoom;
+uniform vec2 u_mouse;
 
 vec3 hsv2rgb(vec3 c) {
   vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -24,12 +25,15 @@ vec3 hsv2rgb(vec3 c) {
 
 void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y);
-  uv *= u_zoom;
+  uv = uv * u_zoom - u_mouse;
   float d = length(uv);
   float a = atan(uv.y, uv.x);
   float wave = sin(12.0 * d - u_time * 2.0 + u_warp * 5.0 * sin(3.0 * a + u_time * 0.7));
-  float band = step(0.0, wave);
-  vec3 bright = hsv2rgb(vec3(u_hue, 0.85, 0.96));
+  float band = smoothstep(-0.12, 0.12, wave);
+  float pick = step(0.0, sin(5.0 * d - u_time * 0.6));
+  vec3 c1 = hsv2rgb(vec3(fract(u_hue), 0.85, 0.96));
+  vec3 c2 = hsv2rgb(vec3(fract(u_hue + 0.42), 0.85, 0.96));
+  vec3 bright = mix(c1, c2, pick);
   vec3 dark = vec3(0.075, 0.075, 0.086);
   gl_FragColor = vec4(mix(dark, bright, band), 1.0);
 }`;
@@ -43,7 +47,7 @@ const COPY = {
     eyebrow: 'Example · WebGL',
     title: 'WebGL uniforms',
     intro:
-      'GSAP tweens plain object properties, so shader uniforms are fair game. The render loop runs on <code>gsap.ticker</code>, the ambient drift is a yoyo tween on <code>u_warp</code>, and the Pulse button tweens zoom and hue through <code>contextSafe</code>. The returned cleanup removes the ticker callback on destroy.',
+      "GSAP tweens plain object properties, so shader uniforms are fair game. The render loop runs on <code>gsap.ticker</code>, the ambient drift is a yoyo tween on <code>u_warp</code>, the pattern's center chases the pointer through two <code>quickTo</code> setters, and Pulse tweens zoom and hue. The returned cleanup removes the ticker callback on destroy.",
     pulse: 'Pulse',
     how: 'How this works',
     explain: [
@@ -56,7 +60,7 @@ const COPY = {
     eyebrow: 'Ejemplo · WebGL',
     title: 'Uniforms de WebGL',
     intro:
-      'GSAP anima propiedades de objetos planos, así que los uniforms de un shader también cuentan. El loop de render corre en <code>gsap.ticker</code>, la deriva ambiental es un tween yoyo sobre <code>u_warp</code>, y el botón Pulso anima zoom y tono vía <code>contextSafe</code>. La limpieza devuelta quita el callback del ticker al destruir.',
+      'GSAP anima propiedades de objetos planos, así que los uniforms de un shader también cuentan. El loop de render corre en <code>gsap.ticker</code>, la deriva ambiental es un tween yoyo sobre <code>u_warp</code>, y el centro del patrón persigue al puntero con dos setters <code>quickTo</code>, y Pulso anima zoom y tono. La limpieza devuelta quita el callback del ticker al destruir.',
     pulse: 'Pulso',
     how: 'Cómo funciona',
     explain: [
@@ -84,7 +88,11 @@ const COPY = {
 
       <div class="example">
         <div>
-          <div class="stage gl-stage">
+          <div
+            class="stage gl-stage"
+            (pointermove)="onMove($event)"
+            (pointerleave)="onLeave()"
+          >
             <canvas #cnv></canvas>
           </div>
           <div class="stage-controls">
@@ -127,7 +135,9 @@ export default class WebglPage {
   private readonly canvas =
     viewChild.required<ElementRef<HTMLCanvasElement>>('cnv');
 
-  private readonly u = { warp: 0.25, hue: 0.36, zoom: 1 };
+  private readonly u = { warp: 0.25, hue: 0.36, zoom: 1, mx: 0, my: 0 };
+  private moveX?: (v: number) => unknown;
+  private moveY?: (v: number) => unknown;
 
   protected readonly ref = injectGsap(({ gsap }) => {
     const canvas = target(this.canvas);
@@ -171,6 +181,7 @@ export default class WebglPage {
     const uWarp = uni('u_warp');
     const uHue = uni('u_hue');
     const uZoom = uni('u_zoom');
+    const uMouse = uni('u_mouse');
 
     const render = (time: number) => {
       const w = canvas.clientWidth;
@@ -185,9 +196,14 @@ export default class WebglPage {
       gl.uniform1f(uWarp, this.u.warp);
       gl.uniform1f(uHue, this.u.hue);
       gl.uniform1f(uZoom, this.u.zoom);
+      gl.uniform2f(uMouse, this.u.mx, this.u.my);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     gsap.ticker.add(render);
+
+    // one reusable tween per pointer axis, quickTo style
+    this.moveX = gsap.quickTo(this.u, 'mx', { duration: 0.6, ease: 'power3' });
+    this.moveY = gsap.quickTo(this.u, 'my', { duration: 0.6, ease: 'power3' });
 
     // ambient drift: a tween on a plain object
     gsap.to(this.u, {
@@ -199,6 +215,22 @@ export default class WebglPage {
     });
 
     return () => gsap.ticker.remove(render);
+  });
+
+  protected onMove = this.ref.contextSafe((event: PointerEvent) => {
+    const canvas = target(this.canvas);
+    if (!canvas) {
+      return;
+    }
+    const r = canvas.getBoundingClientRect();
+    const m = Math.min(r.width, r.height);
+    this.moveX?.((event.clientX - r.left - r.width / 2) / m);
+    this.moveY?.(-(event.clientY - r.top - r.height / 2) / m);
+  });
+
+  protected onLeave = this.ref.contextSafe(() => {
+    this.moveX?.(0);
+    this.moveY?.(0);
   });
 
   protected pulse = this.ref.contextSafe(() => {
@@ -215,32 +247,27 @@ export default class WebglPage {
   });
 
   protected readonly snippet = [
-    `u = { warp: 0.25, hue: 0.36, zoom: 1 };`,
+    `u = { warp: 0.25, hue: 0.36, zoom: 1, mx: 0, my: 0 };`,
     ``,
     `ref = injectGsap(({ gsap }) => {`,
-    `  const gl = target(this.canvas)!.getContext('webgl')!;`,
     `  // …compile shader, look up uniforms…`,
-    ``,
-    `  const render = (time: number) => {`,
-    `    gl.uniform1f(uWarp, this.u.warp);`,
-    `    gl.uniform1f(uZoom, this.u.zoom);`,
+    `  const render = () => {`,
+    `    gl.uniform2f(uMouse, this.u.mx, this.u.my);`,
     `    gl.drawArrays(gl.TRIANGLES, 0, 3);`,
     `  };`,
     `  gsap.ticker.add(render);`,
     ``,
     `  // uniforms are just object properties`,
-    `  gsap.to(this.u, {`,
-    `    warp: 0.9, duration: 6,`,
-    `    yoyo: true, repeat: -1,`,
-    `  });`,
+    `  this.moveX = gsap.quickTo(this.u, 'mx',`,
+    `    { duration: 0.6, ease: 'power3' });`,
+    `  gsap.to(this.u, { warp: 0.9, yoyo: true, repeat: -1 });`,
     ``,
     `  // runs on revert/destroy, like gsap.context()`,
     `  return () => gsap.ticker.remove(render);`,
     `});`,
     ``,
-    `pulse = this.ref.contextSafe(() =>`,
-    `  this.ref.gsap.fromTo(this.u,`,
-    `    { zoom: 1.7 }, { zoom: 1, ease: 'expo.out' })`,
+    `onMove = this.ref.contextSafe((e: PointerEvent) =>`,
+    `  this.moveX?.(toUv(e).x)`,
     `);`,
   ].join('\n');
 }

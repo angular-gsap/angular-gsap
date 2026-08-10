@@ -1,5 +1,5 @@
-import { Component, ElementRef, viewChild } from '@angular/core';
-import { DrawSvg, injectGsap, target } from '@angular-gsap/core';
+import { Component, ElementRef, viewChild, viewChildren } from '@angular/core';
+import { DrawSvg, injectGsap, target, targets } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
@@ -8,10 +8,20 @@ export const routeMeta: RouteMeta = {
   title: 'SVG · angular-gsap',
 };
 
-const BLOB =
-  'M200 170 C 225 120, 300 125, 305 165 C 310 205, 250 235, 215 210 C 185 190, 175 195, 200 170 Z';
-const STAR =
-  'M250 110 L262 150 L305 150 L272 176 L284 216 L250 192 L216 216 L228 176 L195 150 L238 150 Z';
+const SHAPES = [
+  {
+    d: 'M200 170 C 225 120, 300 125, 305 165 C 310 205, 250 235, 215 210 C 185 190, 175 195, 200 170 Z',
+    fill: '#e23b80',
+  },
+  {
+    d: 'M250 110 L262 150 L305 150 L272 176 L284 216 L250 192 L216 216 L228 176 L195 150 L238 150 Z',
+    fill: '#ffb627',
+  },
+  {
+    d: 'M262 108 L214 170 L244 170 L226 218 L288 152 L254 152 Z',
+    fill: '#5b4be8',
+  },
+] as const;
 
 const COPY = {
   en: {
@@ -59,17 +69,17 @@ const COPY = {
       <div class="example">
         <div>
           <div class="stage svg-stage">
-            <svg viewBox="0 0 400 260" drawSvg [each]="0.25">
+            <svg viewBox="0 0 400 260" drawSvg [each]="0.2">
               <path
                 #track
-                d="M 30 215 C 120 60, 280 60, 370 215"
+                d="M 60 130 C 60 60, 180 60, 200 130 C 220 200, 340 200, 340 130 C 340 60, 220 60, 200 130 C 180 200, 60 200, 60 130 Z"
                 fill="none"
                 stroke="var(--ink)"
                 stroke-width="3"
                 stroke-linecap="round"
               />
               <path
-                d="M 40 70 L 90 25 L 140 70 L 190 25"
+                d="M 40 36 L 84 22 L 128 36"
                 fill="none"
                 stroke="var(--arc)"
                 stroke-width="6"
@@ -77,19 +87,31 @@ const COPY = {
                 stroke-linejoin="round"
               />
               <path
+                d="M 272 34 L 316 22 L 360 36"
+                fill="none"
+                stroke="var(--ember)"
+                stroke-width="6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
                 #shape
-                [attr.d]="blob"
-                fill="var(--pulse)"
+                [attr.d]="shapes[0].d"
+                [attr.fill]="shapes[0].fill"
                 stroke="var(--ink)"
                 stroke-width="3"
+                stroke-linejoin="round"
               />
-              <circle
-                #rider
-                r="11"
-                fill="var(--kinetic)"
-                stroke="var(--ink)"
-                stroke-width="3"
-              />
+              @for (i of [0, 1, 2]; track i) {
+                <polygon
+                  #rider
+                  points="-9,-7 11,0 -9,7"
+                  fill="var(--kinetic)"
+                  stroke="var(--ink)"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+              }
             </svg>
           </div>
           <div class="stage-controls">
@@ -128,67 +150,102 @@ const COPY = {
 export default class SvgPage {
   protected readonly c = COPY[injectLocale()];
 
-  protected readonly blob = BLOB;
-  private morphed = false;
+  protected readonly shapes = SHAPES;
+  private shapeIndex = 0;
 
   private readonly track = viewChild.required<ElementRef<SVGPathElement>>('track');
   private readonly shape = viewChild.required<ElementRef<SVGPathElement>>('shape');
-  private readonly rider = viewChild.required<ElementRef<SVGCircleElement>>('rider');
+  private readonly riderEls = viewChildren<ElementRef<SVGPolygonElement>>('rider');
 
   protected readonly ref = injectGsap(({ gsap }) => {
     const track = target(this.track);
-    if (!track) {
+    const riders = targets(this.riderEls);
+    if (!track || riders.length === 0) {
       return;
     }
-    gsap.to(target(this.rider), {
-      motionPath: {
-        path: track,
-        align: track,
-        alignOrigin: [0.5, 0.5],
-      },
-      duration: 4,
-      repeat: -1,
+
+    // pop the arrows in once the strokes have drawn
+    gsap.set(riders, { scale: 0, transformOrigin: 'center' });
+    gsap.to(riders, {
+      scale: 1,
+      delay: 1.3,
+      stagger: 0.12,
+      ease: 'back.out(2.5)',
+      duration: 0.4,
+    });
+
+    // three arrows chase each other around the figure eight,
+    // rotating with the tangent, offset by a third of the loop
+    riders.forEach((rider, i) => {
+      gsap.to(rider, {
+        motionPath: {
+          path: track,
+          align: track,
+          alignOrigin: [0.5, 0.5],
+          autoRotate: true,
+          start: i / 3,
+          end: 1 + i / 3,
+        },
+        duration: 7,
+        repeat: -1,
+        ease: 'none',
+      });
+    });
+
+    // the morph shape never quite sits still
+    gsap.to(target(this.shape), {
+      y: -6,
       yoyo: true,
-      ease: 'power1.inOut',
+      repeat: -1,
+      duration: 1.6,
+      ease: 'sine.inOut',
     });
   });
 
   protected morph = this.ref.contextSafe(() => {
-    this.morphed = !this.morphed;
+    this.shapeIndex = (this.shapeIndex + 1) % SHAPES.length;
+    const next = SHAPES[this.shapeIndex];
     this.ref.gsap.to(target(this.shape), {
-      morphSVG: this.morphed ? STAR : BLOB,
-      duration: 0.7,
-      ease: 'power2.inOut',
+      morphSVG: next.d,
+      fill: next.fill,
+      duration: 0.8,
+      ease: 'power3.inOut',
     });
   });
 
   protected readonly tplSnippet = [
     `<!-- every stroke inside draws in, staggered -->`,
-    `<svg drawSvg [each]="0.25" viewBox="0 0 400 260">`,
-    `  <path #track d="M 30 215 C …" />`,
-    `  <path #shape [attr.d]="blob" />`,
-    `  <circle #rider r="11" />`,
+    `<svg drawSvg [each]="0.2" viewBox="0 0 400 260">`,
+    `  <path #track d="M 60 130 C …" />   <!-- ∞ -->`,
+    `  <path #shape [attr.d]="shapes[0].d" />`,
+    `  @for (i of [0, 1, 2]; track i) {`,
+    `    <polygon #rider points="-9,-7 11,0 -9,7" />`,
+    `  }`,
     `</svg>`,
-    ``,
-    `<button (click)="morph()">Morph</button>`,
   ].join('\n');
 
   protected readonly snippet = [
     `ref = injectGsap(({ gsap }) => {`,
-    `  // ride the curve, forever`,
-    `  gsap.to(target(this.rider), {`,
-    `    motionPath: {`,
-    `      path: target(this.track),`,
-    `      align: target(this.track),`,
-    `      alignOrigin: [0.5, 0.5],`,
-    `    },`,
-    `    duration: 4, repeat: -1, yoyo: true,`,
-    `  });`,
+    `  // three arrows chase around the ∞,`,
+    `  // rotating with the tangent`,
+    `  targets(this.riders).forEach((r, i) =>`,
+    `    gsap.to(r, {`,
+    `      motionPath: {`,
+    `        path: target(this.track),`,
+    `        align: target(this.track),`,
+    `        alignOrigin: [0.5, 0.5],`,
+    `        autoRotate: true,`,
+    `        start: i / 3,`,
+    `        end: 1 + i / 3,`,
+    `      },`,
+    `      duration: 7, repeat: -1, ease: 'none',`,
+    `    })`,
+    `  );`,
     `});`,
     ``,
     `morph = this.ref.contextSafe(() =>`,
     `  this.ref.gsap.to(target(this.shape), {`,
-    `    morphSVG: STAR, duration: 0.7,`,
+    `    morphSVG: next.d, fill: next.fill,`,
     `  })`,
     `);`,
   ].join('\n');
