@@ -294,19 +294,96 @@ export const routeMeta: RouteMeta = {
       </section>
 
       <section class="api-section">
-        <h2>The rest of GSAP</h2>
+        <h2>Plugin coverage</h2>
         <p>
-          There is no wrapper to wait for: <code>gsap.matchMedia()</code>,
-          <code>Draggable.create()</code>, <code>Observer.create()</code>,
-          timelines, effects, and every plugin run inside the
-          <code>injectGsap</code> callback exactly as the GSAP docs show, and
-          the context reverts what they create. If a callback sets up
-          something GSAP doesn't track (a <code>gsap.ticker</code> loop, an
-          event listener), return a cleanup function and it runs on destroy.
-          ScrollSmoother stays deliberately un-wrapped: it's a page-level
-          singleton that owns the body scroll, so create it once in your app
-          shell's <code>injectGsap</code> callback rather than per component.
+          The whole GSAP catalog works here, because nothing is wrapped.
+          Where this table says "vars" or "callback", use the plugin inside
+          <code>injectGsap</code> exactly as the GSAP docs show.
         </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Plugin</th>
+              <th>How you use it</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ScrollTrigger, SplitText, DrawSVG, ScrambleText, ScrollTo, Draggable, Inertia, Observer</td>
+              <td>
+                Directives (<code>reveal</code>/<code>stagger</code>
+                <code>on="scroll"</code>, <code>parallax</code>,
+                <code>splitReveal</code>, <code>drawSvg</code>,
+                <code>scrambleText</code>, <code>scrollTo</code>,
+                <code>drag</code>, <code>observe</code>) or raw in the
+                callback. Examples throughout.
+              </td>
+            </tr>
+            <tr>
+              <td>Flip, MorphSVG, MotionPath</td>
+              <td>
+                Raw in the callback; see the Flip, SVG, and Observer &amp;
+                Inertia example pages.
+              </td>
+            </tr>
+            <tr>
+              <td>Text, Physics2D, PhysicsProps</td>
+              <td>
+                Property plugins: register them, then use
+                <code>text</code>/<code>physics2D</code>/<code>physicsProps</code>
+                vars in any tween.
+              </td>
+            </tr>
+            <tr>
+              <td>EasePack (rough, slow, expoScale), CustomEase, CustomBounce, CustomWiggle</td>
+              <td>
+                Register through <code>provideGsap</code>, then use them as
+                ease strings (<code>ease: 'rough(…)'</code>) or create curves
+                in the callback (<code>CustomEase.create()</code>).
+              </td>
+            </tr>
+            <tr>
+              <td>ScrollSmoother</td>
+              <td>
+                Deliberately un-wrapped: it's a page-level singleton that owns
+                the body scroll. Create it once in your app shell's
+                <code>injectGsap</code> callback.
+              </td>
+            </tr>
+            <tr>
+              <td>GSDevTools, MotionPathHelper</td>
+              <td>
+                Dev tools: create them in the callback during development
+                (<code>GSDevTools.create({ animation: tl })</code>); the
+                context cleans them up.
+              </td>
+            </tr>
+            <tr>
+              <td>Pixi, Easel</td>
+              <td>
+                Canvas-library bridges; register and tween Pixi/Easel objects
+                from the callback like any other target.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          Anything GSAP doesn't track (a <code>gsap.ticker</code> loop, an
+          event listener): return a cleanup function from the callback and it
+          runs on destroy.
+        </p>
+      </section>
+
+      <section class="api-section">
+        <h2>Tree-shaking plugins</h2>
+        <p>
+          The library imports no GSAP plugin, ever, so your bundle contains
+          exactly the plugins your app imports and nothing else. Register
+          only what a given scope uses; <code>provideGsap</code> also works
+          in lazy route <code>providers</code>, which puts a plugin's code in
+          that route's chunk instead of the main bundle:
+        </p>
+        <app-code [code]="routePluginsSig" label="app.routes.ts" />
       </section>
 
       <section class="api-section">
@@ -410,6 +487,16 @@ export default class ReferencePage {
     `  gsap.to(target(this.box), { x: 100 });`,
     `  gsap.from(targets(this.dots), { scale: 0 });`,
     `});`,
+  ].join('\n');
+
+  protected readonly routePluginsSig = [
+    `// main bundle: no plugins at all`,
+    `{`,
+    `  path: 'gallery',`,
+    `  loadComponent: () => import('./gallery'),`,
+    `  // Flip ships in the gallery chunk only`,
+    `  providers: [provideGsap({ plugins: [Flip] })],`,
+    `},`,
   ].join('\n');
 
   protected readonly directiveSig = [

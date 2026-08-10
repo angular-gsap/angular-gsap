@@ -209,7 +209,7 @@ pnpm nx serve docs
 ## Small and fast
 
 - The package is about 6 kB (FESM + types) with no dependencies beyond Angular, GSAP, and tslib. No rxjs, no zone.js.
-- `sideEffects: false`: exports you don't use (the directives, the helpers) tree-shake away, and GSAP plugins are bundled only when you import them.
+- `sideEffects: false`: exports you don't use (the directives, the helpers) tree-shake away, and GSAP plugins are bundled only when you import them. `provideGsap` also works in lazy route `providers`, which keeps a plugin's code in that route's chunk instead of the main bundle.
 - Animations are created outside Angular's change detection and run on GSAP's ticker. A 60 fps tween schedules no Angular work, and the whole library is zoneless-ready.
 
 ## Compatibility
