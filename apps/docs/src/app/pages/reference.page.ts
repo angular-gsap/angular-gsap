@@ -15,9 +15,8 @@ export const routeMeta: RouteMeta = {
         <p class="eyebrow">Reference</p>
         <h1>The whole API</h1>
         <p>
-          Everything <code>&#64;angular-gsap/core</code> exports. The surface
-          is small on purpose: the library owns lifecycle, GSAP owns
-          animation.
+          Everything <code>&#64;angular-gsap/core</code> exports. A small
+          surface: the library owns lifecycle, GSAP owns animation.
         </p>
       </header>
 

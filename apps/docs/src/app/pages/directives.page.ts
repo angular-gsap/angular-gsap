@@ -51,7 +51,7 @@ const COPY = {
     },
     how: 'How this works',
     explain: [
-      '<code>reveal</code> and <code>stagger</code> are presets on top of <code>injectGsap</code>: same scoping, same cleanup, same signal inputs. They only cover entrances, on purpose. Anything richer goes in the composable.',
+      '<code>reveal</code> and <code>stagger</code> are presets on top of <code>injectGsap</code>: same scoping, same cleanup, same signal inputs. They cover entrances; for anything richer, drop to the composable.',
       'The board is wrapped in <code>sequence="0.1"</code>, so the heading, the cards, and the split line play one after another with no <code>[delay]</code> bookkeeping. Template nesting is the choreography; <code>[at]</code> takes any GSAP position parameter for overlaps.',
       'Change any input and the entrance replays. The Replay button just recreates the subtree.',
       "With Reduce Motion turned on in the OS, these directives don't animate and the content simply shows. If this page looks static, check that setting.",
@@ -87,7 +87,7 @@ const COPY = {
     },
     how: 'Cómo funciona',
     explain: [
-      '<code>reveal</code> y <code>stagger</code> son presets sobre <code>injectGsap</code>: mismo scoping, misma limpieza, mismos inputs de signal. Solo cubren entradas, a propósito. Cualquier cosa más rica va en el composable.',
+      '<code>reveal</code> y <code>stagger</code> son presets sobre <code>injectGsap</code>: mismo scoping, misma limpieza, mismos inputs de signal. Cubren entradas; para cualquier cosa más rica, usa el composable.',
       'El tablero está envuelto en <code>sequence="0.1"</code>: el título, las tarjetas y la línea partida entran una tras otra sin contabilidad de <code>[delay]</code>. Anidar en el template es la coreografía; <code>[at]</code> acepta cualquier parámetro de posición de GSAP.',
       'Cambia cualquier input y la entrada se repite. El botón Repetir solo recrea el subárbol.',
       'Con Reducir Movimiento activado en el sistema, estas directivas no animan y el contenido simplemente aparece. Si esta página se ve estática, revisa ese ajuste.',

@@ -67,8 +67,11 @@ const NAV = {
         ],
       },
       {
-        label: 'Beyond the DOM',
-        links: [{ path: '/webgl', label: 'WebGL' }],
+        label: 'Advanced',
+        links: [
+          { path: '/sections', label: 'Sections' },
+          { path: '/webgl', label: 'WebGL' },
+        ],
       },
       {
         label: 'Reference',
@@ -113,8 +116,11 @@ const NAV = {
         ],
       },
       {
-        label: 'Más allá del DOM',
-        links: [{ path: '/webgl', label: 'WebGL' }],
+        label: 'Avanzado',
+        links: [
+          { path: '/sections', label: 'Secciones' },
+          { path: '/webgl', label: 'WebGL' },
+        ],
       },
       {
         label: 'Referencia',

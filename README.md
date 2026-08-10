@@ -201,7 +201,9 @@ replay = () => this.run.update((n) => n + 1);
 
 ## Docs & examples
 
-The [`apps/docs`](./apps/docs) app is a live tour built with [Analog](https://analogjs.org), with the source of every example alongside it: SplitText hero, signal-driven staggers, the directives, timeline controls, ScrollTrigger scrubbing, a FLIP-animated filter, a quickTo cursor follower, SVG drawing/morphing/motion paths, and GSAP-driven WebGL uniforms.
+Live docs with every example's full source, in English and Spanish: signal-driven tweens, timelines, ScrollTrigger, SplitText, Flip, Draggable with inertia, Observer, SVG drawing and morphing, a WebGL cube, and a complete directive reference with running demos.
+
+To run them locally:
 
 ```sh
 pnpm install
