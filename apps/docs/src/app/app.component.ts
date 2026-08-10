@@ -63,6 +63,7 @@ const NAV = {
           { path: '/svg', label: 'SVG' },
           { path: '/flip', label: 'Flip' },
           { path: '/drag', label: 'Draggable' },
+          { path: '/loop', label: 'Observer & Inertia' },
         ],
       },
       {
@@ -108,6 +109,7 @@ const NAV = {
           { path: '/svg', label: 'SVG' },
           { path: '/flip', label: 'Flip' },
           { path: '/drag', label: 'Draggable' },
+          { path: '/loop', label: 'Observer e Inertia' },
         ],
       },
       {
