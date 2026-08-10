@@ -81,6 +81,7 @@ const BGS = [
           </div>
         </div>
         <div class="panels">
+          <app-code [code]="tplSnippet" lang="html" label="sections.html" />
           <app-code [code]="snippet" label="sections.ts" />
         </div>
       </div>
@@ -238,6 +239,22 @@ export default class SectionsPage {
     });
     return () => observer.kill();
   });
+
+  protected readonly tplSnippet = [
+    `<div #stage class="stage">`,
+    `  @for (slide of slides; track $index) {`,
+    `    <section class="slide" #slideEl>`,
+    `      <div class="outer" #outerEl>`,
+    `        <div class="inner" #innerEl>`,
+    `          <div class="bg" #bgEl>`,
+    `            <h2 #titleEl>{{ slide }}</h2>`,
+    `          </div>`,
+    `        </div>`,
+    `      </div>`,
+    `    </section>`,
+    `  }`,
+    `</div>`,
+  ].join('\n');
 
   protected readonly snippet = [
     `slides = viewChildren<ElementRef>('slideEl');`,
