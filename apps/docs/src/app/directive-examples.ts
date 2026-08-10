@@ -322,7 +322,12 @@ export const DIRECTIVE_EXAMPLES: DirectiveExample[] = [
     ]),
     html: L([
       `<!-- wheel, touch, and pointer, one stream -->`,
-      `<section observe (up)="next()" (down)="previous()">`,
+      `<section`,
+      `  observe`,
+      `  [preventDefault]="true"`,
+      `  (up)="next()"`,
+      `  (down)="previous()"`,
+      `>`,
       `  Slide {{ slide() + 1 }} of 5`,
       `</section>`,
     ]),
