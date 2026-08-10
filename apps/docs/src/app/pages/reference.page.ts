@@ -167,7 +167,8 @@ export const routeMeta: RouteMeta = {
           engine: <code>reveal</code>, <code>stagger</code>,
           <code>splitReveal</code>, <code>scrambleText</code>,
           <code>drawSvg</code>, <code>counter</code>, <code>parallax</code>,
-          <code>drag</code>, <code>scrollTo</code>, <code>observe</code>, and
+          <code>drag</code>, <code>scrollTo</code>, <code>observe</code>,
+          <code>hover</code>, and
           <code>sequence</code>, which composes child entrances into one
           timeline (<code>[at]</code> accepts GSAP position syntax). Import
           the classes you use or <code>GSAP_DIRECTIVES</code> for all of

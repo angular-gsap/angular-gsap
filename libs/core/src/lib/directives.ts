@@ -2,6 +2,7 @@ import { Directive, ElementRef, inject, input, numberAttribute, output } from '@
 import { Counter } from './counter';
 import { Drag } from './drag';
 import { DrawSvg } from './draw-svg';
+import { Hover } from './hover';
 import { Observe } from './observe';
 import { ScrambleText } from './scramble-text';
 import { ScrollTo } from './scroll-to';
@@ -183,6 +184,7 @@ export const GSAP_DIRECTIVES = [
   Counter,
   Drag,
   DrawSvg,
+  Hover,
   Observe,
   Parallax,
   Reveal,

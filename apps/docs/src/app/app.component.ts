@@ -8,6 +8,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { filter, map } from 'rxjs';
+import { Hover } from '@angular-gsap/core';
 import type { DocsLocale } from './i18n';
 
 const NAV = {
@@ -53,10 +54,10 @@ const NAV = {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Hover],
   template: `
     <header class="top">
-      <a [routerLink]="p('/')" class="brand-wrap">
+      <a [routerLink]="p('/')" class="brand-wrap" hover="tilt">
         <img
           class="brand-logo"
           src="/favicon-192.png"
@@ -71,35 +72,37 @@ const NAV = {
           [routerLink]="p('/')"
           routerLinkActive="on"
           [routerLinkActiveOptions]="{ exact: true }"
+          hover
           >{{ t().home }}</a
         >
-        <a [routerLink]="p('/start')" routerLinkActive="on">{{
+        <a [routerLink]="p('/start')" routerLinkActive="on" hover>{{
           t().start
         }}</a>
-        <a [routerLink]="p('/directives')" routerLinkActive="on">{{
+        <a [routerLink]="p('/directives')" routerLinkActive="on" hover>{{
           t().directives
         }}</a>
-        <a [routerLink]="p('/timeline')" routerLinkActive="on">{{
+        <a [routerLink]="p('/timeline')" routerLinkActive="on" hover>{{
           t().timeline
         }}</a>
-        <a [routerLink]="p('/scroll')" routerLinkActive="on">{{
+        <a [routerLink]="p('/scroll')" routerLinkActive="on" hover>{{
           t().scroll
         }}</a>
-        <a [routerLink]="p('/text')" routerLinkActive="on">{{ t().text }}</a>
-        <a [routerLink]="p('/flip')" routerLinkActive="on">{{ t().flip }}</a>
-        <a [routerLink]="p('/pointer')" routerLinkActive="on">{{
+        <a [routerLink]="p('/text')" routerLinkActive="on" hover>{{ t().text }}</a>
+        <a [routerLink]="p('/flip')" routerLinkActive="on" hover>{{ t().flip }}</a>
+        <a [routerLink]="p('/pointer')" routerLinkActive="on" hover>{{
           t().pointer
         }}</a>
-        <a [routerLink]="p('/drag')" routerLinkActive="on">{{ t().drag }}</a>
-        <a [routerLink]="p('/svg')" routerLinkActive="on">{{ t().svg }}</a>
-        <a [routerLink]="p('/webgl')" routerLinkActive="on">{{
+        <a [routerLink]="p('/drag')" routerLinkActive="on" hover>{{ t().drag }}</a>
+        <a [routerLink]="p('/svg')" routerLinkActive="on" hover>{{ t().svg }}</a>
+        <a [routerLink]="p('/webgl')" routerLinkActive="on" hover>{{
           t().webgl
         }}</a>
-        <a [routerLink]="p('/reference')" routerLinkActive="on">{{
+        <a [routerLink]="p('/reference')" routerLinkActive="on" hover>{{
           t().api
         }}</a>
         <a
           class="pill"
+          hover="grow"
           [routerLink]="otherLocaleUrl()"
           [attr.aria-label]="t().langLabel"
           >{{ t().lang }}</a
@@ -107,6 +110,7 @@ const NAV = {
         <button
           type="button"
           class="pill theme"
+          hover="grow"
           (click)="toggleTheme($event)"
           [attr.aria-label]="t().theme"
         >
@@ -114,6 +118,7 @@ const NAV = {
         </button>
         <a
           class="gh"
+          hover="grow"
           href="https://github.com/angular-gsap/angular-gsap"
           target="_blank"
           rel="noreferrer"

@@ -2,6 +2,7 @@ export * from './lib/counter';
 export * from './lib/directives';
 export * from './lib/drag';
 export * from './lib/draw-svg';
+export * from './lib/hover';
 export * from './lib/inject-gsap';
 export * from './lib/observe';
 export * from './lib/parallax';
