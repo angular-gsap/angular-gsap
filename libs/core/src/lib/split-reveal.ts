@@ -4,8 +4,10 @@ import {
   entranceScrollTrigger,
   findSplitText,
   hasScrollTrigger,
+  joinSequence,
   warnMissingPlugin,
 } from './internal';
+import { Sequence } from './sequence';
 import { prefersReducedMotion } from './presets';
 import { GSAP_OPTIONS } from './provide-gsap';
 import type { GsapTweenVars } from './types';
@@ -39,6 +41,7 @@ function kindAttribute(value: SplitRevealKind | ''): SplitRevealKind {
 export class SplitReveal {
   private readonly host = inject<ElementRef<Element>>(ElementRef);
   private readonly options = inject(GSAP_OPTIONS, { optional: true });
+  private readonly sequence = inject(Sequence, { optional: true });
 
   /** What to split into; empty attribute means `words`. */
   readonly kind = input('words' as SplitRevealKind, {
@@ -56,6 +59,8 @@ export class SplitReveal {
   readonly each = input(Number.NaN, { transform: numberAttribute });
   /** ScrollTrigger `start` (only used with `on="scroll"`). */
   readonly start = input('top 85%');
+  /** Position in a parent `sequence` (GSAP position parameter). */
+  readonly at = input<string | number>('');
   readonly completed = output<void>();
 
   readonly ctx = injectGsap(({ gsap }) => {
@@ -94,6 +99,9 @@ export class SplitReveal {
         warnMissingPlugin('on="scroll"', 'ScrollTrigger');
       }
     }
-    gsap.from(pieces, vars);
+    const tween = gsap.from(pieces, vars);
+    if (this.on() === 'init') {
+      joinSequence(this.sequence, tween, this.at());
+    }
   });
 }

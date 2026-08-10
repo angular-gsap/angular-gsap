@@ -158,3 +158,28 @@ describe('injectGsap', () => {
     });
   });
 });
+
+describe('injectGsap cleanup functions', () => {
+  @Component({ template: '<div class="box"></div>' })
+  class CleanupHost {
+    cleanups = 0;
+    tick = signal(0);
+    ref = injectGsap(() => {
+      this.tick();
+      return () => this.cleanups++;
+    });
+  }
+
+  it('runs a returned cleanup on re-run and on destroy', async () => {
+    const fixture = TestBed.createComponent(CleanupHost);
+    await settle(fixture);
+    expect(fixture.componentInstance.cleanups).toBe(0);
+
+    fixture.componentInstance.tick.set(1);
+    await settle(fixture);
+    expect(fixture.componentInstance.cleanups).toBe(1); // reverted previous cycle
+
+    fixture.destroy();
+    expect(fixture.componentInstance.cleanups).toBe(2);
+  });
+});

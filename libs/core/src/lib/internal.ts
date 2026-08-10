@@ -1,4 +1,5 @@
-import type { Gsap, GsapTweenVars } from './types';
+import type { Sequence } from './sequence';
+import type { Gsap, GsapTween, GsapTweenVars } from './types';
 
 declare const ngDevMode: boolean | undefined;
 
@@ -70,4 +71,16 @@ export function entranceScrollTrigger(
       toggleActions: 'play none none reset',
     },
   };
+}
+
+/**
+ * Hands an entrance tween to a parent `sequence` when one exists; otherwise
+ * the tween just plays on its own.
+ */
+export function joinSequence(
+  sequence: Sequence | null,
+  tween: GsapTween,
+  at: string | number
+): void {
+  sequence?.add(tween, at);
 }

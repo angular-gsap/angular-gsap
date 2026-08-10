@@ -23,7 +23,15 @@ export interface GsapCallbackParams {
   context: GsapContext;
 }
 
-export type GsapCallback = (params: GsapCallbackParams) => void;
+/**
+ * Returning a function registers it as extra cleanup, exactly like
+ * `gsap.context()`: it runs when the context reverts (signal re-run or
+ * destroy). Use it for things GSAP doesn't track, like `gsap.ticker`
+ * callbacks or event listeners.
+ */
+export type GsapCallback = (
+  params: GsapCallbackParams
+) => void | (() => void);
 
 export interface InjectGsapOptions {
   /**
@@ -140,11 +148,10 @@ export function injectGsap(
           if (!callback) {
             return;
           }
-          if (reactive) {
-            callback({ gsap, context: self });
-          } else {
-            untracked(() => callback({ gsap, context: self }));
-          }
+          // a returned function becomes the context's cleanup, as in gsap.context()
+          return reactive
+            ? callback({ gsap, context: self })
+            : untracked(() => callback({ gsap, context: self }));
         }, scope);
       ctx = zone ? zone.runOutsideAngular(create) : create();
       ready.set(true);
