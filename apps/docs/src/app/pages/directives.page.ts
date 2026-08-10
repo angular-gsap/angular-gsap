@@ -10,7 +10,9 @@ import {
   type RevealPreset,
 } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
-import { DIRECTIVE_EXAMPLES } from '../directive-examples';
+import { CodeTabs, type CodeFile } from '../code-tabs';
+import { DIRECTIVE_EXAMPLES, type DirectiveExample } from '../directive-examples';
+import { DirectiveDemo } from '../directive-demo';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
@@ -97,6 +99,8 @@ const COPY = {
   selector: 'app-directives',
   imports: [
     CodeSnippet,
+    CodeTabs,
+    DirectiveDemo,
     Counter,
     Parallax,
     Reveal,
@@ -184,23 +188,9 @@ const COPY = {
           <article class="ref-card" [id]="ex.id">
             <h3><code>{{ ex.name }}</code></h3>
             <p [innerHTML]="refText(ex.id)"></p>
-            <div class="ref-panels">
-              <app-code
-                [code]="ex.ts"
-                [label]="ex.id.toLowerCase() + '.component.ts'"
-              />
-              <app-code
-                [code]="ex.html"
-                lang="html"
-                [label]="ex.id.toLowerCase() + '.component.html'"
-              />
-              @if (ex.css) {
-                <app-code
-                  [code]="ex.css"
-                  lang="css"
-                  [label]="ex.id.toLowerCase() + '.component.css'"
-                />
-              }
+            <div class="ref-body">
+              <app-directive-demo [id]="ex.id" [label]="c.replay" />
+              <app-code-tabs [files]="filesOf(ex)" />
             </div>
           </article>
         }
@@ -341,11 +331,17 @@ const COPY = {
       }
     }
 
-    .ref-panels {
+    .ref-body {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: 1.5rem;
       align-items: start;
+    }
+
+    @media (max-width: 56rem) {
+      .ref-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
 
     .scroll-tail {
@@ -372,6 +368,18 @@ export default class DirectivesPage {
 
   protected refText(id: string): string {
     return (this.c.refs as Record<string, string>)[id] ?? '';
+  }
+
+  protected filesOf(ex: DirectiveExample): CodeFile[] {
+    const base = ex.id.toLowerCase();
+    const files: CodeFile[] = [
+      { label: base + '.component.ts', code: ex.ts, lang: 'ts' },
+      { label: base + '.component.html', code: ex.html, lang: 'html' },
+    ];
+    if (ex.css) {
+      files.push({ label: base + '.component.css', code: ex.css, lang: 'css' });
+    }
+    return files;
   }
 
   protected readonly c = COPY[injectLocale()];
