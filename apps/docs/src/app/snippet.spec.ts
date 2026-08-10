@@ -13,12 +13,10 @@ class SnippetHost {
 describe('CodeSnippet', () => {
   it('renders source through shiki with token colors', async () => {
     const fixture = TestBed.createComponent(SnippetHost);
-    fixture.detectChanges();
     await fixture.whenStable();
 
     await vi.waitFor(
       () => {
-        fixture.detectChanges();
         const el = fixture.nativeElement as HTMLElement;
         if (!el.querySelector('pre.shiki')) {
           throw new Error('shiki output not rendered yet');

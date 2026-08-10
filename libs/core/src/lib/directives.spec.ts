@@ -24,9 +24,6 @@ class RevealHost {
 class StaggerHost {}
 
 async function settle(fixture: ComponentFixture<unknown>) {
-  fixture.detectChanges();
-  await fixture.whenStable();
-  fixture.detectChanges();
   await fixture.whenStable();
   // gsap.from() defers its first style write to the next ticker tick (lazy
   // rendering); force one so start values are observable synchronously.

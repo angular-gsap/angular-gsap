@@ -38,9 +38,6 @@ class NoCallbackHost {
 }
 
 async function settle(fixture: ComponentFixture<unknown>) {
-  fixture.detectChanges();
-  await fixture.whenStable();
-  fixture.detectChanges();
   await fixture.whenStable();
 }
 

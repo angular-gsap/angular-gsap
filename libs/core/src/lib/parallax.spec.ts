@@ -11,9 +11,6 @@ import { Parallax } from './parallax';
 class ParallaxHost {}
 
 async function settle(fixture: ComponentFixture<unknown>) {
-  fixture.detectChanges();
-  await fixture.whenStable();
-  fixture.detectChanges();
   await fixture.whenStable();
   gsap.ticker.tick();
 }
