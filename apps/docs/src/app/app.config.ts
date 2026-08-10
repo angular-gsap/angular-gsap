@@ -7,7 +7,10 @@ import {
   withFetch,
   withInterceptors,
 } from '@angular/common/http';
-import { provideClientHydration } from '@angular/platform-browser';
+import {
+  provideClientHydration,
+  withNoIncrementalHydration,
+} from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 import { withInMemoryScrolling } from '@angular/router';
 import { provideGsap } from '@angular-gsap/core';
@@ -29,7 +32,9 @@ export const appConfig: ApplicationConfig = {
     provideFileRouter(
       withInMemoryScrolling({ scrollPositionRestoration: 'top' })
     ),
-    provideClientHydration(),
+    // no @defer hydrate blocks in the docs; incremental hydration also drags
+    // in event replay, whose window access crashes Analog's prerender
+    provideClientHydration(withNoIncrementalHydration()),
     provideHttpClient(
       withFetch(),
       withInterceptors([requestContextInterceptor]),
