@@ -125,6 +125,7 @@ bootstrapApplication(App, {
     provideGsap({
       plugins: [ScrollTrigger, SplitText],
       defaults: { ease: 'power3.out' },
+      effects: [{ name: 'pop', effect: (t) => gsap.from(t, { scale: 0 }) }],
     }),
   ],
 });

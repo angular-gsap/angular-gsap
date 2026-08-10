@@ -3,6 +3,7 @@ import {
   Counter,
   Parallax,
   Reveal,
+  ScrambleText,
   Sequence,
   SplitReveal,
   Stagger,
@@ -23,6 +24,7 @@ const COPY = {
     intro:
       'Preset directives cover the common template-level cases: <code>reveal</code>, <code>stagger</code>, and <code>splitReveal</code> for entrances, <code>drawSvg</code> for strokes, <code>counter</code> for numbers, <code>parallax</code> for scroll-linked drift, and <code>sequence</code> to compose them. Everything runs on the <code>injectGsap</code> engine, so scoping, cleanup, and reduced motion come along for free.',
     boardLine: 'and this line staggers in word by word',
+    scramble: 'THIS ONE DECODES ITSELF',
     replay: 'Replay',
     scrollEyebrow: 'And on scroll',
     tailNote:
@@ -41,6 +43,7 @@ const COPY = {
     intro:
       'Las directivas preset cubren los casos comunes a nivel de template: <code>reveal</code>, <code>stagger</code> y <code>splitReveal</code> para entradas, <code>drawSvg</code> para trazos, <code>counter</code> para números, <code>parallax</code> para deriva ligada al scroll, y <code>sequence</code> para componerlas. Todo corre sobre el motor de <code>injectGsap</code>: scoping, limpieza y reduced motion vienen gratis.',
     boardLine: 'y esta línea entra palabra por palabra',
+    scramble: 'ESTA SE DECODIFICA SOLA',
     replay: 'Repetir',
     scrollEyebrow: 'Y con scroll',
     tailNote:
@@ -62,6 +65,7 @@ const COPY = {
     Counter,
     Parallax,
     Reveal,
+    ScrambleText,
     Sequence,
     SplitReveal,
     Stagger,
@@ -98,6 +102,9 @@ const COPY = {
                 </div>
                 <p class="board-line" splitReveal>
                   {{ c.boardLine }}
+                </p>
+                <p class="board-scramble" scrambleText [duration]="0.9">
+                  {{ c.scramble }}
                 </p>
                 <div class="counters">
                   <span class="count" [counter]="12500" [delay]="0.4"></span>
@@ -187,6 +194,13 @@ const COPY = {
       font-family: var(--font-body);
       font-size: 1rem;
       color: var(--ink-soft);
+      margin: 0;
+    }
+
+    .board-scramble {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--ink);
       margin: 0;
     }
 

@@ -17,6 +17,9 @@ import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { Flip } from 'gsap/Flip';
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import { Observer } from 'gsap/Observer';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 
@@ -39,6 +42,9 @@ export const appConfig: ApplicationConfig = {
         Flip,
         MorphSVGPlugin,
         MotionPathPlugin,
+        Observer,
+        ScrambleTextPlugin,
+        ScrollToPlugin,
         ScrollTrigger,
         SplitText,
       ],

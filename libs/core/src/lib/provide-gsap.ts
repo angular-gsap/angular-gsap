@@ -10,6 +10,13 @@ import {
 import { gsap } from 'gsap';
 import type { GsapConfig, GsapTweenVars } from './types';
 
+export interface GsapEffect {
+  name: string;
+  effect: (targets: unknown, config: Record<string, unknown>) => unknown;
+  defaults?: Record<string, unknown>;
+  extendTimeline?: boolean;
+}
+
 export interface GsapOptions {
   /**
    * GSAP plugins to register globally, e.g. `[ScrollTrigger, SplitText]`.
@@ -21,6 +28,8 @@ export interface GsapOptions {
   config?: GsapConfig;
   /** Passed to `gsap.defaults()`: default vars for every tween. */
   defaults?: GsapTweenVars;
+  /** Registered with `gsap.registerEffect()`, usable as `gsap.effects.name()`. */
+  effects?: GsapEffect[];
 }
 
 export const GSAP_OPTIONS = new InjectionToken<GsapOptions>('GSAP_OPTIONS');
@@ -47,10 +56,11 @@ export function provideGsap(options: GsapOptions = {}): EnvironmentProviders {
       if (!isPlatformBrowser(inject(PLATFORM_ID))) {
         return;
       }
-      const { plugins, config, defaults } = inject(GSAP_OPTIONS);
+      const { plugins, config, defaults, effects } = inject(GSAP_OPTIONS);
       if (plugins?.length) {
         gsap.registerPlugin(...plugins);
       }
+      effects?.forEach((effect) => gsap.registerEffect(effect));
       if (config) {
         gsap.config(config);
       }

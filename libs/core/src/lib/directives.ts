@@ -1,6 +1,10 @@
 import { Directive, ElementRef, inject, input, numberAttribute, output } from '@angular/core';
 import { Counter } from './counter';
+import { Drag } from './drag';
 import { DrawSvg } from './draw-svg';
+import { Observe } from './observe';
+import { ScrambleText } from './scramble-text';
+import { ScrollTo } from './scroll-to';
 import { injectGsap } from './inject-gsap';
 import { Parallax } from './parallax';
 import { SplitReveal } from './split-reveal';
@@ -177,9 +181,13 @@ export class Stagger {
 /** Everything template-facing, for one-line imports. */
 export const GSAP_DIRECTIVES = [
   Counter,
+  Drag,
   DrawSvg,
+  Observe,
   Parallax,
   Reveal,
+  ScrambleText,
+  ScrollTo,
   Sequence,
   SplitReveal,
   Stagger,

@@ -165,8 +165,9 @@ export const routeMeta: RouteMeta = {
         <p>
           Preset directives, all built on the <code>injectGsap</code>
           engine: <code>reveal</code>, <code>stagger</code>,
-          <code>splitReveal</code>, <code>drawSvg</code>,
-          <code>counter</code>, <code>parallax</code>, and
+          <code>splitReveal</code>, <code>scrambleText</code>,
+          <code>drawSvg</code>, <code>counter</code>, <code>parallax</code>,
+          <code>drag</code>, <code>scrollTo</code>, <code>observe</code>, and
           <code>sequence</code>, which composes child entrances into one
           timeline (<code>[at]</code> accepts GSAP position syntax). Import
           the classes you use or <code>GSAP_DIRECTIVES</code> for all of
@@ -301,6 +302,9 @@ export const routeMeta: RouteMeta = {
           the context reverts what they create. If a callback sets up
           something GSAP doesn't track (a <code>gsap.ticker</code> loop, an
           event listener), return a cleanup function and it runs on destroy.
+          ScrollSmoother stays deliberately un-wrapped: it's a page-level
+          singleton that owns the body scroll, so create it once in your app
+          shell's <code>injectGsap</code> callback rather than per component.
         </p>
       </section>
 

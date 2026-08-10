@@ -84,3 +84,54 @@ export function joinSequence(
 ): void {
   sequence?.add(tween, at);
 }
+
+/**
+ * Property plugins (scrollTo, scrambleText, drawSVG, …) are config objects
+ * with a literal `name` string, which minifiers never touch. Looked up in
+ * the plugins the app passed to `provideGsap`.
+ */
+export function findPropertyPlugin(
+  plugins: readonly object[] | undefined,
+  name: string
+): object | undefined {
+  return plugins?.find((p) => (p as { name?: string }).name === name);
+}
+
+export interface DraggableLike {
+  kill(): void;
+}
+
+export interface DraggableCtor {
+  create(target: Element | Element[], vars: object): DraggableLike[];
+  hitTest(a: unknown, b: unknown): boolean;
+}
+
+/** Draggable, identified structurally (static create + hitTest). */
+export function findDraggable(
+  plugins: readonly object[] | undefined
+): DraggableCtor | undefined {
+  return plugins?.find(
+    (p): p is DraggableCtor =>
+      typeof (p as DraggableCtor).create === 'function' &&
+      typeof (p as DraggableCtor).hitTest === 'function'
+  ) as DraggableCtor | undefined;
+}
+
+export interface ObserverLike {
+  kill(): void;
+}
+
+export interface ObserverCtor {
+  create(vars: object): ObserverLike;
+  isTouch: unknown;
+}
+
+/** Observer, identified structurally (static isTouch + create). */
+export function findObserver(
+  plugins: readonly object[] | undefined
+): ObserverCtor | undefined {
+  return plugins?.find(
+    (p): p is ObserverCtor =>
+      typeof (p as ObserverCtor).create === 'function' && 'isTouch' in p
+  ) as ObserverCtor | undefined;
+}

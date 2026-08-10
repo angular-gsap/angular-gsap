@@ -1,6 +1,5 @@
 import { Component, ElementRef, viewChild, viewChildren } from '@angular/core';
-import { injectGsap, target, targets } from '@angular-gsap/core';
-import { Draggable } from 'gsap/Draggable';
+import { Drag, injectGsap, target, targets } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
@@ -14,12 +13,12 @@ const COPY = {
     eyebrow: 'Advanced · plugin: Draggable + Inertia',
     title: 'Drag, throw, snap',
     intro:
-      'Grab a brick and throw it. InertiaPlugin glides it with real momentum and snaps it to the grid. The Draggable instances are created inside the callback, so the context kills them with the component.',
+      'Grab a brick and throw it. InertiaPlugin glides it with real momentum and snaps it to the grid. The whole setup is the <code>drag</code> directive on each brick; the instances die with the component.',
     hint: 'drag the bricks, throw them, they snap to the grid',
     scatter: 'Scatter',
     how: 'How this works',
     explain: [
-      "<code>Draggable.create()</code> runs inside the callback like any other GSAP call, so <code>gsap.context()</code> tracks the instances and reverts them on destroy. No stray pointer listeners after navigation.",
+      "The <code>drag</code> directive is <code>Draggable.create()</code> with signal inputs: type, bounds (the parent by default), inertia, and a grid <code>snap</code>. Instances are killed on destroy, so no stray pointer listeners after navigation. The raw API works too, straight from the callback.",
       '<code>inertia: true</code> hands the release velocity to InertiaPlugin, and <code>snap</code> rounds the landing position to the grid. Momentum, friction, and settling are all GSAP.',
       'Scatter is a <code>contextSafe</code> handler tweening the same <code>x</code>/<code>y</code> transforms Draggable uses, so dragging and tweening never fight over state.',
     ],
@@ -28,12 +27,12 @@ const COPY = {
     eyebrow: 'Avanzado · plugin: Draggable + Inertia',
     title: 'Arrastra, lanza, encaja',
     intro:
-      'Agarra un ladrillo y lánzalo. InertiaPlugin lo desliza con impulso real y lo encaja en la cuadrícula. Los Draggable se crean dentro del callback, así que el contexto los mata con el componente.',
+      'Agarra un ladrillo y lánzalo. InertiaPlugin lo desliza con impulso real y lo encaja en la cuadrícula. Todo el montaje es la directiva <code>drag</code> en cada ladrillo; las instancias mueren con el componente.',
     hint: 'arrastra los ladrillos, lánzalos, encajan en la cuadrícula',
     scatter: 'Dispersar',
     how: 'Cómo funciona',
     explain: [
-      '<code>Draggable.create()</code> corre dentro del callback como cualquier llamada de GSAP, así que <code>gsap.context()</code> registra las instancias y las revierte al destruir. No quedan listeners de puntero sueltos tras navegar.',
+      'La directiva <code>drag</code> es <code>Draggable.create()</code> con inputs de signal: tipo, límites (el padre por defecto), inercia y un <code>snap</code> de cuadrícula. Las instancias se matan al destruir: no quedan listeners de puntero sueltos tras navegar. La API cruda también funciona, directo en el callback.',
       '<code>inertia: true</code> entrega la velocidad de soltado a InertiaPlugin, y <code>snap</code> redondea el aterrizaje a la cuadrícula. Impulso, fricción y asentamiento son puro GSAP.',
       'Dispersar es un handler <code>contextSafe</code> que anima los mismos transforms <code>x</code>/<code>y</code> que usa Draggable, así que arrastrar y animar nunca pelean por el estado.',
     ],
@@ -44,7 +43,7 @@ const GRID = 96;
 
 @Component({
   selector: 'app-drag',
-  imports: [CodeSnippet],
+  imports: [CodeSnippet, Drag],
   template: `
     <div class="page">
       <header class="page-head">
@@ -60,7 +59,13 @@ const GRID = 96;
         <div>
           <div #stage class="stage drag-stage">
             @for (brick of bricks; track brick.label) {
-              <div class="brick" #brick [style.background]="brick.color">
+              <div
+                class="brick"
+                #brick
+                drag
+                [snap]="96"
+                [style.background]="brick.color"
+              >
                 {{ brick.label }}
               </div>
             }
@@ -71,7 +76,8 @@ const GRID = 96;
           </div>
         </div>
         <div class="panels">
-          <app-code [code]="snippet" label="bricks.ts" />
+          <app-code [code]="snippet" lang="html" label="bricks.html" />
+          <app-code [code]="tsSnippet" label="bricks.ts" />
         </div>
       </div>
 
@@ -151,6 +157,7 @@ export default class DragPage {
       return;
     }
 
+    void stage;
     // deal the bricks onto the grid
     gsap.set(bricks, {
       x: (i) => GRID * (i + 1) - 24,
@@ -164,14 +171,6 @@ export default class DragPage {
       duration: 0.5,
     });
 
-    const snap = (value: number) => Math.round(value / GRID) * GRID - 24;
-    Draggable.create(bricks, {
-      type: 'x,y',
-      bounds: stage,
-      inertia: true,
-      snap: { x: snap, y: snap },
-      edgeResistance: 0.7,
-    });
   });
 
   protected scatter = this.ref.contextSafe(() => {
@@ -192,27 +191,26 @@ export default class DragPage {
   });
 
   protected readonly snippet = [
-    `ref = injectGsap(({ gsap }) => {`,
-    `  const bricks = targets(this.brickEls);`,
+    `<!-- the whole drag setup is one attribute -->`,
+    `<div class="arena">`,
+    `  <div class="brick" drag [snap]="96"></div>`,
+    `</div>`,
     ``,
-    `  // tracked by the context, killed on destroy`,
-    `  Draggable.create(bricks, {`,
-    `    type: 'x,y',`,
+    `<!-- inputs when you need them -->`,
+    `<div drag="x" [inertia]="false"`,
+    `  [bounds]="'.arena'"`,
+    `  (dragEnd)="save()">`,
+    `</div>`,
+  ].join('\n');
+
+  protected readonly tsSnippet = [
+    `// or the raw API inside the callback:`,
+    `ref = injectGsap(() => {`,
+    `  Draggable.create(targets(this.bricks), {`,
+    `    type: 'x,y', inertia: true,`,
     `    bounds: target(this.stage),`,
-    `    inertia: true,   // momentum on release`,
-    `    snap: {          // land on the grid`,
-    `      x: (v) => Math.round(v / 96) * 96,`,
-    `      y: (v) => Math.round(v / 96) * 96,`,
-    `    },`,
-    `    edgeResistance: 0.7,`,
+    `    snap: { x: grid, y: grid },`,
     `  });`,
     `});`,
-    ``,
-    `scatter = this.ref.contextSafe(() =>`,
-    `  this.ref.gsap.to(targets(this.brickEls), {`,
-    `    x: () => gsap.utils.random(0, w),`,
-    `    y: () => gsap.utils.random(0, h),`,
-    `  })`,
-    `);`,
   ].join('\n');
 }
