@@ -151,15 +151,16 @@ export const routeMeta: RouteMeta = {
       <section class="api-section">
         <h2>Directives</h2>
         <p>
-          Five preset directives, all built on the <code>injectGsap</code>
+          Preset directives, all built on the <code>injectGsap</code>
           engine: <code>reveal</code>, <code>stagger</code>,
-          <code>splitReveal</code>, <code>counter</code>, and
-          <code>parallax</code>. Import the classes you use
-          (<code>Reveal</code>, <code>Stagger</code>, <code>SplitReveal</code>,
-          <code>Counter</code>, <code>Parallax</code>) or
-          <code>GSAP_DIRECTIVES</code> for all of them. Every input is a
-          signal: change one and the animation replays. Under reduced motion
-          they don't animate (<code>counter</code> shows the final value).
+          <code>splitReveal</code>, <code>drawSvg</code>,
+          <code>counter</code>, <code>parallax</code>, and
+          <code>sequence</code>, which composes child entrances into one
+          timeline (<code>[at]</code> accepts GSAP position syntax). Import
+          the classes you use or <code>GSAP_DIRECTIVES</code> for all of
+          them. Every input is a signal: change one and the animation
+          replays. Under reduced motion they don't animate
+          (<code>counter</code> shows the final value).
         </p>
         <app-code [code]="directiveSig" lang="html" label="usage" />
         <table>
@@ -240,6 +241,22 @@ export const routeMeta: RouteMeta = {
             <td>
               Counter only: the target number, the starting number, and the
               fraction digits. Formatted with the user's locale.
+            </td>
+          </tr>
+          <tr>
+            <td><code>drawSvg</code> / <code>each</code></td>
+            <td><code>0.15</code></td>
+            <td>
+              DrawSvg only: seconds between strokes when the host contains
+              several. Needs DrawSVGPlugin in <code>provideGsap</code>.
+            </td>
+          </tr>
+          <tr>
+            <td><code>sequence</code> / <code>at</code></td>
+            <td>in order</td>
+            <td>
+              The container's attribute value is the gap between steps; each
+              child's <code>at</code> is a GSAP position parameter.
             </td>
           </tr>
           <tr>

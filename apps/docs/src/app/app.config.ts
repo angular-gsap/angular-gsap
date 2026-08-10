@@ -11,7 +11,10 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 import { withInMemoryScrolling } from '@angular/router';
 import { provideGsap } from '@angular-gsap/core';
+import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 import { Flip } from 'gsap/Flip';
+import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 
@@ -26,6 +29,15 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([requestContextInterceptor]),
     ),
-    provideGsap({ plugins: [Flip, ScrollTrigger, SplitText] }),
+    provideGsap({
+      plugins: [
+        DrawSVGPlugin,
+        Flip,
+        MorphSVGPlugin,
+        MotionPathPlugin,
+        ScrollTrigger,
+        SplitText,
+      ],
+    }),
   ],
 };

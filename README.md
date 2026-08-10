@@ -67,7 +67,11 @@ Runs your callback inside a [`gsap.context()`](https://gsap.com/docs/v3/GSAP/gsa
 Returns a `GsapRef`:
 
 ```ts
-const ref = injectGsap(({ gsap, context }) => { /* vanilla GSAP */ });
+const ref = injectGsap(({ gsap, context }) => {
+  /* vanilla GSAP */
+  // optionally return a cleanup, like gsap.context():
+  // return () => gsap.ticker.remove(render);
+});
 
 ref.gsap;               // the GSAP instance
 ref.context;            // the live gsap.Context (undefined on the server)
@@ -193,7 +197,7 @@ replay = () => this.run.update((n) => n + 1);
 
 ## Docs & examples
 
-The [`apps/docs`](./apps/docs) app is a live tour built with [Analog](https://analogjs.org), with the source of every example alongside it: SplitText hero, signal-driven staggers, the sugar directives, timeline controls, a scroll-scrubbed ScrollTrigger section, and a FLIP-animated filter.
+The [`apps/docs`](./apps/docs) app is a live tour built with [Analog](https://analogjs.org), with the source of every example alongside it: SplitText hero, signal-driven staggers, the directives, timeline controls, ScrollTrigger scrubbing, a FLIP-animated filter, a quickTo cursor follower, SVG drawing/morphing/motion paths, and GSAP-driven WebGL uniforms.
 
 ```sh
 pnpm install

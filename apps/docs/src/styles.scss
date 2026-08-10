@@ -1,19 +1,23 @@
-/* angular-gsap docs: "color belongs to motion".
-   Static chrome is ink on porcelain; saturated color is reserved for
-   elements the library animates. */
+/* angular-gsap docs: neo-brutalist take on "color belongs to motion".
+   Cream paper, thick ink borders, hard offset shadows; saturated color
+   stays reserved for things the library animates. */
 
 :root {
-  --paper: #f6f6f3;
-  --ink: #17171c;
+  --paper: #f4f1e9;
+  --ink: #131316;
   --ink-soft: #4c4c55;
-  --hairline: #d9d9d2;
-  --card: #ffffff;
+  --hairline: #d8d4c8;
+  --card: #fffdf7;
 
   /* motion palette, only ever applied to animated elements */
   --pulse: #e23b80; /* angular side */
   --kinetic: #0ae448; /* gsap side */
   --arc: #5b4be8; /* the bridge; also interactive text */
   --ember: #ffb627;
+
+  --bw: 3px;
+  --shadow: 7px 7px 0 var(--ink);
+  --shadow-sm: 4px 4px 0 var(--ink);
 
   --font-display: 'Archivo', sans-serif;
   --font-body: 'Instrument Sans', sans-serif;
@@ -57,19 +61,22 @@ a:hover {
 }
 
 :focus-visible {
-  outline: 2px solid var(--arc);
+  outline: var(--bw) solid var(--arc);
   outline-offset: 2px;
 }
 
-/* ---- shared demo furniture ---- */
+/* ---- shared furniture ---- */
 
 .eyebrow {
+  display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-soft);
-  margin: 0 0 0.75rem;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 0.2rem 0.6rem;
+  margin: 0 0 1rem;
 }
 
 .page {
@@ -84,7 +91,9 @@ a:hover {
 
   h1 {
     font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 800;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
   }
 
   p {
@@ -96,23 +105,23 @@ a:hover {
 .api-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.6rem;
   margin-top: 1.25rem;
 
   span {
     font-family: var(--font-mono);
     font-size: 0.78rem;
-    border: 1px solid var(--hairline);
-    border-radius: 999px;
+    border: 2px solid var(--ink);
     padding: 0.2rem 0.7rem;
     background: var(--card);
+    box-shadow: 3px 3px 0 var(--ink);
   }
 }
 
 .example {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  gap: 1.5rem;
+  gap: 2rem;
   align-items: start;
 }
 
@@ -126,47 +135,55 @@ a:hover {
 .stage {
   position: relative;
   background: var(--card);
-  border: 1px solid var(--hairline);
+  border: var(--bw) solid var(--ink);
   border-radius: 12px;
+  box-shadow: var(--shadow);
   min-height: 22rem;
   overflow: hidden;
-  background-image: radial-gradient(var(--hairline) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(var(--hairline) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
 }
 
 .stage-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
+  gap: 0.85rem;
+  margin-top: 1.4rem;
 }
 
-/* labeled snippet panels: template + component side by side or stacked */
+/* labeled snippet panels */
 .snippet-panel {
   margin: 0;
 
   figcaption {
+    display: inline-block;
     font-family: var(--font-mono);
     font-size: 0.72rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--ink-soft);
-    margin-bottom: 0.45rem;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 0.25rem 0.7rem;
+    margin-bottom: 0;
+    border: var(--bw) solid var(--ink);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
   }
 }
 
 .panels {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
   align-content: start;
   min-width: 0;
 }
 
-/* shiki-highlighted snippets */
 .snippet pre {
   background: var(--ink) !important;
-  border-radius: 12px;
+  border: var(--bw) solid var(--ink);
+  border-radius: 0 10px 10px 10px;
+  box-shadow: var(--shadow-sm);
   padding: 1.25rem 1.4rem;
   overflow-x: auto;
   font-family: var(--font-mono);
@@ -182,25 +199,34 @@ a:hover {
 }
 
 .btn {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-family: var(--font-display);
+  font-stretch: 110%;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: var(--ink);
-  background: var(--card);
-  border: 1px solid var(--ink);
-  border-radius: 999px;
+  background: var(--kinetic);
+  border: var(--bw) solid var(--ink);
+  border-radius: 10px;
   padding: 0.5rem 1.15rem;
   cursor: pointer;
-  transition: background 120ms ease, color 120ms ease;
+  box-shadow: var(--shadow-sm);
+  transition: transform 90ms ease, box-shadow 90ms ease;
 }
 
 .btn:hover {
-  background: var(--ink);
-  color: var(--paper);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
 }
 
 .btn--quiet {
-  border-color: var(--hairline);
+  background: var(--card);
 }
 
 label.range {
@@ -209,29 +235,37 @@ label.range {
   gap: 0.6rem;
   font-family: var(--font-mono);
   font-size: 0.82rem;
-  color: var(--ink-soft);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  background: var(--card);
+  box-shadow: 3px 3px 0 var(--ink);
+  border-radius: 10px;
+  padding: 0.35rem 0.8rem;
 }
 
 input[type='range'] {
-  accent-color: var(--arc);
+  accent-color: var(--pulse);
   width: 11rem;
 }
 
-/* per-example "what the library is doing" block */
+/* per-example "how this works" block */
 .explain {
-  margin-top: 2.75rem;
+  margin-top: 3rem;
   max-width: 46rem;
-  border-top: 1px solid var(--hairline);
+  border-top: var(--bw) solid var(--ink);
   padding-top: 1.5rem;
 
   h2 {
+    display: inline-block;
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--ink-soft);
-    margin-bottom: 0.9rem;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 0.2rem 0.6rem;
+    margin-bottom: 1rem;
   }
 
   ul {
@@ -245,6 +279,8 @@ input[type='range'] {
   li {
     color: var(--ink-soft);
     font-size: 0.95rem;
+    padding-left: 1rem;
+    border-left: var(--bw) solid var(--ember);
   }
 
   strong {
@@ -261,5 +297,11 @@ input[type='range'] {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .btn,
+  .btn:hover,
+  .btn:active {
+    transition: none;
   }
 }

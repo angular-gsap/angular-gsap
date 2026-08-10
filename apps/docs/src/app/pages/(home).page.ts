@@ -26,6 +26,17 @@ export const routeMeta: RouteMeta = {
       </div>
     </section>
 
+    <div class="marquee" aria-hidden="true">
+      <div class="tape">
+        @for (i of [0, 1]; track i) {
+          <span class="tape-run">
+            SCROLLTRIGGER ✦ SPLITTEXT ✦ MORPHSVG ✦ DRAWSVG ✦ FLIP ✦
+            MOTIONPATH ✦ OBSERVER ✦ TEXTPLUGIN ✦ ALL FREE ✦&nbsp;
+          </span>
+        }
+      </div>
+    </div>
+
     <section class="how">
       <div class="how-inner">
         <div class="how-grid">
@@ -136,14 +147,38 @@ export const routeMeta: RouteMeta = {
       font-family: var(--font-mono);
       font-size: 0.88rem;
       background: var(--card);
-      border: 1px solid var(--hairline);
-      border-radius: 999px;
+      border: var(--bw) solid var(--ink);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
       padding: 0.55rem 1.1rem;
     }
 
+    .marquee {
+      border-top: var(--bw) solid var(--ink);
+      border-bottom: var(--bw) solid var(--ink);
+      background: var(--ember);
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .tape {
+      display: inline-flex;
+      width: max-content;
+      will-change: transform;
+    }
+
+    .tape-run {
+      font-family: var(--font-display);
+      font-stretch: 118%;
+      font-weight: 900;
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+      padding: 0.55rem 0;
+    }
+
     .how {
-      border-top: 1px solid var(--hairline);
       background: var(--card);
+      border-bottom: var(--bw) solid var(--ink);
     }
 
     .how-inner {
@@ -194,9 +229,16 @@ export const routeMeta: RouteMeta = {
 
       .feature {
         background: var(--card);
-        border: 1px solid var(--hairline);
+        border: var(--bw) solid var(--ink);
         border-radius: 12px;
+        box-shadow: var(--shadow-sm);
         padding: 1.4rem;
+        transition: transform 90ms ease, box-shadow 90ms ease;
+
+        &:hover {
+          transform: translate(-2px, -2px);
+          box-shadow: 6px 6px 0 var(--ink);
+        }
 
         h3 {
           font-size: 1.05rem;
@@ -262,6 +304,13 @@ export default class HomePage {
       tl.progress(1);
       return;
     }
+
+    gsap.to('.tape', {
+      xPercent: -50,
+      duration: 22,
+      ease: 'none',
+      repeat: -1,
+    });
 
     if (tick) {
       // the hyphen is the bridge between the two worlds; it never fully rests

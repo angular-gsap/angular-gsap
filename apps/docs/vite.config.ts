@@ -33,6 +33,8 @@ export default defineConfig(() => {
             '/text',
             '/flip',
             '/pointer',
+            '/svg',
+            '/webgl',
             '/reference',
           ],
         },

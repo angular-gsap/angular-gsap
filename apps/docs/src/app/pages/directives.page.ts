@@ -3,6 +3,7 @@ import {
   Counter,
   Parallax,
   Reveal,
+  Sequence,
   SplitReveal,
   Stagger,
   type RevealPreset,
@@ -16,24 +17,32 @@ export const routeMeta: RouteMeta = {
 
 @Component({
   selector: 'app-directives',
-  imports: [CodeSnippet, Counter, Parallax, Reveal, SplitReveal, Stagger],
+  imports: [
+    CodeSnippet,
+    Counter,
+    Parallax,
+    Reveal,
+    Sequence,
+    SplitReveal,
+    Stagger,
+  ],
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Example · sugar directives</p>
+        <p class="eyebrow">Example · directives</p>
         <h1>Template directives</h1>
         <p>
-          Five preset directives cover the common template-level cases:
-          <code>reveal</code> and <code>stagger</code> for entrances,
-          <code>splitReveal</code> for text, <code>counter</code> for
-          numbers, and <code>parallax</code> for scroll-linked drift. All of
-          them run on the <code>injectGsap</code> engine, so scoping, cleanup,
-          and reduced motion come along for free. For anything richer, drop to
-          the composable.
+          Preset directives cover the common template-level cases:
+          <code>reveal</code>, <code>stagger</code>, and
+          <code>splitReveal</code> for entrances, <code>drawSvg</code> for
+          strokes, <code>counter</code> for numbers, <code>parallax</code>
+          for scroll-linked drift, and <code>sequence</code> to compose them.
+          Everything runs on the <code>injectGsap</code> engine, so scoping,
+          cleanup, and reduced motion come along for free.
         </p>
         <div class="api-chips">
-          <span>reveal</span><span>stagger</span><span>splitReveal</span
-          ><span>counter</span><span>parallax</span>
+          <span>sequence</span><span>reveal</span><span>stagger</span
+          ><span>splitReveal</span><span>counter</span><span>parallax</span>
         </div>
       </header>
 
@@ -41,7 +50,7 @@ export const routeMeta: RouteMeta = {
         <div>
           <div class="stage directives-stage">
             @for (run of [runId()]; track run) {
-              <div class="board">
+              <div class="board" sequence="0.1">
                 <h2 [reveal]="preset()" [distance]="36">
                   {{ preset() || 'fade-up' }}
                 </h2>
@@ -55,7 +64,7 @@ export const routeMeta: RouteMeta = {
                     <span class="card" [style.background]="card"></span>
                   }
                 </div>
-                <p class="board-line" splitReveal [delay]="0.2">
+                <p class="board-line" splitReveal>
                   and this line staggers in word by word
                 </p>
                 <div class="counters">
@@ -92,6 +101,13 @@ export const routeMeta: RouteMeta = {
             <code>injectGsap</code>: same scoping, same cleanup, same signal
             inputs. They only cover entrances, on purpose. Anything richer
             goes in the composable.
+          </li>
+          <li>
+            The board is wrapped in <code>sequence="0.1"</code>, so the
+            heading, the cards, and the split line play one after another
+            with no <code>[delay]</code> bookkeeping. Template nesting is the
+            choreography; <code>[at]</code> takes any GSAP position parameter
+            for overlaps.
           </li>
           <li>
             Change any input and the entrance replays. The Replay button just
@@ -232,17 +248,16 @@ export default class DirectivesPage {
   ].join('\n');
 
   protected readonly snippet = [
-    `<!-- entrances; every input is a signal -->`,
-    `<h2 reveal="fade-up" [distance]="36">Hi</h2>`,
-    `<ul stagger="0.07" preset="scale-in">`,
-    `  <li>…</li>`,
-    `</ul>`,
+    `<!-- nesting is the choreography -->`,
+    `<section sequence="0.1">`,
+    `  <h2 reveal="fade-up">Hi</h2>`,
+    `  <ul stagger preset="scale-in">…</ul>`,
+    `  <p splitReveal [at]="'<0.2'">word by word</p>`,
+    `</section>`,
     ``,
-    `<!-- text and numbers -->`,
-    `<p splitReveal>word by word</p>`,
+    `<!-- numbers, strokes, scroll -->`,
     `<span [counter]="12500"></span>`,
-    ``,
-    `<!-- scroll-linked -->`,
+    `<svg drawSvg>…</svg>`,
     `<p reveal="fade-up" on="scroll">…</p>`,
     `<img parallax="0.3" src="…" />`,
   ].join('\n');
