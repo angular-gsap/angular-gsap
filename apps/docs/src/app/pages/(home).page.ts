@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Stagger, injectGsap, type GsapTimeline } from '@angular-gsap/core';
+import { Hover, Stagger, injectGsap, type GsapTimeline } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
 import { CodeSnippet } from '../code-snippet';
 import { injectLocale } from '../i18n';
@@ -16,6 +16,8 @@ const COPY = {
     lede: 'Write vanilla GSAP. The library handles the Angular part: host scoping, cleanup, signal reactivity, and SSR.',
     replay: 'Replay intro',
     copy: 'Copy install command',
+    frame:
+      "GSAP itself is framework-agnostic: it runs in any Angular app today, no wrapper required. What it can't know is Angular — when a template has rendered, what a component owns, when it's destroyed, whether the code is on a server. This library handles exactly those friction points and nothing else.",
     howEyebrow: 'The whole idea',
     howTitle: 'One composable. Vanilla GSAP inside.',
     howBody:
@@ -23,6 +25,8 @@ const COPY = {
     howCta: 'Start with the basics →',
     basicsLink: '/start',
     featEyebrow: 'What it handles for you',
+    featNote:
+      "None of this needs a library — it's the glue you'd otherwise write and maintain yourself, in every component that animates.",
     features: [
       {
         title: 'Scoped like your styles',
@@ -59,6 +63,8 @@ const COPY = {
     lede: 'Escribe GSAP puro. La librería se encarga de la parte de Angular: scoping al host, limpieza, reactividad con signals y SSR.',
     replay: 'Repetir intro',
     copy: 'Copiar comando de instalación',
+    frame:
+      'GSAP es agnóstico al framework: corre en cualquier app Angular hoy, sin wrapper. Lo que no puede saber es Angular — cuándo se pintó un template, qué posee un componente, cuándo se destruye, si el código corre en un servidor. Esta librería resuelve exactamente esas fricciones y nada más.',
     howEyebrow: 'La idea completa',
     howTitle: 'Un composable. GSAP puro adentro.',
     howBody:
@@ -66,6 +72,8 @@ const COPY = {
     howCta: 'Empieza con los básicos →',
     basicsLink: '/es/start',
     featEyebrow: 'Lo que resuelve por ti',
+    featNote:
+      'Nada de esto necesita una librería: es el pegamento que de otro modo escribes y mantienes tú, en cada componente que anima.',
     features: [
       {
         title: 'Scoped como tus estilos',
@@ -101,7 +109,7 @@ const COPY = {
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, CodeSnippet, Stagger],
+  imports: [RouterLink, CodeSnippet, Hover, Stagger],
   template: `
     <section class="hero">
       <p class="eyebrow">{{ c.eyebrow }}</p>
@@ -151,6 +159,7 @@ const COPY = {
           <div class="how-copy">
             <p class="eyebrow">{{ c.howEyebrow }}</p>
             <h2>{{ c.howTitle }}</h2>
+            <p class="frame">{{ c.frame }}</p>
             <p [innerHTML]="c.howBody"></p>
             <a [routerLink]="c.basicsLink">{{ c.howCta }}</a>
           </div>
@@ -161,9 +170,10 @@ const COPY = {
 
     <section class="features">
       <p class="eyebrow">{{ c.featEyebrow }}</p>
-      <ul stagger="0.08" on="scroll" preset="fade-up">
+      <p class="feat-note">{{ c.featNote }}</p>
+      <ul stagger="0.08" on="scroll" preset="fade-up" [distance]="40">
         @for (f of c.features; track f.title) {
-          <li class="feature">
+          <li class="feature" hover>
             <h3>{{ f.title }}</h3>
             <p [innerHTML]="f.body"></p>
           </li>
@@ -303,6 +313,11 @@ const COPY = {
     .how-copy {
       max-width: 30rem;
 
+      .frame {
+        color: var(--ink);
+        font-weight: 500;
+      }
+
       h2 {
         font-size: 1.9rem;
         font-weight: 800;
@@ -324,6 +339,12 @@ const COPY = {
       margin: 0 auto;
       padding: 4rem 1.5rem 5rem;
 
+      .feat-note {
+        color: var(--ink-soft);
+        max-width: 40rem;
+        margin: 0.9rem 0 0;
+      }
+
       ul {
         list-style: none;
         margin: 1.5rem 0 0;
@@ -339,12 +360,6 @@ const COPY = {
         border-radius: 12px;
         box-shadow: var(--shadow-sm);
         padding: 1.4rem;
-        transition: transform 90ms ease, box-shadow 90ms ease;
-
-        &:hover {
-          transform: translate(-2px, -2px);
-          box-shadow: 6px 6px 0 var(--ink);
-        }
 
         h3 {
           font-size: 1.05rem;
