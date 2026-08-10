@@ -15,7 +15,7 @@ const COPY = {
     title: 'A momentum loop',
     intro:
       'Wheel, drag, or swipe anywhere on the stage and the chips ride the track; flick and let go, and InertiaPlugin keeps them gliding with your real release velocity. One Observer normalizes every input, and the whole loop is a single number that GSAP tweens.',
-    hint: 'wheel · drag · flick — momentum carries it',
+    hint: 'wheel · drag · flick · momentum carries it',
     how: 'How this works',
     explain: [
       "Each chip has a paused <code>motionPath</code> tween used as a position setter: the loop's state is one number <code>p</code>, and every chip renders at <code>p</code> plus its offset. Move the number, the whole train moves.",
@@ -29,7 +29,7 @@ const COPY = {
     title: 'Un bucle con impulso',
     intro:
       'Rueda, arrastra o desliza en cualquier parte del escenario y las fichas recorren la pista; da un tirón y suelta, e InertiaPlugin las deja deslizándose con tu velocidad real. Un Observer normaliza cada entrada, y todo el bucle es un solo número que GSAP anima.',
-    hint: 'rueda · arrastra · tirón — el impulso lo lleva',
+    hint: 'rueda · arrastra · tirón · el impulso lo lleva',
     how: 'Cómo funciona',
     explain: [
       'Cada ficha tiene un tween <code>motionPath</code> pausado usado como setter de posición: el estado del bucle es un número <code>p</code>, y cada ficha se pinta en <code>p</code> más su desfase. Mueves el número, se mueve todo el tren.',

@@ -1,5 +1,11 @@
-import { Component, computed, signal } from '@angular/core';
-import { injectGsap } from '@angular-gsap/core';
+import {
+  Component,
+  ElementRef,
+  computed,
+  signal,
+  viewChildren,
+} from '@angular/core';
+import { injectGsap, targets } from '@angular-gsap/core';
 import { Flip } from 'gsap/Flip';
 import { CodeSnippet } from '../code-snippet';
 import { injectLocale } from '../i18n';
@@ -75,6 +81,7 @@ const COPY = {
             <div class="flip-grid">
               @for (card of cards(); track card.id) {
                 <div
+                  #card
                   class="flip-card"
                   [attr.data-flip-id]="card.id"
                   [style.--c]="card.color"
@@ -161,6 +168,8 @@ export default class FlipPage {
 
   private flipState?: Flip.FlipState;
 
+  private readonly cardEls = viewChildren<ElementRef<HTMLElement>>('card');
+
   protected readonly ref = injectGsap(({ gsap }) => {
     this.filter(); // tracked: re-runs after the @for re-renders
     const state = this.flipState;
@@ -169,7 +178,7 @@ export default class FlipPage {
       return; // first render: nothing to transition from
     }
     Flip.from(state, {
-      targets: '.flip-card',
+      targets: targets(this.cardEls),
       duration: 0.55,
       ease: 'power3.inOut',
       onEnter: (els) =>
@@ -186,7 +195,7 @@ export default class FlipPage {
       return;
     }
     // 1) capture the layout BEFORE the DOM changes
-    this.flipState = Flip.getState('.flip-card');
+    this.flipState = Flip.getState(targets(this.cardEls));
     this.filter.set(tag);
   }
 
@@ -208,9 +217,11 @@ export default class FlipPage {
     `cards = computed(() => /* filter the list */);`,
     `private flipState?: Flip.FlipState;`,
     ``,
+    `cards = viewChildren<ElementRef>('card');`,
+    ``,
     `setFilter(tag) {`,
     `  // 1) capture layout BEFORE the DOM changes`,
-    `  this.flipState = Flip.getState('.flip-card');`,
+    `  this.flipState = Flip.getState(targets(this.cards));`,
     `  this.filter.set(tag);`,
     `}`,
     ``,
@@ -221,7 +232,7 @@ export default class FlipPage {
     `  if (!state) return;`,
     ``,
     `  Flip.from(state, {`,
-    `    targets: '.flip-card',`,
+    `    targets: targets(this.cards),`,
     `    duration: 0.55,`,
     `    ease: 'power3.inOut',`,
     `    onEnter: (els) =>`,

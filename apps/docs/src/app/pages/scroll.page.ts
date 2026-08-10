@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, viewChild } from '@angular/core';
 import { CodeSnippet } from '../code-snippet';
 import { injectLocale } from '../i18n';
-import { injectGsap } from '@angular-gsap/core';
+import { injectGsap, target } from '@angular-gsap/core';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
@@ -68,11 +68,11 @@ const COPY = {
       </section>
     </div>
 
-    <div class="track">
+    <div #track class="track">
       <div class="pin">
         <div class="stage scroll-stage">
-          <span class="shape"></span>
-          <div class="meter"><span class="meter-fill"></span></div>
+          <span #shape class="shape"></span>
+          <div class="meter"><span #meterFill class="meter-fill"></span></div>
           <p class="hint">{{ c.hint }}</p>
         </div>
       </div>
@@ -150,32 +150,41 @@ const COPY = {
 export default class ScrollPage {
   protected readonly c = COPY[injectLocale()];
 
+  private readonly track = viewChild.required<ElementRef<HTMLElement>>('track');
+  private readonly shape = viewChild.required<ElementRef<HTMLElement>>('shape');
+  private readonly meterFill =
+    viewChild.required<ElementRef<HTMLElement>>('meterFill');
+
   protected readonly ref = injectGsap(({ gsap }) => {
+    const track = target(this.track);
+    if (!track) {
+      return;
+    }
     gsap
       .timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
-          trigger: '.track',
+          trigger: track,
           start: 'top top',
           end: 'bottom bottom',
           scrub: 0.5,
         },
       })
-      .to('.shape', {
+      .to(target(this.shape), {
         rotation: 360,
         borderRadius: '50%',
         backgroundColor: '#0ae448',
         scale: 1.35,
       })
-      .to('.meter-fill', { scaleX: 1 }, 0);
+      .to(target(this.meterFill), { scaleX: 1 }, 0);
   });
 
   protected readonly tplSnippet = [
-    `<div class="track">        <!-- tall runway -->`,
+    `<div #track class="track">        <!-- tall runway -->`,
     `  <div class="pin">        <!-- position: sticky -->`,
-    `    <span class="shape"></span>`,
+    `    <span #shape class="shape"></span>`,
     `    <div class="meter">`,
-    `      <span class="meter-fill"></span>`,
+    `      <span #meterFill class="meter-fill"></span>`,
     `    </div>`,
     `  </div>`,
     `</div>`,
@@ -185,18 +194,21 @@ export default class ScrollPage {
     `// app.config.ts`,
     `provideGsap({ plugins: [ScrollTrigger] });`,
     ``,
-    `// scroll.ts: plain GSAP, nothing special`,
+    `// scroll.ts: plain GSAP, Angular refs`,
+    `track = viewChild.required<ElementRef>('track');`,
+    `shape = viewChild.required<ElementRef>('shape');`,
+    ``,
     `ref = injectGsap(({ gsap }) => {`,
     `  gsap`,
     `    .timeline({`,
     `      scrollTrigger: {`,
-    `        trigger: '.track',`,
+    `        trigger: target(this.track),`,
     `        start: 'top top',`,
     `        end: 'bottom bottom',`,
     `        scrub: 0.5,`,
     `      },`,
     `    })`,
-    `    .to('.shape', {`,
+    `    .to(target(this.shape), {`,
     `      rotation: 360,`,
     `      borderRadius: '50%',`,
     `      backgroundColor: '#0ae448',`,

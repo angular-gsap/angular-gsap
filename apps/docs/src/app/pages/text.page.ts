@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, signal, viewChild } from '@angular/core';
 import { CodeSnippet } from '../code-snippet';
 import { injectLocale } from '../i18n';
-import { injectGsap } from '@angular-gsap/core';
+import { injectGsap, target } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
 import { RouteMeta } from '@analogjs/router';
 
@@ -67,7 +67,7 @@ const COPY = {
       <div class="example">
         <div>
           <div class="stage text-stage">
-            <p class="passage">{{ c.passage }}</p>
+            <p #passage class="passage">{{ c.passage }}</p>
           </div>
           <div class="stage-controls">
             @for (m of modes; track m) {
@@ -123,10 +123,17 @@ export default class TextPage {
   protected readonly mode = signal<SplitMode>('words');
   protected readonly run = signal(0);
 
+  private readonly passage =
+    viewChild.required<ElementRef<HTMLElement>>('passage');
+
   protected readonly ref = injectGsap(({ gsap }) => {
     this.run(); // tracked: replay() bumps it to re-run the context
     const mode = this.mode();
-    const split = SplitText.create('.passage', { type: mode });
+    const passage = target(this.passage);
+    if (!passage) {
+      return;
+    }
+    const split = SplitText.create(passage, { type: mode });
     gsap.from(split[mode], {
       y: 26,
       opacity: 0,
@@ -139,7 +146,7 @@ export default class TextPage {
   protected replay = () => this.run.update((n) => n + 1);
 
   protected readonly tplSnippet = [
-    `<p class="passage">Great interfaces move…</p>`,
+    `<p #passage class="passage">Great interfaces move…</p>`,
     ``,
     `@for (m of modes; track m) {`,
     `  <button (click)="mode.set(m)">{{ m }}</button>`,
@@ -153,13 +160,15 @@ export default class TextPage {
 `,
     `  mode = signal<'chars' | 'words' | 'lines'>('words');`,
     `  run = signal(0);`,
+    `  passage = viewChild.required<ElementRef>('passage');`,
     ``,
     `  ref = injectGsap(({ gsap }) => {`,
     `    this.run(); // replay = just bump a signal`,
     `    const mode = this.mode();`,
-    `    const split = SplitText.create('.passage', {`,
-    `      type: mode,`,
-    `    });`,
+    `    const split = SplitText.create(`,
+    `      target(this.passage),`,
+    `      { type: mode },`,
+    `    );`,
     `    gsap.from(split[mode], {`,
     `      y: 26, opacity: 0,`,
     `      stagger: 0.04,`,

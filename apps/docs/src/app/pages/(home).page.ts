@@ -1,6 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Hover, Stagger, injectGsap, type GsapTimeline } from '@angular-gsap/core';
+import {
+  Hover,
+  Stagger,
+  injectGsap,
+  target,
+  type GsapTimeline,
+} from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
 import { CodeSnippet } from '../code-snippet';
 import { injectLocale } from '../i18n';
@@ -17,7 +23,7 @@ const COPY = {
     replay: 'Replay intro',
     copy: 'Copy install command',
     frame:
-      "GSAP itself is framework-agnostic: it runs in any Angular app today, no wrapper required. What it can't know is Angular — when a template has rendered, what a component owns, when it's destroyed, whether the code is on a server. This library handles exactly those friction points and nothing else.",
+      "GSAP itself is framework-agnostic and runs in any Angular app today, no wrapper required. What it can't know is Angular: when a template has rendered, what a component owns, when it's destroyed, whether the code is on a server. This library handles exactly those friction points and nothing else.",
     howEyebrow: 'The whole idea',
     howTitle: 'One composable. Vanilla GSAP inside.',
     howBody:
@@ -26,7 +32,7 @@ const COPY = {
     basicsLink: '/start',
     featEyebrow: 'What it handles for you',
     featNote:
-      "None of this needs a library — it's the glue you'd otherwise write and maintain yourself, in every component that animates.",
+      "You could write all of this glue yourself. Most Angular apps that animate end up doing exactly that, one component at a time.",
     features: [
       {
         title: 'Scoped like your styles',
@@ -64,7 +70,7 @@ const COPY = {
     replay: 'Repetir intro',
     copy: 'Copiar comando de instalación',
     frame:
-      'GSAP es agnóstico al framework: corre en cualquier app Angular hoy, sin wrapper. Lo que no puede saber es Angular — cuándo se pintó un template, qué posee un componente, cuándo se destruye, si el código corre en un servidor. Esta librería resuelve exactamente esas fricciones y nada más.',
+      'GSAP es agnóstico al framework y corre en cualquier app Angular hoy, sin wrapper. Lo que no puede saber es Angular: cuándo se pintó un template, qué posee un componente, cuándo se destruye, si el código corre en un servidor. Esta librería resuelve exactamente esas fricciones y nada más.',
     howEyebrow: 'La idea completa',
     howTitle: 'Un composable. GSAP puro adentro.',
     howBody:
@@ -73,7 +79,7 @@ const COPY = {
     basicsLink: '/es/start',
     featEyebrow: 'Lo que resuelve por ti',
     featNote:
-      'Nada de esto necesita una librería: es el pegamento que de otro modo escribes y mantienes tú, en cada componente que anima.',
+      'Todo este pegamento lo podrías escribir tú. La mayoría de las apps Angular que animan terminan haciendo justo eso, componente por componente.',
     features: [
       {
         title: 'Scoped como tus estilos',
@@ -113,7 +119,7 @@ const COPY = {
   template: `
     <section class="hero">
       <p class="eyebrow">{{ c.eyebrow }}</p>
-      <h1 class="logotype" aria-label="angular-gsap">angular-gsap</h1>
+      <h1 #logo class="logotype" aria-label="angular-gsap">angular-gsap</h1>
       <p class="lede">{{ c.lede }}</p>
       <div class="hero-actions">
         <div class="install-box">
@@ -143,7 +149,7 @@ const COPY = {
     </section>
 
     <div class="marquee" aria-hidden="true">
-      <div class="tape">
+      <div #tape class="tape">
         @for (i of [0, 1]; track i) {
           <span class="tape-run">
             SCROLLTRIGGER ✦ SPLITTEXT ✦ MORPHSVG ✦ DRAWSVG ✦ FLIP ✦
@@ -381,6 +387,9 @@ export default class HomePage {
   protected readonly c = COPY[injectLocale()];
   private intro?: GsapTimeline;
 
+  private readonly logo = viewChild.required<ElementRef<HTMLElement>>('logo');
+  private readonly tape = viewChild.required<ElementRef<HTMLElement>>('tape');
+
   protected readonly pms = ['pnpm', 'npm', 'yarn'] as const;
   protected readonly pm = signal<'pnpm' | 'npm' | 'yarn'>('pnpm');
   protected readonly installCmd = () => {
@@ -422,12 +431,16 @@ export default class HomePage {
     const reduce = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches;
-    const split = SplitText.create('.logotype', { type: 'chars' });
+    const logo = target(this.logo);
+    if (!logo) {
+      return;
+    }
+    const split = SplitText.create(logo, { type: 'chars' });
     const flightColors = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
     const tick = split.chars.find((c) => c.textContent === '-');
 
     const tl = gsap.timeline();
-    tl.set('.logotype', { opacity: 1 }).from(split.chars, {
+    tl.set(logo, { opacity: 1 }).from(split.chars, {
       y: 90,
       opacity: 0,
       rotation: () => gsap.utils.random(-28, 28),
@@ -448,7 +461,7 @@ export default class HomePage {
       return;
     }
 
-    gsap.to('.tape', {
+    gsap.to(target(this.tape), {
       xPercent: -50,
       duration: 22,
       ease: 'none',

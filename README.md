@@ -36,7 +36,7 @@ export class Hero {
 
 ## Why not wrap GSAP?
 
-GSAP itself is framework-agnostic: it runs in any Angular app today, no wrapper required. What it can't know is Angular — when a template has rendered, what a component owns, when it's destroyed, whether the code is on a server. This library handles exactly those friction points and nothing else.
+GSAP itself is framework-agnostic and runs in any Angular app today, no wrapper required. What it can't know is Angular: when a template has rendered, what a component owns, when it's destroyed, whether the code is on a server. This library handles exactly those friction points and nothing else.
 
 GSAP's surface is enormous: tweens, timelines, position parameters, staggers, ScrollTrigger, SplitText, getters, utilities. Wrappers that re-expose it as directives or per-tween helpers cover a fraction of it awkwardly and go stale as GSAP evolves. What Angular actually makes hard is **lifecycle**: create animations after the DOM exists, scope selectors to your component, react to state, and clean everything up.
 

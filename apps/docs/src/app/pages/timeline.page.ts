@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, viewChildren } from '@angular/core';
 import { CodeSnippet } from '../code-snippet';
 import { injectLocale } from '../i18n';
-import { injectGsap, type GsapTimeline } from '@angular-gsap/core';
+import { injectGsap, targets, type GsapTimeline } from '@angular-gsap/core';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
@@ -57,7 +57,7 @@ const COPY = {
           <div class="stage bars-stage">
             <div class="bars">
               @for (bar of bars; track bar.i) {
-                <span class="bar" [style.background]="bar.color"></span>
+                <span #barEl class="bar" [style.background]="bar.color"></span>
               }
             </div>
           </div>
@@ -129,16 +129,19 @@ export default class TimelinePage {
 
   private tl?: GsapTimeline;
 
+  private readonly barEls = viewChildren<ElementRef<HTMLElement>>('barEl');
+
   protected readonly ref = injectGsap(({ gsap }) => {
+    const bars = targets(this.barEls);
     this.tl = gsap
       .timeline({ repeat: -1, defaults: { ease: 'sine.inOut' } })
-      .to('.bar', {
+      .to(bars, {
         scaleY: 4.4,
         duration: 0.45,
         stagger: { each: 0.12, yoyo: true, repeat: 1 },
       })
-      .to('.bar', { rotation: 8, duration: 0.3, stagger: 0.06 }, '<0.2')
-      .to('.bar', { rotation: 0, duration: 0.3 });
+      .to(bars, { rotation: 8, duration: 0.3, stagger: 0.06 }, '<0.2')
+      .to(bars, { rotation: 0, duration: 0.3 });
   });
 
   protected play = this.ref.contextSafe(() => this.tl?.play());
@@ -164,11 +167,12 @@ export default class TimelinePage {
   protected readonly c = COPY[injectLocale()];
 `,
     `  private tl?: GsapTimeline;`,
+    `  bars = viewChildren<ElementRef>('bar');`,
     ``,
     `  ref = injectGsap(({ gsap }) => {`,
     `    this.tl = gsap`,
     `      .timeline({ repeat: -1 })`,
-    `      .to('.bar', {`,
+    `      .to(targets(this.bars), {`,
     `        scaleY: 4.4,`,
     `        stagger: { each: 0.12, yoyo: true, repeat: 1 },`,
     `      });`,
