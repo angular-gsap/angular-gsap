@@ -24,13 +24,34 @@ const COPY = {
     basicsLink: '/start',
     featEyebrow: 'What it handles for you',
     features: [
-      { title: 'Scoped by default', body: "Selectors match inside your component's host and nowhere else." },
-      { title: 'Signal-reactive', body: 'Read a signal in the callback; the animation reverts and re-runs when it changes.' },
-      { title: 'Cleans up after itself', body: 'Tweens, timelines, ScrollTriggers, and SplitText all revert on destroy.' },
-      { title: 'SSR-safe', body: 'On the server the context never runs. No platform checks in your code.' },
-      { title: 'Nothing wrapped', body: "It's the real GSAP API, plus preset directives for the common template cases." },
-      { title: 'Tree-shakeable', body: '<code>sideEffects: false</code> and a tiny surface: unused exports drop out of your bundle, and GSAP plugins are only bundled when you import them.' },
-      { title: 'Cheap at runtime', body: "Tweens run on GSAP's ticker outside change detection. No rxjs, no zone.js, zoneless-ready." },
+      {
+        title: 'Scoped like your styles',
+        body: "Fifty instances of a component, each animating <code>'.icon'</code>? Each one only ever touches its own. Selectors stop at the host, exactly like component styles do.",
+      },
+      {
+        title: 'Signals drive motion too',
+        body: 'Your signals already drive the template. Read one in the callback and it drives the animation the same way: change it, and the animation replays against the freshly rendered DOM.',
+      },
+      {
+        title: 'Nothing to write in ngOnDestroy',
+        body: 'Leave the route and every tween, ScrollTrigger, and text split is reverted, the same way Angular tears down the view itself. Forgetting cleanup stops being a bug you can write.',
+      },
+      {
+        title: 'ng add @angular/ssr just works',
+        body: "No 'window is not defined' at build time, no isPlatformBrowser guards scattered through components. Animation code simply waits until there's a browser.",
+      },
+      {
+        title: 'Every GSAP tutorial applies',
+        body: "You're writing GSAP, not a translation of it. Docs, forum answers, and CodePens work verbatim; the directives are shortcuts, not a dialect.",
+      },
+      {
+        title: 'Bundle budgets stay green',
+        body: 'Use two directives and the other nine leave your bundle. Plugins cost bytes only when you import them.',
+      },
+      {
+        title: 'Change detection stays idle',
+        body: "A tween at 60fps never schedules a change detection pass: GSAP's ticker does the work while Angular does nothing. No zone.js, no rxjs anywhere in the library.",
+      },
     ],
   },
   es: {
@@ -46,13 +67,34 @@ const COPY = {
     basicsLink: '/es/start',
     featEyebrow: 'Lo que resuelve por ti',
     features: [
-      { title: 'Scoped por defecto', body: 'Los selectores solo aplican dentro del host de tu componente, en ningún otro lado.' },
-      { title: 'Reactivo con signals', body: 'Lee un signal en el callback; la animación se revierte y se vuelve a ejecutar cuando cambia.' },
-      { title: 'Limpia solo', body: 'Tweens, timelines, ScrollTriggers y SplitText se revierten al destruir el componente.' },
-      { title: 'Seguro en SSR', body: 'En el servidor el contexto nunca corre. Sin checks de plataforma en tu código.' },
-      { title: 'Nada envuelto', body: 'Es la API real de GSAP, más directivas preset para los casos comunes en templates.' },
-      { title: 'Tree-shakeable', body: '<code>sideEffects: false</code> y una superficie mínima: lo que no usas sale del bundle, y los plugins de GSAP solo se incluyen cuando los importas.' },
-      { title: 'Barato en runtime', body: 'Los tweens corren en el ticker de GSAP fuera de change detection. Sin rxjs, sin zone.js, listo para zoneless.' },
+      {
+        title: 'Scoped como tus estilos',
+        body: "¿Cincuenta instancias de un componente, cada una animando <code>'.icon'</code>? Cada una toca solo el suyo. Los selectores se detienen en el host, exactamente como los estilos del componente.",
+      },
+      {
+        title: 'Los signals también mueven',
+        body: 'Tus signals ya dirigen el template. Lee uno en el callback y dirige la animación igual: cámbialo y la animación se repite contra el DOM recién pintado.',
+      },
+      {
+        title: 'Nada que escribir en ngOnDestroy',
+        body: 'Sal de la ruta y cada tween, ScrollTrigger y división de texto se revierte, igual que Angular desmonta la vista. Olvidar la limpieza deja de ser un bug posible.',
+      },
+      {
+        title: 'ng add @angular/ssr sin sustos',
+        body: "Sin 'window is not defined' al compilar, sin isPlatformBrowser regado por los componentes. El código de animación simplemente espera a que haya navegador.",
+      },
+      {
+        title: 'Todo tutorial de GSAP aplica',
+        body: 'Escribes GSAP, no una traducción. Docs, respuestas de foros y CodePens funcionan tal cual; las directivas son atajos, no un dialecto.',
+      },
+      {
+        title: 'El bundle no engorda',
+        body: 'Usa dos directivas y las otras nueve salen del bundle. Los plugins cuestan bytes solo cuando los importas.',
+      },
+      {
+        title: 'Change detection en reposo',
+        body: 'Un tween a 60fps nunca agenda un pase de change detection: el ticker de GSAP hace el trabajo mientras Angular no hace nada. Sin zone.js, sin rxjs en la librería.',
+      },
     ],
   },
 } as const;
