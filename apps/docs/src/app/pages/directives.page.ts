@@ -10,6 +10,7 @@ import {
   type RevealPreset,
 } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
+import { DIRECTIVE_EXAMPLES } from '../directive-examples';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
@@ -29,6 +30,23 @@ const COPY = {
     scrollEyebrow: 'And on scroll',
     tailNote:
       'This paragraph used <code>reveal="fade-up" on="scroll"</code>, and the blocks above drift at different <code>parallax</code> speeds. Under the hood both are ScrollTrigger, registered once in <code>provideGsap</code>.',
+    fullTitle: 'Complete examples',
+    fullIntro:
+      'One self-contained component per directive: the TypeScript and the template exactly as they would sit in your project, plus a stylesheet when the example needs one. Copy the pair and it runs.',
+    refs: {
+      reveal: 'Entrances for a single element, on render or on scroll. Presets: <code>fade</code>, <code>fade-up/down/left/right</code>, <code>scale-in</code>.',
+      stagger: "The same entrances across an element's children. Works naturally with <code>@for</code>: new items replay the entrance.",
+      splitReveal: 'Splits text into characters, words, or lines and staggers the pieces. The original markup is restored on destroy.',
+      scrambleText: "Scrambles text into place. Without a target text it decodes the element's own content.",
+      counter: "Counts the element's text to a number, formatted with the user's locale.",
+      parallax: 'Scroll-linked drift as the element crosses the viewport. Negative speeds move against the scroll.',
+      drawSvg: 'Draws SVG strokes in. On a container, every stroked descendant draws, staggered.',
+      sequence: 'Composes child entrances into one timeline. Nesting is the choreography; <code>[at]</code> takes GSAP position syntax for overlaps.',
+      drag: 'Draggable with bounds (the parent by default), a grid snap, and momentum on release.',
+      scrollTo: 'Smooth-scrolls to a selector on click, with a native fallback when the plugin is not registered.',
+      observe: 'Wheel, touch, and pointer as one stream of Angular outputs.',
+      hover: 'Pointer micro-interactions. Enter and leave tweens overwrite each other, so fast passes never pile up.',
+    },
     how: 'How this works',
     explain: [
       '<code>reveal</code> and <code>stagger</code> are presets on top of <code>injectGsap</code>: same scoping, same cleanup, same signal inputs. They only cover entrances, on purpose. Anything richer goes in the composable.',
@@ -48,6 +66,23 @@ const COPY = {
     scrollEyebrow: 'Y con scroll',
     tailNote:
       'Este párrafo usó <code>reveal="fade-up" on="scroll"</code>, y los bloques de arriba derivan a distintas velocidades de <code>parallax</code>. Por debajo ambos son ScrollTrigger, registrado una vez en <code>provideGsap</code>.',
+    fullTitle: 'Ejemplos completos',
+    fullIntro:
+      'Un componente autocontenido por directiva: el TypeScript y el template tal como irían en tu proyecto, más una hoja de estilos cuando el ejemplo la necesita. Copia el par y funciona.',
+    refs: {
+      reveal: 'Entradas para un solo elemento, al pintar o con scroll. Presets: <code>fade</code>, <code>fade-up/down/left/right</code>, <code>scale-in</code>.',
+      stagger: 'Las mismas entradas sobre los hijos de un elemento. Funciona natural con <code>@for</code>: los items nuevos repiten la entrada.',
+      splitReveal: 'Divide el texto en caracteres, palabras o líneas y escalona las piezas. El marcado original se restaura al destruir.',
+      scrambleText: 'Descodifica el texto en su lugar. Sin texto objetivo, descodifica el contenido propio del elemento.',
+      counter: 'Cuenta el texto del elemento hasta un número, con el formato del locale del usuario.',
+      parallax: 'Deriva ligada al scroll mientras el elemento cruza el viewport. Velocidades negativas van contra el scroll.',
+      drawSvg: 'Dibuja trazos de SVG. En un contenedor, cada descendiente con trazo se dibuja, escalonado.',
+      sequence: 'Compone las entradas hijas en un solo timeline. Anidar es la coreografía; <code>[at]</code> acepta posiciones de GSAP para solapar.',
+      drag: 'Draggable con límites (el padre por defecto), snap de cuadrícula e impulso al soltar.',
+      scrollTo: 'Scroll suave hasta un selector al hacer click, con fallback nativo si el plugin no está registrado.',
+      observe: 'Rueda, touch y puntero como un solo stream de outputs de Angular.',
+      hover: 'Microinteracciones de puntero. Los tweens de entrada y salida se sobreescriben: los pases rápidos no se acumulan.',
+    },
     how: 'Cómo funciona',
     explain: [
       '<code>reveal</code> y <code>stagger</code> son presets sobre <code>injectGsap</code>: mismo scoping, misma limpieza, mismos inputs de signal. Solo cubren entradas, a propósito. Cualquier cosa más rica va en el composable.',
@@ -141,6 +176,36 @@ const COPY = {
         </ul>
       </section>
 
+      <section class="full-refs">
+        <h2 class="refs-title">{{ c.fullTitle }}</h2>
+        <p class="refs-intro">{{ c.fullIntro }}</p>
+
+        @for (ex of examples; track ex.id) {
+          <article class="ref-card" [id]="ex.id">
+            <h3><code>{{ ex.name }}</code></h3>
+            <p [innerHTML]="refText(ex.id)"></p>
+            <div class="ref-panels">
+              <app-code
+                [code]="ex.ts"
+                [label]="ex.id.toLowerCase() + '.component.ts'"
+              />
+              <app-code
+                [code]="ex.html"
+                lang="html"
+                [label]="ex.id.toLowerCase() + '.component.html'"
+              />
+              @if (ex.css) {
+                <app-code
+                  [code]="ex.css"
+                  lang="css"
+                  [label]="ex.id.toLowerCase() + '.component.css'"
+                />
+              }
+            </div>
+          </article>
+        }
+      </section>
+
       <section class="scroll-tail">
         <p class="eyebrow">{{ c.scrollEyebrow }}</p>
         <div class="parallax-row" aria-hidden="true">
@@ -228,6 +293,61 @@ const COPY = {
       border-radius: 10px;
     }
 
+    .full-refs {
+      margin-top: 4rem;
+      border-top: var(--bw) solid var(--ink);
+      padding-top: 2rem;
+    }
+
+    .refs-title {
+      font-size: 1.6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .refs-intro {
+      color: var(--ink-soft);
+      max-width: 44rem;
+      margin: 0.75rem 0 2rem;
+    }
+
+    .ref-card {
+      border: var(--bw) solid var(--ink);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      background: var(--card);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+
+      h3 {
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+
+        code {
+          font-family: var(--font-mono);
+        }
+      }
+
+      > p {
+        color: var(--ink-soft);
+        max-width: 44rem;
+        margin: 0 0 1.25rem;
+
+        code {
+          font-family: var(--font-mono);
+          font-size: 0.85em;
+          color: var(--ink);
+        }
+      }
+    }
+
+    .ref-panels {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+      gap: 1.25rem;
+      align-items: start;
+    }
+
     .scroll-tail {
       /* a full viewport of runway so the reveal is below the fold on any screen */
       margin-top: 100vh;
@@ -248,6 +368,12 @@ const COPY = {
   `,
 })
 export default class DirectivesPage {
+  protected readonly examples = DIRECTIVE_EXAMPLES;
+
+  protected refText(id: string): string {
+    return (this.c.refs as Record<string, string>)[id] ?? '';
+  }
+
   protected readonly c = COPY[injectLocale()];
 
   protected readonly presets: RevealPreset[] = [
