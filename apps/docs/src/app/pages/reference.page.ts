@@ -32,12 +32,15 @@ export const routeMeta: RouteMeta = {
         <app-code [code]="injectSig" label="signature" />
         <h3>Options</h3>
         <table>
-          <tr>
+          <thead>
+<tr>
             <th>Option</th>
             <th>Default</th>
             <th>What it does</th>
           </tr>
-          <tr>
+          </thead>
+          <tbody>
+<tr>
             <td><code>scope</code></td>
             <td>host element</td>
             <td>
@@ -46,7 +49,7 @@ export const routeMeta: RouteMeta = {
               change it, or <code>false</code> for document-wide.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>reactive</code></td>
             <td><code>true</code></td>
             <td>
@@ -54,51 +57,56 @@ export const routeMeta: RouteMeta = {
               changes.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>injector</code></td>
             <td>current</td>
             <td>Needed when calling outside an injection context.</td>
           </tr>
+          </tbody>
         </table>
         <h3>Returns <code>GsapRef</code></h3>
         <table>
-          <tr>
+          <thead>
+<tr>
             <th>Member</th>
             <th>What it is</th>
           </tr>
-          <tr>
+          </thead>
+          <tbody>
+<tr>
             <td><code>gsap</code></td>
             <td>The GSAP instance.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>context</code></td>
             <td>
               The live <code>gsap.Context</code>. <code>undefined</code> on
               the server and before first render.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>ready</code></td>
             <td>
               <code>Signal&lt;boolean&gt;</code>, flips to <code>true</code>
               once the context exists.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>contextSafe(fn)</code></td>
             <td>
               Wraps event handlers so anything they create joins the context
               and its cleanup.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>revert()</code></td>
             <td>Reverts everything; elements go back to their pre-animation state.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>kill()</code></td>
             <td>Kills everything without reverting inline styles.</td>
           </tr>
+          </tbody>
         </table>
       </section>
 
@@ -110,11 +118,14 @@ export const routeMeta: RouteMeta = {
         </p>
         <app-code [code]="provideSig" label="usage" />
         <table>
-          <tr>
+          <thead>
+<tr>
             <th>Option</th>
             <th>What it does</th>
           </tr>
-          <tr>
+          </thead>
+          <tbody>
+<tr>
             <td><code>plugins</code></td>
             <td>
               Registers GSAP plugins once (<code>ScrollTrigger</code>,
@@ -123,17 +134,18 @@ export const routeMeta: RouteMeta = {
               bundled.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>config</code></td>
             <td>Passed to <code>gsap.config()</code>.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>defaults</code></td>
             <td>
               Passed to <code>gsap.defaults()</code>: default vars for every
               tween.
             </td>
           </tr>
+          </tbody>
         </table>
       </section>
 
@@ -164,12 +176,15 @@ export const routeMeta: RouteMeta = {
         </p>
         <app-code [code]="directiveSig" lang="html" label="usage" />
         <table>
-          <tr>
+          <thead>
+<tr>
             <th>Input</th>
             <th>Default</th>
             <th>What it does</th>
           </tr>
-          <tr>
+          </thead>
+          <tbody>
+<tr>
             <td><code>reveal</code> / <code>preset</code></td>
             <td><code>fade-up</code></td>
             <td>
@@ -178,7 +193,7 @@ export const routeMeta: RouteMeta = {
               <code>fade-right</code>, <code>scale-in</code>.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>on</code></td>
             <td><code>init</code></td>
             <td>
@@ -187,37 +202,37 @@ export const routeMeta: RouteMeta = {
               ScrollTrigger in <code>provideGsap</code>).
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>delay</code></td>
             <td><code>0</code></td>
             <td>Seconds before the entrance starts.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>duration</code></td>
             <td><code>0.7</code></td>
             <td>Entrance length in seconds.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>distance</code></td>
             <td><code>28</code></td>
             <td>Travel in px for the directional presets.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>ease</code></td>
             <td><code>power3.out</code></td>
             <td>Any GSAP ease string.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>start</code></td>
             <td><code>top 85%</code></td>
             <td>ScrollTrigger start, only used with <code>on="scroll"</code>.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>stagger</code> / <code>each</code></td>
             <td><code>0.08</code></td>
             <td>Stagger only: seconds between each child.</td>
           </tr>
-          <tr>
+<tr>
             <td><code>items</code></td>
             <td>direct children</td>
             <td>
@@ -225,7 +240,7 @@ export const routeMeta: RouteMeta = {
               staggered items.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>splitReveal</code> / <code>kind</code></td>
             <td><code>words</code></td>
             <td>
@@ -235,7 +250,7 @@ export const routeMeta: RouteMeta = {
               <code>each</code> overrides it.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>counter</code> / <code>from</code> / <code>decimals</code></td>
             <td><code>0</code></td>
             <td>
@@ -243,7 +258,7 @@ export const routeMeta: RouteMeta = {
               fraction digits. Formatted with the user's locale.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>drawSvg</code> / <code>each</code></td>
             <td><code>0.15</code></td>
             <td>
@@ -251,7 +266,7 @@ export const routeMeta: RouteMeta = {
               several. Needs DrawSVGPlugin in <code>provideGsap</code>.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>sequence</code> / <code>at</code></td>
             <td>in order</td>
             <td>
@@ -259,7 +274,7 @@ export const routeMeta: RouteMeta = {
               child's <code>at</code> is a GSAP position parameter.
             </td>
           </tr>
-          <tr>
+<tr>
             <td><code>parallax</code></td>
             <td><code>0.15</code></td>
             <td>
@@ -268,10 +283,24 @@ export const routeMeta: RouteMeta = {
               Needs ScrollTrigger.
             </td>
           </tr>
+          </tbody>
         </table>
         <p>
           The entrance directives and <code>counter</code> emit a
           <code>completed</code> output when they finish.
+        </p>
+      </section>
+
+      <section class="api-section">
+        <h2>The rest of GSAP</h2>
+        <p>
+          There is no wrapper to wait for: <code>gsap.matchMedia()</code>,
+          <code>Draggable.create()</code>, <code>Observer.create()</code>,
+          timelines, effects, and every plugin run inside the
+          <code>injectGsap</code> callback exactly as the GSAP docs show, and
+          the context reverts what they create. If a callback sets up
+          something GSAP doesn't track (a <code>gsap.ticker</code> loop, an
+          event listener), return a cleanup function and it runs on destroy.
         </p>
       </section>
 

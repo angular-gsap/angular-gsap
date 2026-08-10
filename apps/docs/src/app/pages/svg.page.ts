@@ -28,7 +28,7 @@ const COPY = {
     eyebrow: 'Example · SVG',
     title: 'SVG animation',
     intro:
-      'SVG is regular DOM to GSAP: strokes draw in with DrawSVG, shapes morph with MorphSVG, and elements ride paths with MotionPath. All three plugins are free now, registered once in <code>provideGsap</code>.',
+      'SVG is regular DOM to GSAP: strokes draw in with DrawSVG, shapes morph with MorphSVG, and elements ride paths with MotionPath. All three plugins are registered once in <code>provideGsap</code>.',
     morph: 'Morph',
     how: 'How this works',
     explain: [
@@ -41,7 +41,7 @@ const COPY = {
     eyebrow: 'Ejemplo · SVG',
     title: 'Animación de SVG',
     intro:
-      'Para GSAP el SVG es DOM normal: los trazos se dibujan con DrawSVG, las formas se transforman con MorphSVG y los elementos recorren rutas con MotionPath. Los tres plugins ahora son gratis, registrados una vez en <code>provideGsap</code>.',
+      'Para GSAP el SVG es DOM normal: los trazos se dibujan con DrawSVG, las formas se transforman con MorphSVG y los elementos recorren rutas con MotionPath. Los tres plugins se registran una vez en <code>provideGsap</code>.',
     morph: 'Transformar',
     how: 'Cómo funciona',
     explain: [

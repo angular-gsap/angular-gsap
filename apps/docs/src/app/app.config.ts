@@ -11,7 +11,9 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideFileRouter, requestContextInterceptor } from '@analogjs/router';
 import { withInMemoryScrolling } from '@angular/router';
 import { provideGsap } from '@angular-gsap/core';
+import { Draggable } from 'gsap/Draggable';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { Flip } from 'gsap/Flip';
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
@@ -31,7 +33,9 @@ export const appConfig: ApplicationConfig = {
     ),
     provideGsap({
       plugins: [
+        Draggable,
         DrawSVGPlugin,
+        InertiaPlugin,
         Flip,
         MorphSVGPlugin,
         MotionPathPlugin,

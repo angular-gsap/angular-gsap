@@ -8,7 +8,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 export default defineConfig(() => {
   return {
     root: __dirname,
-    cacheDir: `../../node_modules/.vite`,
+    cacheDir: process.env['DOCS_VITE_CACHE'] ?? `../../node_modules/.vite`,
     base: process.env['DOCS_BASE'] ?? '/',
     build: {
       outDir: '../../dist/apps/docs/client',
@@ -26,24 +26,26 @@ export default defineConfig(() => {
         prerender: {
           routes: [
             '/',
-            '/basics',
+            '/start',
             '/directives',
             '/timeline',
             '/scroll',
             '/text',
             '/flip',
             '/pointer',
+            '/drag',
             '/svg',
             '/webgl',
             '/reference',
             '/es',
-            '/es/basics',
+            '/es/start',
             '/es/directives',
             '/es/timeline',
             '/es/scroll',
             '/es/text',
             '/es/flip',
             '/es/pointer',
+            '/es/drag',
             '/es/svg',
             '/es/webgl',
             '/es/reference',

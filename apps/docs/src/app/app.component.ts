@@ -12,13 +12,15 @@ import type { DocsLocale } from './i18n';
 
 const NAV = {
   en: {
-    basics: 'Basics',
+    home: 'Home',
+    start: 'Start',
     directives: 'Directives',
     timeline: 'Timeline',
     scroll: 'ScrollTrigger',
     text: 'SplitText',
     flip: 'Flip',
     pointer: 'quickTo',
+    drag: 'Draggable',
     svg: 'SVG',
     webgl: 'WebGL',
     api: 'API',
@@ -29,13 +31,15 @@ const NAV = {
     langLabel: 'Leer en español',
   },
   es: {
-    basics: 'Básicos',
+    home: 'Inicio',
+    start: 'Empezar',
     directives: 'Directivas',
     timeline: 'Timeline',
     scroll: 'ScrollTrigger',
     text: 'SplitText',
     flip: 'Flip',
     pointer: 'quickTo',
+    drag: 'Draggable',
     svg: 'SVG',
     webgl: 'WebGL',
     api: 'API',
@@ -63,8 +67,14 @@ const NAV = {
         <span class="brand">angular<span class="brand-tick">-</span>gsap</span>
       </a>
       <nav aria-label="Examples">
-        <a [routerLink]="p('/basics')" routerLinkActive="on">{{
-          t().basics
+        <a
+          [routerLink]="p('/')"
+          routerLinkActive="on"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >{{ t().home }}</a
+        >
+        <a [routerLink]="p('/start')" routerLinkActive="on">{{
+          t().start
         }}</a>
         <a [routerLink]="p('/directives')" routerLinkActive="on">{{
           t().directives
@@ -80,6 +90,7 @@ const NAV = {
         <a [routerLink]="p('/pointer')" routerLinkActive="on">{{
           t().pointer
         }}</a>
+        <a [routerLink]="p('/drag')" routerLinkActive="on">{{ t().drag }}</a>
         <a [routerLink]="p('/svg')" routerLinkActive="on">{{ t().svg }}</a>
         <a [routerLink]="p('/webgl')" routerLinkActive="on">{{
           t().webgl

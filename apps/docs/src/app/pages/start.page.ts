@@ -11,7 +11,7 @@ import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
-  title: 'Basics · angular-gsap',
+  title: 'Start · angular-gsap',
 };
 
 const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];

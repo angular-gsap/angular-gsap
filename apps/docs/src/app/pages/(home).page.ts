@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Stagger, injectGsap, type GsapTimeline } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
@@ -12,15 +12,16 @@ export const routeMeta: RouteMeta = {
 
 const COPY = {
   en: {
-    eyebrow: 'gsap × angular · every plugin, free',
+    eyebrow: 'gsap × angular',
     lede: 'Write vanilla GSAP. The library handles the Angular part: host scoping, cleanup, signal reactivity, and SSR.',
     replay: 'Replay intro',
+    copy: 'Copy install command',
     howEyebrow: 'The whole idea',
     howTitle: 'One composable. Vanilla GSAP inside.',
     howBody:
       '<code>injectGsap()</code> runs your GSAP code in a context that belongs to the component. Target elements with <code>viewChild</code> queries or component-scoped selectors, read signals to make it reactive, and the context reverts everything when the component is destroyed. On the server it never runs.',
     howCta: 'Start with the basics →',
-    basicsLink: '/basics',
+    basicsLink: '/start',
     featEyebrow: 'What it handles for you',
     features: [
       { title: 'Scoped by default', body: "Selectors match inside your component's host and nowhere else." },
@@ -33,15 +34,16 @@ const COPY = {
     ],
   },
   es: {
-    eyebrow: 'gsap × angular · todos los plugins, gratis',
+    eyebrow: 'gsap × angular',
     lede: 'Escribe GSAP puro. La librería se encarga de la parte de Angular: scoping al host, limpieza, reactividad con signals y SSR.',
     replay: 'Repetir intro',
+    copy: 'Copiar comando de instalación',
     howEyebrow: 'La idea completa',
     howTitle: 'Un composable. GSAP puro adentro.',
     howBody:
       '<code>injectGsap()</code> ejecuta tu código GSAP en un contexto que pertenece al componente. Apunta a elementos con queries <code>viewChild</code> o selectores limitados al componente, lee signals para hacerlo reactivo, y el contexto revierte todo cuando el componente se destruye. En el servidor nunca se ejecuta.',
     howCta: 'Empieza con los básicos →',
-    basicsLink: '/es/basics',
+    basicsLink: '/es/start',
     featEyebrow: 'Lo que resuelve por ti',
     features: [
       { title: 'Scoped por defecto', body: 'Los selectores solo aplican dentro del host de tu componente, en ningún otro lado.' },
@@ -64,7 +66,28 @@ const COPY = {
       <h1 class="logotype" aria-label="angular-gsap">angular-gsap</h1>
       <p class="lede">{{ c.lede }}</p>
       <div class="hero-actions">
-        <code class="install">pnpm add &#64;angular-gsap/core gsap</code>
+        <div class="install-box">
+          <div class="pm-tabs">
+            @for (p of pms; track p) {
+              <button
+                type="button"
+                [class.on]="p === pm()"
+                (click)="pm.set(p)"
+              >
+                {{ p }}
+              </button>
+            }
+          </div>
+          <button
+            type="button"
+            class="install"
+            (click)="copyInstall()"
+            [attr.aria-label]="c.copy"
+          >
+            <code>{{ installCmd() }}</code>
+            <span class="copy-mark">{{ copied() ? '✓' : '⧉' }}</span>
+          </button>
+        </div>
         <button class="btn" (click)="replay()">{{ c.replay }}</button>
       </div>
     </section>
@@ -74,7 +97,7 @@ const COPY = {
         @for (i of [0, 1]; track i) {
           <span class="tape-run">
             SCROLLTRIGGER ✦ SPLITTEXT ✦ MORPHSVG ✦ DRAWSVG ✦ FLIP ✦
-            MOTIONPATH ✦ OBSERVER ✦ TEXTPLUGIN ✦ ALL FREE ✦&nbsp;
+            MOTIONPATH ✦ DRAGGABLE ✦ INERTIA ✦ OBSERVER ✦&nbsp;
           </span>
         }
       </div>
@@ -133,19 +156,65 @@ const COPY = {
     .hero-actions {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
+      align-items: flex-end;
       gap: 1rem;
       margin-top: 2rem;
     }
 
+    .install-box {
+      display: inline-block;
+    }
+
+    .pm-tabs {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: -2px;
+
+      button {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        border: 2px solid var(--ink);
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        background: var(--paper);
+        color: var(--ink-soft);
+        padding: 0.2rem 0.7rem;
+        cursor: pointer;
+
+        &.on {
+          background: var(--ink);
+          color: var(--paper);
+        }
+      }
+    }
+
     .install {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
       font-family: var(--font-mono);
       font-size: 0.88rem;
+      color: var(--ink);
       background: var(--card);
       border: var(--bw) solid var(--ink);
-      border-radius: 10px;
+      border-radius: 0 10px 10px 10px;
       box-shadow: var(--shadow-sm);
       padding: 0.55rem 1.1rem;
+      cursor: pointer;
+
+      code {
+        font-family: inherit;
+      }
+
+      .copy-mark {
+        font-size: 0.95rem;
+        color: var(--ink-soft);
+      }
+
+      &:hover .copy-mark {
+        color: var(--ink);
+      }
     }
 
     .marquee {
@@ -255,6 +324,24 @@ export default class HomePage {
   protected readonly c = COPY[injectLocale()];
   private intro?: GsapTimeline;
 
+  protected readonly pms = ['pnpm', 'npm', 'yarn'] as const;
+  protected readonly pm = signal<'pnpm' | 'npm' | 'yarn'>('pnpm');
+  protected readonly installCmd = () => {
+    const verb = { pnpm: 'pnpm add', npm: 'npm install', yarn: 'yarn add' }[
+      this.pm()
+    ];
+    return verb + ' @angular-gsap/core gsap';
+  };
+
+  protected readonly copied = signal(false);
+
+  protected copyInstall(): void {
+    navigator.clipboard?.writeText(this.installCmd()).then(() => {
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 1400);
+    });
+  }
+
   protected readonly snippet = [
     `@Component({`,
     `  template: '<div #box class="box"></div>',`,
@@ -292,8 +379,10 @@ export default class HomePage {
       stagger: 0.05,
       ease: 'back.out(1.6)',
     });
+    // hand color back to the CSS token so theme switches stay visible
+    tl.set(split.chars, { clearProps: 'color' });
     if (tick) {
-      tl.set(tick, { color: '#0ae448' }, '>-0.2');
+      tl.set(tick, { color: '#0ae448' }, '>');
     }
     this.intro = tl;
 

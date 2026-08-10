@@ -44,7 +44,8 @@ That is the approach GSAP itself endorses with [`@gsap/react`'s `useGSAP()`](htt
 
 ```sh
 pnpm add @angular-gsap/core gsap
-# or: npm i @angular-gsap/core gsap
+# npm install @angular-gsap/core gsap
+# yarn add @angular-gsap/core gsap
 ```
 
 Since GSAP 3.13 the entire toolset is [100% free](https://gsap.com/pricing/), including formerly paid plugins like ScrollTrigger, SplitText, and MorphSVG. Everything ships in the `gsap` npm package.
