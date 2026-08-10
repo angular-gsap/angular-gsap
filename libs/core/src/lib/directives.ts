@@ -14,6 +14,7 @@ import {
   hasScrollTrigger,
   joinSequence,
   warnMissingPlugin,
+  type ScrollerLike,
 } from './internal';
 import { Sequence } from './sequence';
 import { RevealPreset, prefersReducedMotion, presetFromVars } from './presets';
@@ -33,6 +34,7 @@ interface EntranceConfig {
   distance: number;
   ease: string;
   start: string;
+  scroller: ScrollerLike;
   onComplete: () => void;
 }
 
@@ -46,7 +48,10 @@ function entranceVars(config: EntranceConfig): GsapTweenVars {
   };
   if (config.on === 'scroll') {
     if (hasScrollTrigger(config.gsap)) {
-      Object.assign(vars, entranceScrollTrigger(config.trigger, config.start));
+      Object.assign(
+        vars,
+        entranceScrollTrigger(config.trigger, config.start, config.scroller)
+      );
     } else {
       warnMissingPlugin('on="scroll"', 'ScrollTrigger');
     }
@@ -83,6 +88,8 @@ export class Reveal {
   readonly ease = input('power3.out');
   /** ScrollTrigger `start` (only used with `on="scroll"`). */
   readonly start = input('top 85%');
+  /** Scrollable container for `on="scroll"`; defaults to the window. */
+  readonly scroller = input<ScrollerLike>(null);
   /** Position in a parent `sequence` (GSAP position parameter). */
   readonly at = input<string | number>('');
   readonly completed = output<void>();
@@ -103,6 +110,7 @@ export class Reveal {
         distance: this.distance(),
         ease: this.ease(),
         start: this.start(),
+        scroller: this.scroller(),
         onComplete: () => this.completed.emit(),
       })
     );
@@ -140,6 +148,8 @@ export class Stagger {
   readonly distance = input(28, { transform: numberAttribute });
   readonly ease = input('power3.out');
   readonly start = input('top 85%');
+  /** Scrollable container for `on="scroll"`; defaults to the window. */
+  readonly scroller = input<ScrollerLike>(null);
   /** Optional CSS selector for the staggered items, resolved within the host. */
   readonly items = input('');
   /** Position in a parent `sequence` (GSAP position parameter). */
@@ -168,6 +178,7 @@ export class Stagger {
         distance: this.distance(),
         ease: this.ease(),
         start: this.start(),
+        scroller: this.scroller(),
         onComplete: () => this.completed.emit(),
       }),
       stagger: this.each(),

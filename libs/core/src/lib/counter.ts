@@ -4,6 +4,7 @@ import {
   entranceScrollTrigger,
   hasScrollTrigger,
   warnMissingPlugin,
+  type ScrollerLike,
 } from './internal';
 import { prefersReducedMotion } from './presets';
 import type { GsapTweenVars } from './types';
@@ -36,6 +37,8 @@ export class Counter {
   readonly on = input<'init' | 'scroll'>('init');
   /** ScrollTrigger `start` (only used with `on="scroll"`). */
   readonly start = input('top 85%');
+  /** Scrollable container for `on="scroll"`; defaults to the window. */
+  readonly scroller = input<ScrollerLike>(null);
   readonly completed = output<void>();
 
   readonly ctx = injectGsap(({ gsap }) => {
@@ -66,7 +69,7 @@ export class Counter {
     };
     if (this.on() === 'scroll') {
       if (hasScrollTrigger(gsap)) {
-        Object.assign(vars, entranceScrollTrigger(el, this.start()));
+        Object.assign(vars, entranceScrollTrigger(el, this.start(), this.scroller()));
       } else {
         warnMissingPlugin('on="scroll"', 'ScrollTrigger');
       }

@@ -1,6 +1,11 @@
 import { Directive, ElementRef, inject, input } from '@angular/core';
 import { injectGsap } from './inject-gsap';
-import { hasScrollTrigger, warnMissingPlugin } from './internal';
+import {
+  hasScrollTrigger,
+  resolveScroller,
+  warnMissingPlugin,
+  type ScrollerLike,
+} from './internal';
 import { prefersReducedMotion } from './presets';
 
 function speedAttribute(value: number | string): number {
@@ -27,6 +32,8 @@ export class Parallax {
 
   /** Fraction of the viewport height to travel; empty attribute means `0.15`. */
   readonly speed = input(0.15, { alias: 'parallax', transform: speedAttribute });
+  /** Scrollable container to scrub against; defaults to the window. */
+  readonly scroller = input<ScrollerLike>(null);
 
   readonly ctx = injectGsap(({ gsap }) => {
     if (prefersReducedMotion()) {
@@ -37,6 +44,7 @@ export class Parallax {
       return;
     }
     const el = this.host.nativeElement;
+    const scroller = resolveScroller(this.scroller());
     const shift = () => (this.speed() * window.innerHeight) / 2;
     gsap.fromTo(
       el,
@@ -49,6 +57,7 @@ export class Parallax {
           start: 'top bottom',
           end: 'bottom top',
           scrub: true,
+          ...(scroller ? { scroller } : {}),
         },
       }
     );

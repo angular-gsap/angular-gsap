@@ -6,6 +6,7 @@ import {
   hasScrollTrigger,
   joinSequence,
   warnMissingPlugin,
+  type ScrollerLike,
 } from './internal';
 import { prefersReducedMotion } from './presets';
 import { GSAP_OPTIONS } from './provide-gsap';
@@ -40,6 +41,8 @@ export class ScrambleText {
   readonly on = input<'init' | 'scroll'>('init');
   /** ScrollTrigger `start` (only used with `on="scroll"`). */
   readonly start = input('top 85%');
+  /** Scrollable container for `on="scroll"`; defaults to the window. */
+  readonly scroller = input<ScrollerLike>(null);
   /** Position in a parent `sequence` (GSAP position parameter). */
   readonly at = input<string | number>('');
   readonly completed = output<void>();
@@ -66,7 +69,7 @@ export class ScrambleText {
     };
     if (this.on() === 'scroll') {
       if (hasScrollTrigger(gsap)) {
-        Object.assign(vars, entranceScrollTrigger(el, this.start()));
+        Object.assign(vars, entranceScrollTrigger(el, this.start(), this.scroller()));
       } else {
         warnMissingPlugin('on="scroll"', 'ScrollTrigger');
       }

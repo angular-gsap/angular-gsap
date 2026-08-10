@@ -82,7 +82,8 @@ describe('extra directives', () => {
     const fixture = TestBed.createComponent(ObserveHost);
     await settle(fixture);
     expect(Observer.getAll().length).toBe(before + 1);
-    const instance = Observer.getAll().at(-1) as Observer & {
+    const observers = Observer.getAll();
+    const instance = observers[observers.length - 1] as Observer & {
       vars: { preventDefault?: boolean };
     };
     expect(instance.vars.preventDefault).toBe(true);

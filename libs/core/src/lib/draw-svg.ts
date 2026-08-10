@@ -5,6 +5,7 @@ import {
   hasScrollTrigger,
   joinSequence,
   warnMissingPlugin,
+  type ScrollerLike,
 } from './internal';
 import { prefersReducedMotion } from './presets';
 import { Sequence } from './sequence';
@@ -37,6 +38,8 @@ export class DrawSvg {
   readonly each = input(0.15, { transform: numberAttribute });
   /** ScrollTrigger `start` (only used with `on="scroll"`). */
   readonly start = input('top 85%');
+  /** Scrollable container for `on="scroll"`; defaults to the window. */
+  readonly scroller = input<ScrollerLike>(null);
   /** Position in a parent `sequence` (GSAP position parameter). */
   readonly at = input<string | number>('');
   readonly completed = output<void>();
@@ -65,7 +68,7 @@ export class DrawSvg {
     };
     if (this.on() === 'scroll') {
       if (hasScrollTrigger(gsap)) {
-        Object.assign(vars, entranceScrollTrigger(host, this.start()));
+        Object.assign(vars, entranceScrollTrigger(host, this.start(), this.scroller()));
       } else {
         warnMissingPlugin('on="scroll"', 'ScrollTrigger');
       }

@@ -10,3 +10,6 @@ export type GsapTween = gsap.core.Tween;
 export type GsapTimeline = gsap.core.Timeline;
 export type GsapContext = gsap.Context;
 export type GsapConfig = gsap.GSAPConfig;
+
+/** Accepted by the `scroller` inputs: selector, element, or an ElementRef. */
+export type { ScrollerLike } from './internal';

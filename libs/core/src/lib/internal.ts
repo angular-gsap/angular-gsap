@@ -55,6 +55,21 @@ export function warnMissingPlugin(feature: string, plugin: string): void {
   }
 }
 
+/** A ScrollTrigger scroller: selector, element, or an ElementRef-like box. */
+export type ScrollerLike = string | Element | { nativeElement: Element } | null;
+
+/** Unwraps an ElementRef-like scroller; `null` means the window (default). */
+export function resolveScroller(
+  scroller: ScrollerLike
+): string | Element | undefined {
+  if (!scroller) {
+    return undefined;
+  }
+  return typeof scroller === 'object' && 'nativeElement' in scroller
+    ? scroller.nativeElement
+    : scroller;
+}
+
 /**
  * ScrollTrigger vars for one-shot entrances. 'reset' on leave-back makes
  * them self-correct when the trigger is created already past its start
@@ -62,13 +77,16 @@ export function warnMissingPlugin(feature: string, plugin: string): void {
  */
 export function entranceScrollTrigger(
   trigger: Element,
-  start: string
+  start: string,
+  scroller?: ScrollerLike
 ): GsapTweenVars {
+  const resolved = resolveScroller(scroller ?? null);
   return {
     scrollTrigger: {
       trigger,
       start,
       toggleActions: 'play none none reset',
+      ...(resolved ? { scroller: resolved } : {}),
     },
   };
 }

@@ -6,6 +6,7 @@ import {
   hasScrollTrigger,
   joinSequence,
   warnMissingPlugin,
+  type ScrollerLike,
 } from './internal';
 import { Sequence } from './sequence';
 import { prefersReducedMotion } from './presets';
@@ -59,6 +60,8 @@ export class SplitReveal {
   readonly each = input(Number.NaN, { transform: numberAttribute });
   /** ScrollTrigger `start` (only used with `on="scroll"`). */
   readonly start = input('top 85%');
+  /** Scrollable container for `on="scroll"`; defaults to the window. */
+  readonly scroller = input<ScrollerLike>(null);
   /** Position in a parent `sequence` (GSAP position parameter). */
   readonly at = input<string | number>('');
   readonly completed = output<void>();
@@ -94,7 +97,7 @@ export class SplitReveal {
     };
     if (this.on() === 'scroll') {
       if (hasScrollTrigger(gsap)) {
-        Object.assign(vars, entranceScrollTrigger(el, this.start()));
+        Object.assign(vars, entranceScrollTrigger(el, this.start(), this.scroller()));
       } else {
         warnMissingPlugin('on="scroll"', 'ScrollTrigger');
       }

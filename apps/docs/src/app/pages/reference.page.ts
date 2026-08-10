@@ -229,6 +229,14 @@ export const routeMeta: RouteMeta = {
             <td>ScrollTrigger start, only used with <code>on="scroll"</code>.</td>
           </tr>
 <tr>
+            <td><code>scroller</code></td>
+            <td>the window</td>
+            <td>
+              Scrollable container for <code>on="scroll"</code> and
+              <code>parallax</code>: a selector, an element, or an ElementRef.
+            </td>
+          </tr>
+<tr>
             <td><code>stagger</code> / <code>each</code></td>
             <td><code>0.08</code></td>
             <td>Stagger only: seconds between each child.</td>
