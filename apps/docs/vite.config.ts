@@ -1,8 +1,8 @@
 /// <reference types="vitest" />
 
 import analog from '@analogjs/platform';
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -15,13 +15,20 @@ export default defineConfig(() => {
       reportCompressedSize: true,
       target: ['es2020'],
     },
+    resolve: {
+      tsconfigPaths: true,
+    },
     server: {
+      port: 4300,
       fs: {
         allow: ['.'],
       },
     },
     plugins: [
       analog({
+        // vite now runs from the project dir (inferred targets); keep nitro
+        // and the router globs anchored to the workspace root
+        workspaceRoot: resolve(__dirname, '../..'),
         static: true,
         prerender: {
           routes: [
@@ -67,9 +74,9 @@ export default defineConfig(() => {
           inlineStylesExtension: 'scss',
         },
       }),
-      nxViteTsPaths(),
     ],
     test: {
+      watch: false,
       globals: true,
       environment: 'jsdom',
       setupFiles: ['src/test-setup.ts'],
