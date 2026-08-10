@@ -21,14 +21,17 @@ const REPLAYABLE = new Set([
         @for (r of [run()]; track r) {
           @switch (id()) {
             @case ('reveal') {
-              <div class="center col">
-                <strong class="line" reveal>Fades up when the page renders</strong>
-                <div class="demo-card" reveal="fade-right" [delay]="0.2" [distance]="40">
-                  from the left
+              <div class="mini-frame" #revealFrame>
+                <div class="mini-inner">
+                  <strong class="line" reveal>Fades up when the page renders</strong>
+                  <div class="demo-card" reveal="fade-right" [delay]="0.2" [distance]="40">
+                    from the left
+                  </div>
+                  <p class="small-hint">scroll inside ↓</p>
+                  <p class="line soft far" reveal="fade-up" on="scroll" [scroller]="revealFrame" [start]="'top 90%'">
+                    and this one waits for the frame scroll
+                  </p>
                 </div>
-                <p class="line soft" reveal="fade-up" on="scroll">
-                  and this one waits for scroll
-                </p>
               </div>
             }
             @case ('stagger') {
@@ -66,10 +69,15 @@ const REPLAYABLE = new Set([
               </div>
             }
             @case ('parallax') {
-              <div class="center col">
-                <span class="pblock" parallax="0.25"></span>
-                <span class="pblock two" parallax="-0.15"></span>
-                <p class="small-hint">scroll the page ↕ · the second moves against it</p>
+              <div class="mini-frame" #pFrame>
+                <div class="mini-inner runway">
+                  <p class="small-hint">scroll inside ↕ · the second moves against it</p>
+                  <div class="row">
+                    <span class="pblock" parallax="0.25" [scroller]="pFrame"></span>
+                    <span class="pblock two" parallax="-0.15" [scroller]="pFrame"></span>
+                    <span class="pblock three" parallax="0.15" [scroller]="pFrame"></span>
+                  </div>
+                </div>
               </div>
             }
             @case ('drawSvg') {
@@ -103,11 +111,11 @@ const REPLAYABLE = new Set([
             }
             @case ('scrollTo') {
               <div class="center col">
-                <button type="button" class="jump" scrollTo="#reveal" [offsetY]="84">
-                  ↑ reveal
+                <button type="button" class="jump" scrollTo="#main" [offsetY]="84">
+                  ↑ top
                 </button>
-                <button type="button" class="jump" scrollTo="#hover" [duration]="1.2" [offsetY]="84">
-                  ↓ hover
+                <button type="button" class="jump" scrollTo="#how" [duration]="1.2" [offsetY]="84">
+                  ↓ how it works
                 </button>
               </div>
             }
@@ -291,6 +299,35 @@ const REPLAYABLE = new Set([
 
     .two {
       background: var(--kinetic);
+    }
+
+    .three {
+      background: var(--arc);
+    }
+
+    /* a demo that scrolls inside its own frame, not the page */
+    .mini-frame {
+      height: 15rem;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .mini-inner {
+      display: grid;
+      justify-items: center;
+      align-content: start;
+      gap: 1.1rem;
+      padding: 1.5rem 1rem;
+    }
+
+    .far {
+      margin-top: 15rem;
+      padding-bottom: 2rem;
+    }
+
+    .runway {
+      padding-top: 6rem;
+      padding-bottom: 22rem;
     }
 
     .draw {
