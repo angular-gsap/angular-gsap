@@ -1,5 +1,5 @@
 import { Component, ElementRef, signal, viewChild } from '@angular/core';
-import { CodeSnippet } from '../code-snippet';
+import { CodeTabs, type CodeFile } from '../code-tabs';
 import { injectLocale } from '../i18n';
 import { injectGsap, target } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
@@ -51,7 +51,7 @@ const COPY = {
 } as const;
 
 @Component({
-  imports: [CodeSnippet],
+  imports: [CodeTabs],
   selector: 'app-text',
   template: `
     <div class="page">
@@ -83,8 +83,7 @@ const COPY = {
           </div>
         </div>
         <div class="panels">
-          <app-code [code]="tplSnippet" lang="html" label="passage.html" />
-          <app-code [code]="snippet" label="passage.ts" />
+          <app-code-tabs [files]="files" />
         </div>
       </div>
 
@@ -178,4 +177,9 @@ export default class TextPage {
     `  replay = () => this.run.update((n) => n + 1);`,
     `}`,
   ].join('\n');
+
+  protected readonly files: CodeFile[] = [
+    { label: 'passage.html', code: this.tplSnippet, lang: 'html' },
+    { label: 'passage.ts', code: this.snippet, lang: 'ts' },
+  ];
 }

@@ -1,6 +1,6 @@
 import { Component, ElementRef, viewChild, viewChildren } from '@angular/core';
 import { DrawSvg, injectGsap, target, targets } from '@angular-gsap/core';
-import { CodeSnippet } from '../code-snippet';
+import { CodeTabs, type CodeFile } from '../code-tabs';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
@@ -54,7 +54,7 @@ const COPY = {
 
 @Component({
   selector: 'app-svg',
-  imports: [CodeSnippet, DrawSvg],
+  imports: [CodeTabs, DrawSvg],
   template: `
     <div class="page">
       <header class="page-head">
@@ -119,8 +119,7 @@ const COPY = {
           </div>
         </div>
         <div class="panels">
-          <app-code [code]="tplSnippet" lang="html" label="shapes.html" />
-          <app-code [code]="snippet" label="shapes.ts" />
+          <app-code-tabs [files]="files" />
         </div>
       </div>
 
@@ -249,4 +248,9 @@ export default class SvgPage {
     `  })`,
     `);`,
   ].join('\n');
+
+  protected readonly files: CodeFile[] = [
+    { label: 'shapes.html', code: this.tplSnippet, lang: 'html' },
+    { label: 'shapes.ts', code: this.snippet, lang: 'ts' },
+  ];
 }

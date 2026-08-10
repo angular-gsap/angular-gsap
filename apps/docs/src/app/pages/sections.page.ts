@@ -2,7 +2,7 @@ import { Component, ElementRef, viewChild, viewChildren } from '@angular/core';
 import { injectGsap, prefersReducedMotion, target, targets } from '@angular-gsap/core';
 import { Observer } from 'gsap/Observer';
 import { SplitText } from 'gsap/SplitText';
-import { CodeSnippet } from '../code-snippet';
+import { CodeTabs, type CodeFile } from '../code-tabs';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
@@ -81,8 +81,7 @@ const BGS = [
           </div>
         </div>
         <div class="panels">
-          <app-code [code]="tplSnippet" lang="html" label="sections.html" />
-          <app-code [code]="snippet" label="sections.ts" />
+          <app-code-tabs [files]="files" />
         </div>
       </div>
 
@@ -299,4 +298,9 @@ export default class SectionsPage {
     `  return () => observer.kill();`,
     `});`,
   ].join('\n');
+
+  protected readonly files: CodeFile[] = [
+    { label: 'sections.html', code: this.tplSnippet, lang: 'html' },
+    { label: 'sections.ts', code: this.snippet, lang: 'ts' },
+  ];
 }

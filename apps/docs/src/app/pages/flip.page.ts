@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { injectGsap, targets } from '@angular-gsap/core';
 import { Flip } from 'gsap/Flip';
-import { CodeSnippet } from '../code-snippet';
+import { CodeTabs, type CodeFile } from '../code-tabs';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
@@ -63,7 +63,7 @@ const COPY = {
 
 @Component({
   selector: 'app-flip',
-  imports: [CodeSnippet],
+  imports: [CodeTabs],
   template: `
     <div class="page">
       <header class="page-head">
@@ -104,8 +104,7 @@ const COPY = {
           </div>
         </div>
         <div class="panels">
-          <app-code [code]="tplSnippet" lang="html" label="grid.html" />
-          <app-code [code]="snippet" label="grid.ts" />
+          <app-code-tabs [files]="files" />
         </div>
       </div>
 
@@ -242,4 +241,9 @@ export default class FlipPage {
     `  });`,
     `});`,
   ].join('\n');
+
+  protected readonly files: CodeFile[] = [
+    { label: 'grid.html', code: this.tplSnippet, lang: 'html' },
+    { label: 'grid.ts', code: this.snippet, lang: 'ts' },
+  ];
 }

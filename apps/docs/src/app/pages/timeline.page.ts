@@ -1,5 +1,5 @@
 import { Component, ElementRef, viewChildren } from '@angular/core';
-import { CodeSnippet } from '../code-snippet';
+import { CodeTabs, type CodeFile } from '../code-tabs';
 import { injectLocale } from '../i18n';
 import { injectGsap, targets, type GsapTimeline } from '@angular-gsap/core';
 import { RouteMeta } from '@analogjs/router';
@@ -38,7 +38,7 @@ const COPY = {
 } as const;
 
 @Component({
-  imports: [CodeSnippet],
+  imports: [CodeTabs],
   selector: 'app-timeline',
   template: `
     <div class="page">
@@ -80,8 +80,7 @@ const COPY = {
           </div>
         </div>
         <div class="panels">
-          <app-code [code]="tplSnippet" lang="html" label="equalizer.html" />
-          <app-code [code]="snippet" label="equalizer.ts" />
+          <app-code-tabs [files]="files" />
         </div>
       </div>
 
@@ -185,4 +184,9 @@ export default class TimelinePage {
     `  );`,
     `}`,
   ].join('\n');
+
+  protected readonly files: CodeFile[] = [
+    { label: 'equalizer.html', code: this.tplSnippet, lang: 'html' },
+    { label: 'equalizer.ts', code: this.snippet, lang: 'ts' },
+  ];
 }

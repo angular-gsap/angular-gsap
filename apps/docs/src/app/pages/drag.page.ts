@@ -1,6 +1,6 @@
 import { Component, ElementRef, viewChild, viewChildren } from '@angular/core';
 import { Drag, injectGsap, target, targets } from '@angular-gsap/core';
-import { CodeSnippet } from '../code-snippet';
+import { CodeTabs, type CodeFile } from '../code-tabs';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
@@ -43,7 +43,7 @@ const GRID = 96;
 
 @Component({
   selector: 'app-drag',
-  imports: [CodeSnippet, Drag],
+  imports: [CodeTabs, Drag],
   template: `
     <div class="page">
       <header class="page-head">
@@ -76,8 +76,7 @@ const GRID = 96;
           </div>
         </div>
         <div class="panels">
-          <app-code [code]="snippet" lang="html" label="bricks.html" />
-          <app-code [code]="tsSnippet" label="bricks.ts" />
+          <app-code-tabs [files]="files" />
         </div>
       </div>
 
@@ -213,4 +212,9 @@ export default class DragPage {
     `  });`,
     `});`,
   ].join('\n');
+
+  protected readonly files: CodeFile[] = [
+    { label: 'bricks.html', code: this.snippet, lang: 'html' },
+    { label: 'bricks.ts', code: this.tsSnippet, lang: 'ts' },
+  ];
 }

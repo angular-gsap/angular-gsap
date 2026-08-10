@@ -1,5 +1,5 @@
 import { Component, ElementRef, viewChild } from '@angular/core';
-import { CodeSnippet } from '../code-snippet';
+import { CodeTabs, type CodeFile } from '../code-tabs';
 import { injectLocale } from '../i18n';
 import { injectGsap, target } from '@angular-gsap/core';
 import { RouteMeta } from '@analogjs/router';
@@ -40,7 +40,7 @@ const COPY = {
 } as const;
 
 @Component({
-  imports: [CodeSnippet],
+  imports: [CodeTabs],
   selector: 'app-scroll',
   template: `
     <div class="page">
@@ -54,8 +54,7 @@ const COPY = {
         </div>
       </header>
       <div class="panels">
-        <app-code [code]="tplSnippet" lang="html" label="scroll.html" />
-        <app-code [code]="snippet" label="scroll.ts" />
+        <app-code-tabs [files]="files" />
       </div>
 
       <section class="explain">

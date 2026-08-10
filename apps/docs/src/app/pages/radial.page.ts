@@ -7,7 +7,7 @@ import {
   viewChildren,
 } from '@angular/core';
 import { injectGsap, targets, target, type GsapTimeline } from '@angular-gsap/core';
-import { CodeSnippet } from '../code-snippet';
+import { CodeTabs, type CodeFile } from '../code-tabs';
 import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
@@ -80,7 +80,7 @@ const END_ANGLE = 270;
 
 @Component({
   selector: 'app-radial',
-  imports: [CodeSnippet],
+  imports: [CodeTabs],
   template: `
     <div class="page">
       <header class="page-head">
@@ -174,8 +174,7 @@ const END_ANGLE = 270;
           </div>
         </div>
         <div class="panels">
-          <app-code [code]="tplSnippet" lang="html" label="radial.html" />
-          <app-code [code]="snippet" label="radial.ts" />
+          <app-code-tabs [files]="files" />
         </div>
       </div>
 
@@ -451,4 +450,9 @@ export default class RadialPage {
     `  }`,
     `});`,
   ].join('\n');
+
+  protected readonly files: CodeFile[] = [
+    { label: 'radial.html', code: this.tplSnippet, lang: 'html' },
+    { label: 'radial.ts', code: this.snippet, lang: 'ts' },
+  ];
 }
