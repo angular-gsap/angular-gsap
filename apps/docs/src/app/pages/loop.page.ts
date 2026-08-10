@@ -41,14 +41,14 @@ const COPY = {
 } as const;
 
 const CHIPS = [
-  { label: 'SCROLL', color: '#e23b80' },
-  { label: 'SPLIT', color: '#0ae448' },
-  { label: 'FLIP', color: '#5b4be8' },
-  { label: 'MORPH', color: '#ffb627' },
-  { label: 'DRAW', color: '#0ae448' },
-  { label: 'MOTION', color: '#e23b80' },
-  { label: 'OBSERVER', color: '#ffb627' },
-  { label: 'INERTIA', color: '#5b4be8' },
+  { label: 'SCROLL', color: 'var(--pulse)' },
+  { label: 'SPLIT', color: 'var(--kinetic)' },
+  { label: 'FLIP', color: 'var(--arc)' },
+  { label: 'MORPH', color: 'var(--ember)' },
+  { label: 'DRAW', color: 'var(--kinetic)' },
+  { label: 'MOTION', color: 'var(--pulse)' },
+  { label: 'OBSERVER', color: 'var(--ember)' },
+  { label: 'INERTIA', color: 'var(--arc)' },
 ] as const;
 
 @Component({

@@ -14,7 +14,7 @@ export const routeMeta: RouteMeta = {
   title: 'Start · angular-gsap',
 };
 
-const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
+const RING_COLORS = ['var(--pulse)', 'var(--arc)', 'var(--ember)', 'var(--kinetic)'];
 
 const COPY = {
   en: {

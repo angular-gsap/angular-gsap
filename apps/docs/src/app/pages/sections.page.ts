@@ -42,15 +42,15 @@ const COPY = {
 } as const;
 
 const BGS = [
-  'linear-gradient(135deg, #e23b80, #5b4be8)',
-  'linear-gradient(135deg, #0ae448, #ffb627)',
-  'linear-gradient(135deg, #5b4be8, #0ae448)',
-  'linear-gradient(135deg, #ffb627, #e23b80)',
+  'linear-gradient(135deg, var(--pulse), var(--arc))',
+  'linear-gradient(135deg, var(--kinetic), var(--ember))',
+  'linear-gradient(135deg, var(--arc), var(--kinetic))',
+  'linear-gradient(135deg, var(--ember), var(--pulse))',
 ];
 
 @Component({
   selector: 'app-sections',
-  imports: [CodeSnippet],
+  imports: [CodeTabs],
   template: `
     <div class="page">
       <header class="page-head">

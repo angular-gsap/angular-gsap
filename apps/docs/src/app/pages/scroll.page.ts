@@ -112,7 +112,7 @@ const COPY = {
       width: 7rem;
       height: 7rem;
       border-radius: 14px;
-      background: #e23b80;
+      background: var(--pulse);
     }
 
     .meter {
@@ -172,7 +172,10 @@ export default class ScrollPage {
       .to(target(this.shape), {
         rotation: 360,
         borderRadius: '50%',
-        backgroundColor: '#0ae448',
+        // GSAP interpolates real colors: read the theme token's current value
+        backgroundColor: getComputedStyle(track)
+          .getPropertyValue('--kinetic')
+          .trim(),
         scale: 1.35,
       })
       .to(target(this.meterFill), { scaleX: 1 }, 0);
@@ -210,8 +213,15 @@ export default class ScrollPage {
     `    .to(target(this.shape), {`,
     `      rotation: 360,`,
     `      borderRadius: '50%',`,
-    `      backgroundColor: '#0ae448',`,
+    `      // color tweens need real values, not var()`,
+    `      backgroundColor: getComputedStyle(track)`,
+    `        .getPropertyValue('--brand'),`,
     `    });`,
     `});`,
   ].join('\n');
+
+  protected readonly files: CodeFile[] = [
+    { label: 'scroll.html', code: this.tplSnippet, lang: 'html' },
+    { label: 'scroll.ts', code: this.snippet, lang: 'ts' },
+  ];
 }

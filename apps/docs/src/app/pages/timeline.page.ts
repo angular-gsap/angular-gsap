@@ -119,11 +119,11 @@ export default class TimelinePage {
   protected readonly c = COPY[injectLocale()];
 
   protected readonly bars = [
-    '#e23b80',
-    '#5b4be8',
-    '#ffb627',
-    '#0ae448',
-    '#e23b80',
+    'var(--pulse)',
+    'var(--arc)',
+    'var(--ember)',
+    'var(--kinetic)',
+    'var(--pulse)',
   ].map((color, i) => ({ i, color }));
 
   private tl?: GsapTimeline;

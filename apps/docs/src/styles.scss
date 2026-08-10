@@ -26,13 +26,17 @@
   --font-mono: 'Spline Sans Mono', monospace;
 }
 
-/* dark: the ink/paper roles flip; the motion palette stays loud */
+/* dark: the ink/paper roles flip and the motion palette dims with the lights */
 @mixin dark-tokens {
   --paper: #17171b;
   --ink: #f2efe6;
   --ink-soft: #b9b6ac;
   --hairline: #33333a;
   --card: #1f1f25;
+  --pulse: #b13566;
+  --kinetic: #17b048;
+  --arc: #7d74d2;
+  --ember: #d3982f;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -316,6 +320,12 @@ input[type='range'] {
 }
 
 /* theme switch: the WAAPI clip-path circle owns the animation */
+/* the hero logotype's tick lands on this class after the entrance,
+   so it follows the theme instead of a baked inline color */
+.hero-tick {
+  color: var(--kinetic);
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;

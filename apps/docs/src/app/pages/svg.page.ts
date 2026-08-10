@@ -11,15 +11,15 @@ export const routeMeta: RouteMeta = {
 const SHAPES = [
   {
     d: 'M200 170 C 225 120, 300 125, 305 165 C 310 205, 250 235, 215 210 C 185 190, 175 195, 200 170 Z',
-    fill: '#e23b80',
+    fill: '--pulse',
   },
   {
     d: 'M250 110 L262 150 L305 150 L272 176 L284 216 L250 192 L216 216 L228 176 L195 150 L238 150 Z',
-    fill: '#ffb627',
+    fill: '--ember',
   },
   {
     d: 'M262 108 L214 170 L244 170 L226 218 L288 152 L254 152 Z',
-    fill: '#5b4be8',
+    fill: '--arc',
   },
 ] as const;
 
@@ -97,7 +97,7 @@ const COPY = {
               <path
                 #shape
                 [attr.d]="shapes[0].d"
-                [attr.fill]="shapes[0].fill"
+                [style.fill]="'var(' + shapes[0].fill + ')'"
                 stroke="var(--ink)"
                 stroke-width="3"
                 stroke-linejoin="round"
@@ -204,9 +204,11 @@ export default class SvgPage {
   protected morph = this.ref.contextSafe(() => {
     this.shapeIndex = (this.shapeIndex + 1) % SHAPES.length;
     const next = SHAPES[this.shapeIndex];
-    this.ref.gsap.to(target(this.shape), {
+    const shape = target(this.shape);
+    this.ref.gsap.to(shape, {
       morphSVG: next.d,
-      fill: next.fill,
+      // fill tweens interpolate real colors: resolve the theme token
+      fill: shape ? getComputedStyle(shape).getPropertyValue(next.fill).trim() : '',
       duration: 0.8,
       ease: 'power3.inOut',
     });

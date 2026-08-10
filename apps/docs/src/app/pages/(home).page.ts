@@ -445,7 +445,11 @@ export default class HomePage {
       return;
     }
     const split = SplitText.create(logo, { type: 'chars' });
-    const flightColors = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
+    // GSAP interpolates real colors, so read the theme tokens' current values
+    const css = getComputedStyle(logo);
+    const flightColors = ['--pulse', '--arc', '--ember', '--kinetic'].map(
+      (token) => css.getPropertyValue(token).trim()
+    );
     const tick = split.chars.find((c) => c.textContent === '-');
 
     const tl = gsap.timeline();
@@ -461,7 +465,8 @@ export default class HomePage {
     // hand color back to the CSS token so theme switches stay visible
     tl.set(split.chars, { clearProps: 'color' });
     if (tick) {
-      tl.set(tick, { color: '#0ae448' }, '>');
+      // a class instead of an inline color, so theme switches keep working
+      tl.call(() => tick.classList.add('hero-tick'), [], '>');
     }
     this.intro = tl;
 

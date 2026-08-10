@@ -140,10 +140,10 @@ export default class DragPage {
   protected readonly c = COPY[injectLocale()];
 
   protected readonly bricks = [
-    { label: 'G', color: '#0ae448' },
-    { label: 'S', color: '#e23b80' },
-    { label: 'A', color: '#ffb627' },
-    { label: 'P', color: '#5b4be8' },
+    { label: 'G', color: 'var(--kinetic)' },
+    { label: 'S', color: 'var(--pulse)' },
+    { label: 'A', color: 'var(--ember)' },
+    { label: 'P', color: 'var(--arc)' },
   ];
 
   private readonly stage = viewChild.required<ElementRef<HTMLElement>>('stage');

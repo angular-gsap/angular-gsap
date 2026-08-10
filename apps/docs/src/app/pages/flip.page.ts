@@ -24,14 +24,14 @@ interface Card {
 }
 
 const CARDS: Card[] = [
-  { id: 1, label: 'injectGsap', tag: 'core', color: '#e23b80' },
-  { id: 2, label: 'ScrollTrigger', tag: 'plugin', color: '#0ae448' },
-  { id: 3, label: 'contextSafe', tag: 'core', color: '#5b4be8' },
-  { id: 4, label: 'SplitText', tag: 'plugin', color: '#ffb627' },
-  { id: 5, label: 'provideGsap', tag: 'core', color: '#5b4be8' },
-  { id: 6, label: 'Flip', tag: 'plugin', color: '#e23b80' },
-  { id: 7, label: 'reveal', tag: 'core', color: '#0ae448' },
-  { id: 8, label: 'MorphSVG', tag: 'plugin', color: '#ffb627' },
+  { id: 1, label: 'injectGsap', tag: 'core', color: 'var(--pulse)' },
+  { id: 2, label: 'ScrollTrigger', tag: 'plugin', color: 'var(--kinetic)' },
+  { id: 3, label: 'contextSafe', tag: 'core', color: 'var(--arc)' },
+  { id: 4, label: 'SplitText', tag: 'plugin', color: 'var(--ember)' },
+  { id: 5, label: 'provideGsap', tag: 'core', color: 'var(--arc)' },
+  { id: 6, label: 'Flip', tag: 'plugin', color: 'var(--pulse)' },
+  { id: 7, label: 'reveal', tag: 'core', color: 'var(--kinetic)' },
+  { id: 8, label: 'MorphSVG', tag: 'plugin', color: 'var(--ember)' },
 ];
 
 const COPY = {
