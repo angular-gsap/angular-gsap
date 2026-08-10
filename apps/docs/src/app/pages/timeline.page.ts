@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { injectGsap, type GsapTimeline } from '@angular-gsap/core';
 import { RouteMeta } from '@analogjs/router';
 
@@ -7,20 +8,44 @@ export const routeMeta: RouteMeta = {
   title: 'Timeline · angular-gsap',
 };
 
+const COPY = {
+  en: {
+    eyebrow: 'Example · core',
+    title: 'Timelines',
+    intro:
+      'Build the timeline in the callback, keep the reference on the component, and drive it from event handlers wrapped with <code>contextSafe</code>. When you navigate away, the context reverts the whole thing.',
+    play: 'Play', pause: 'Pause', reverse: 'Reverse', restart: 'Restart', speed: 'speed',
+    how: 'How this works',
+    explain: [
+      'The timeline is straight from the GSAP docs: position parameters, staggers, <code>repeat: -1</code>. Nothing here is wrapped.',
+      'Play, pause, and the speed slider go through <code>contextSafe</code>, so driving a 60fps loop never touches change detection.',
+      'Navigate away and the context reverts the loop. No timeline keeps ticking against a DOM node that no longer exists.',
+    ],
+  },
+  es: {
+    eyebrow: 'Ejemplo · core',
+    title: 'Timelines',
+    intro:
+      'Construye el timeline en el callback, guarda la referencia en el componente y contrólalo desde handlers envueltos en <code>contextSafe</code>. Al navegar a otra página, el contexto revierte todo.',
+    play: 'Play', pause: 'Pausa', reverse: 'Reversa', restart: 'Reiniciar', speed: 'velocidad',
+    how: 'Cómo funciona',
+    explain: [
+      'El timeline sale directo de la documentación de GSAP: parámetros de posición, staggers, <code>repeat: -1</code>. Nada está envuelto.',
+      'Play, pausa y el slider de velocidad pasan por <code>contextSafe</code>, así que manejar un loop a 60fps nunca toca change detection.',
+      'Navega a otra página y el contexto revierte el loop. Ningún timeline sigue corriendo contra un nodo del DOM que ya no existe.',
+    ],
+  },
+} as const;
+
 @Component({
   imports: [CodeSnippet],
   selector: 'app-timeline',
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Example · core</p>
-        <h1>Timelines</h1>
-        <p>
-          Build the timeline in the callback, keep the reference on the
-          component, and drive it from event handlers wrapped with
-          <code>contextSafe</code>. When you navigate away, the context reverts
-          the whole thing.
-        </p>
+        <p class="eyebrow">{{ c.eyebrow }}</p>
+        <h1>{{ c.title }}</h1>
+        <p [innerHTML]="c.intro"></p>
         <div class="api-chips">
           <span>injectGsap</span><span>gsap.timeline</span
           ><span>contextSafe</span>
@@ -37,12 +62,12 @@ export const routeMeta: RouteMeta = {
             </div>
           </div>
           <div class="stage-controls">
-            <button class="btn" (click)="play()">Play</button>
-            <button class="btn btn--quiet" (click)="pause()">Pause</button>
-            <button class="btn btn--quiet" (click)="reverse()">Reverse</button>
-            <button class="btn btn--quiet" (click)="restart()">Restart</button>
+            <button class="btn" (click)="play()">{{ c.play }}</button>
+            <button class="btn btn--quiet" (click)="pause()">{{ c.pause }}</button>
+            <button class="btn btn--quiet" (click)="reverse()">{{ c.reverse }}</button>
+            <button class="btn btn--quiet" (click)="restart()">{{ c.restart }}</button>
             <label class="range">
-              speed
+              {{ c.speed }}
               <input
                 type="range"
                 min="0.25"
@@ -61,21 +86,11 @@ export const routeMeta: RouteMeta = {
       </div>
 
       <section class="explain">
-        <h2>How this works</h2>
+        <h2>{{ c.how }}</h2>
         <ul>
-          <li>
-            The timeline is straight from the GSAP docs: position parameters,
-            staggers, <code>repeat: -1</code>. Nothing here is wrapped.
-          </li>
-          <li>
-            Play, pause, and the speed slider go through
-            <code>contextSafe</code>, so driving a 60fps loop never touches
-            change detection.
-          </li>
-          <li>
-            Navigate away and the context reverts the loop. No timeline keeps
-            ticking against a DOM node that no longer exists.
-          </li>
+          @for (item of c.explain; track $index) {
+            <li [innerHTML]="item"></li>
+          }
         </ul>
       </section>
     </div>
@@ -102,6 +117,8 @@ export const routeMeta: RouteMeta = {
   `,
 })
 export default class TimelinePage {
+  protected readonly c = COPY[injectLocale()];
+
   protected readonly bars = [
     '#e23b80',
     '#5b4be8',
@@ -143,7 +160,9 @@ export default class TimelinePage {
   ].join('\n');
 
   protected readonly snippet = [
-    `export default class TimelinePage {`,
+    `export default class TimelinePage {
+  protected readonly c = COPY[injectLocale()];
+`,
     `  private tl?: GsapTimeline;`,
     ``,
     `  ref = injectGsap(({ gsap }) => {`,

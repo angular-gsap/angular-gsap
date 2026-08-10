@@ -9,11 +9,51 @@ import {
   type RevealPreset,
 } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
   title: 'Directives · angular-gsap',
 };
+
+const COPY = {
+  en: {
+    eyebrow: 'Example · directives',
+    title: 'Template directives',
+    intro:
+      'Preset directives cover the common template-level cases: <code>reveal</code>, <code>stagger</code>, and <code>splitReveal</code> for entrances, <code>drawSvg</code> for strokes, <code>counter</code> for numbers, <code>parallax</code> for scroll-linked drift, and <code>sequence</code> to compose them. Everything runs on the <code>injectGsap</code> engine, so scoping, cleanup, and reduced motion come along for free.',
+    boardLine: 'and this line staggers in word by word',
+    replay: 'Replay',
+    scrollEyebrow: 'And on scroll',
+    tailNote:
+      'This paragraph used <code>reveal="fade-up" on="scroll"</code>, and the blocks above drift at different <code>parallax</code> speeds. Under the hood both are ScrollTrigger, registered once in <code>provideGsap</code>.',
+    how: 'How this works',
+    explain: [
+      '<code>reveal</code> and <code>stagger</code> are presets on top of <code>injectGsap</code>: same scoping, same cleanup, same signal inputs. They only cover entrances, on purpose. Anything richer goes in the composable.',
+      'The board is wrapped in <code>sequence="0.1"</code>, so the heading, the cards, and the split line play one after another with no <code>[delay]</code> bookkeeping. Template nesting is the choreography; <code>[at]</code> takes any GSAP position parameter for overlaps.',
+      'Change any input and the entrance replays. The Replay button just recreates the subtree.',
+      "With Reduce Motion turned on in the OS, these directives don't animate and the content simply shows. If this page looks static, check that setting.",
+    ],
+  },
+  es: {
+    eyebrow: 'Ejemplo · directivas',
+    title: 'Directivas de template',
+    intro:
+      'Las directivas preset cubren los casos comunes a nivel de template: <code>reveal</code>, <code>stagger</code> y <code>splitReveal</code> para entradas, <code>drawSvg</code> para trazos, <code>counter</code> para números, <code>parallax</code> para deriva ligada al scroll, y <code>sequence</code> para componerlas. Todo corre sobre el motor de <code>injectGsap</code>: scoping, limpieza y reduced motion vienen gratis.',
+    boardLine: 'y esta línea entra palabra por palabra',
+    replay: 'Repetir',
+    scrollEyebrow: 'Y con scroll',
+    tailNote:
+      'Este párrafo usó <code>reveal="fade-up" on="scroll"</code>, y los bloques de arriba derivan a distintas velocidades de <code>parallax</code>. Por debajo ambos son ScrollTrigger, registrado una vez en <code>provideGsap</code>.',
+    how: 'Cómo funciona',
+    explain: [
+      '<code>reveal</code> y <code>stagger</code> son presets sobre <code>injectGsap</code>: mismo scoping, misma limpieza, mismos inputs de signal. Solo cubren entradas, a propósito. Cualquier cosa más rica va en el composable.',
+      'El tablero está envuelto en <code>sequence="0.1"</code>: el título, las tarjetas y la línea partida entran una tras otra sin contabilidad de <code>[delay]</code>. Anidar en el template es la coreografía; <code>[at]</code> acepta cualquier parámetro de posición de GSAP.',
+      'Cambia cualquier input y la entrada se repite. El botón Repetir solo recrea el subárbol.',
+      'Con Reducir Movimiento activado en el sistema, estas directivas no animan y el contenido simplemente aparece. Si esta página se ve estática, revisa ese ajuste.',
+    ],
+  },
+} as const;
 
 @Component({
   selector: 'app-directives',
@@ -29,17 +69,9 @@ export const routeMeta: RouteMeta = {
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Example · directives</p>
-        <h1>Template directives</h1>
-        <p>
-          Preset directives cover the common template-level cases:
-          <code>reveal</code>, <code>stagger</code>, and
-          <code>splitReveal</code> for entrances, <code>drawSvg</code> for
-          strokes, <code>counter</code> for numbers, <code>parallax</code>
-          for scroll-linked drift, and <code>sequence</code> to compose them.
-          Everything runs on the <code>injectGsap</code> engine, so scoping,
-          cleanup, and reduced motion come along for free.
-        </p>
+        <p class="eyebrow">{{ c.eyebrow }}</p>
+        <h1>{{ c.title }}</h1>
+        <p [innerHTML]="c.intro"></p>
         <div class="api-chips">
           <span>sequence</span><span>reveal</span><span>stagger</span
           ><span>splitReveal</span><span>counter</span><span>parallax</span>
@@ -65,7 +97,7 @@ export const routeMeta: RouteMeta = {
                   }
                 </div>
                 <p class="board-line" splitReveal>
-                  and this line staggers in word by word
+                  {{ c.boardLine }}
                 </p>
                 <div class="counters">
                   <span class="count" [counter]="12500" [delay]="0.4"></span>
@@ -84,7 +116,7 @@ export const routeMeta: RouteMeta = {
                 {{ p }}
               </button>
             }
-            <button class="btn" (click)="replay()">Replay</button>
+            <button class="btn" (click)="replay()">{{ c.replay }}</button>
           </div>
         </div>
         <div class="panels">
@@ -94,35 +126,16 @@ export const routeMeta: RouteMeta = {
       </div>
 
       <section class="explain">
-        <h2>How this works</h2>
+        <h2>{{ c.how }}</h2>
         <ul>
-          <li>
-            <code>reveal</code> and <code>stagger</code> are presets on top of
-            <code>injectGsap</code>: same scoping, same cleanup, same signal
-            inputs. They only cover entrances, on purpose. Anything richer
-            goes in the composable.
-          </li>
-          <li>
-            The board is wrapped in <code>sequence="0.1"</code>, so the
-            heading, the cards, and the split line play one after another
-            with no <code>[delay]</code> bookkeeping. Template nesting is the
-            choreography; <code>[at]</code> takes any GSAP position parameter
-            for overlaps.
-          </li>
-          <li>
-            Change any input and the entrance replays. The Replay button just
-            recreates the subtree.
-          </li>
-          <li>
-            With Reduce Motion turned on in the OS, these directives don't
-            animate and the content simply shows. If this page looks static,
-            check that setting.
-          </li>
+          @for (item of c.explain; track $index) {
+            <li [innerHTML]="item"></li>
+          }
         </ul>
       </section>
 
       <section class="scroll-tail">
-        <p class="eyebrow">And on scroll</p>
+        <p class="eyebrow">{{ c.scrollEyebrow }}</p>
         <div class="parallax-row" aria-hidden="true">
           <span class="p-block" parallax="0.35" style="background:#e23b80"></span>
           <span class="p-block" parallax="-0.2" style="background:#0ae448"></span>
@@ -134,10 +147,7 @@ export const routeMeta: RouteMeta = {
           on="scroll"
           [distance]="40"
         >
-          This paragraph used
-          <code>reveal="fade-up" on="scroll"</code>, and the blocks above
-          drift at different <code>parallax</code> speeds. Under the hood both
-          are ScrollTrigger, registered once in <code>provideGsap</code>.
+          <span [innerHTML]="c.tailNote"></span>
         </p>
       </section>
     </div>
@@ -224,6 +234,8 @@ export const routeMeta: RouteMeta = {
   `,
 })
 export default class DirectivesPage {
+  protected readonly c = COPY[injectLocale()];
+
   protected readonly presets: RevealPreset[] = [
     'fade-up',
     'fade-right',

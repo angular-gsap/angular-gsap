@@ -1,6 +1,7 @@
 import { Component, ElementRef, viewChild } from '@angular/core';
 import { injectGsap, target } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
@@ -37,21 +38,44 @@ const VERT = `
 attribute vec2 p;
 void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
 
+const COPY = {
+  en: {
+    eyebrow: 'Example · WebGL',
+    title: 'WebGL uniforms',
+    intro:
+      'GSAP tweens plain object properties, so shader uniforms are fair game. The render loop runs on <code>gsap.ticker</code>, the ambient drift is a yoyo tween on <code>u_warp</code>, and the Pulse button tweens zoom and hue through <code>contextSafe</code>. The returned cleanup removes the ticker callback on destroy.',
+    pulse: 'Pulse',
+    how: 'How this works',
+    explain: [
+      'The uniforms live in a plain object. <code>gsap.to(u, { warp: 0.9 })</code> works exactly like tweening an element, because to GSAP everything is just properties over time.',
+      'The draw call is a <code>gsap.ticker</code> callback: one shared requestAnimationFrame, in sync with every other tween, outside change detection.',
+      "The callback returns a cleanup function, and the context runs it on destroy, exactly like <code>gsap.context()</code>. The GL loop can't outlive the component.",
+    ],
+  },
+  es: {
+    eyebrow: 'Ejemplo · WebGL',
+    title: 'Uniforms de WebGL',
+    intro:
+      'GSAP anima propiedades de objetos planos, así que los uniforms de un shader también cuentan. El loop de render corre en <code>gsap.ticker</code>, la deriva ambiental es un tween yoyo sobre <code>u_warp</code>, y el botón Pulso anima zoom y tono vía <code>contextSafe</code>. La limpieza devuelta quita el callback del ticker al destruir.',
+    pulse: 'Pulso',
+    how: 'Cómo funciona',
+    explain: [
+      'Los uniforms viven en un objeto plano. <code>gsap.to(u, { warp: 0.9 })</code> funciona exactamente igual que animar un elemento, porque para GSAP todo son propiedades en el tiempo.',
+      'El draw call es un callback de <code>gsap.ticker</code>: un solo requestAnimationFrame compartido, en sincronía con el resto de los tweens, fuera de change detection.',
+      'El callback devuelve una función de limpieza y el contexto la ejecuta al destruir, igual que <code>gsap.context()</code>. El loop de GL no puede sobrevivir al componente.',
+    ],
+  },
+} as const;
+
 @Component({
   selector: 'app-webgl',
   imports: [CodeSnippet],
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Example · WebGL</p>
-        <h1>WebGL uniforms</h1>
-        <p>
-          GSAP tweens plain object properties, so shader uniforms are fair
-          game. The render loop runs on <code>gsap.ticker</code>, the ambient
-          drift is a yoyo tween on <code>u_warp</code>, and the Pulse button
-          tweens zoom and hue through <code>contextSafe</code>. The returned
-          cleanup removes the ticker callback on destroy.
-        </p>
+        <p class="eyebrow">{{ c.eyebrow }}</p>
+        <h1>{{ c.title }}</h1>
+        <p [innerHTML]="c.intro"></p>
         <div class="api-chips">
           <span>gsap.ticker</span><span>uniforms</span
           ><span>cleanup functions</span>
@@ -64,7 +88,7 @@ void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
             <canvas #cnv></canvas>
           </div>
           <div class="stage-controls">
-            <button class="btn" (click)="pulse()">Pulse</button>
+            <button class="btn" (click)="pulse()">{{ c.pulse }}</button>
           </div>
         </div>
         <div class="panels">
@@ -73,24 +97,11 @@ void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
       </div>
 
       <section class="explain">
-        <h2>How this works</h2>
+        <h2>{{ c.how }}</h2>
         <ul>
-          <li>
-            The uniforms live in a plain object.
-            <code>gsap.to(u, {{ '{' }} warp: 0.9 {{ '}' }})</code> works
-            exactly like tweening an element, because to GSAP everything is
-            just properties over time.
-          </li>
-          <li>
-            The draw call is a <code>gsap.ticker</code> callback: one shared
-            requestAnimationFrame, in sync with every other tween, outside
-            change detection.
-          </li>
-          <li>
-            The callback returns a cleanup function, and the context runs it
-            on destroy, exactly like <code>gsap.context()</code>. The GL loop
-            can't outlive the component.
-          </li>
+          @for (item of c.explain; track $index) {
+            <li [innerHTML]="item"></li>
+          }
         </ul>
       </section>
     </div>
@@ -111,6 +122,8 @@ void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
   `,
 })
 export default class WebglPage {
+  protected readonly c = COPY[injectLocale()];
+
   private readonly canvas =
     viewChild.required<ElementRef<HTMLCanvasElement>>('cnv');
 

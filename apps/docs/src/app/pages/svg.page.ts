@@ -1,6 +1,7 @@
 import { Component, ElementRef, viewChild } from '@angular/core';
 import { DrawSvg, injectGsap, target } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
@@ -12,20 +13,44 @@ const BLOB =
 const STAR =
   'M250 110 L262 150 L305 150 L272 176 L284 216 L250 192 L216 216 L228 176 L195 150 L238 150 Z';
 
+const COPY = {
+  en: {
+    eyebrow: 'Example · SVG',
+    title: 'SVG animation',
+    intro:
+      'SVG is regular DOM to GSAP: strokes draw in with DrawSVG, shapes morph with MorphSVG, and elements ride paths with MotionPath. All three plugins are free now, registered once in <code>provideGsap</code>.',
+    morph: 'Morph',
+    how: 'How this works',
+    explain: [
+      'The whole <code>&lt;svg&gt;</code> carries the <code>drawSvg</code> directive, so every stroked shape inside draws in, staggered. On a single <code>&lt;path&gt;</code> it draws just that one.',
+      'The morph is one line of vanilla GSAP: <code>gsap.to(shape, { morphSVG: STAR })</code> inside a <code>contextSafe</code> handler. MorphSVG interpolates between any two paths.',
+      'The rider circle follows the curve with MotionPath, looping on GSAP&#39;s ticker. Leave the page and the context reverts all of it, ScrollTriggers, splits, and paths alike.',
+    ],
+  },
+  es: {
+    eyebrow: 'Ejemplo · SVG',
+    title: 'Animación de SVG',
+    intro:
+      'Para GSAP el SVG es DOM normal: los trazos se dibujan con DrawSVG, las formas se transforman con MorphSVG y los elementos recorren rutas con MotionPath. Los tres plugins ahora son gratis, registrados una vez en <code>provideGsap</code>.',
+    morph: 'Transformar',
+    how: 'Cómo funciona',
+    explain: [
+      'Todo el <code>&lt;svg&gt;</code> lleva la directiva <code>drawSvg</code>, así que cada forma con trazo se dibuja, escalonada. En un solo <code>&lt;path&gt;</code> dibuja solo ese.',
+      'El morph es una línea de GSAP puro: <code>gsap.to(shape, { morphSVG: STAR })</code> dentro de un handler <code>contextSafe</code>. MorphSVG interpola entre dos paths cualesquiera.',
+      'El círculo sigue la curva con MotionPath, en loop sobre el ticker de GSAP. Sal de la página y el contexto lo revierte todo: ScrollTriggers, splits y paths por igual.',
+    ],
+  },
+} as const;
+
 @Component({
   selector: 'app-svg',
   imports: [CodeSnippet, DrawSvg],
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Example · SVG</p>
-        <h1>SVG animation</h1>
-        <p>
-          SVG is regular DOM to GSAP: strokes draw in with DrawSVG, shapes
-          morph with MorphSVG, and elements ride paths with MotionPath. All
-          three plugins are free now, registered once in
-          <code>provideGsap</code>.
-        </p>
+        <p class="eyebrow">{{ c.eyebrow }}</p>
+        <h1>{{ c.title }}</h1>
+        <p [innerHTML]="c.intro"></p>
         <div class="api-chips">
           <span>drawSvg</span><span>MorphSVG</span><span>MotionPath</span>
         </div>
@@ -68,7 +93,7 @@ const STAR =
             </svg>
           </div>
           <div class="stage-controls">
-            <button class="btn" (click)="morph()">Morph</button>
+            <button class="btn" (click)="morph()">{{ c.morph }}</button>
           </div>
         </div>
         <div class="panels">
@@ -78,25 +103,11 @@ const STAR =
       </div>
 
       <section class="explain">
-        <h2>How this works</h2>
+        <h2>{{ c.how }}</h2>
         <ul>
-          <li>
-            The whole <code>&lt;svg&gt;</code> carries the
-            <code>drawSvg</code> directive, so every stroked shape inside
-            draws in, staggered. On a single <code>&lt;path&gt;</code> it
-            draws just that one.
-          </li>
-          <li>
-            The morph is one line of vanilla GSAP:
-            <code>gsap.to(shape, {{ '{' }} morphSVG: STAR {{ '}' }})</code>
-            inside a <code>contextSafe</code> handler. MorphSVG interpolates
-            between any two paths.
-          </li>
-          <li>
-            The rider circle follows the curve with MotionPath, looping on
-            GSAP's ticker. Leave the page and the context reverts all of it,
-            ScrollTriggers, splits, and paths alike.
-          </li>
+          @for (item of c.explain; track $index) {
+            <li [innerHTML]="item"></li>
+          }
         </ul>
       </section>
     </div>
@@ -115,6 +126,8 @@ const STAR =
   `,
 })
 export default class SvgPage {
+  protected readonly c = COPY[injectLocale()];
+
   protected readonly blob = BLOB;
   private morphed = false;
 

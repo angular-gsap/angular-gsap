@@ -1,34 +1,121 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, DOCUMENT, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
+import { filter, map } from 'rxjs';
+import type { DocsLocale } from './i18n';
+
+const NAV = {
+  en: {
+    basics: 'Basics',
+    directives: 'Directives',
+    timeline: 'Timeline',
+    scroll: 'ScrollTrigger',
+    text: 'SplitText',
+    flip: 'Flip',
+    pointer: 'quickTo',
+    svg: 'SVG',
+    webgl: 'WebGL',
+    api: 'API',
+    mit: 'MIT licensed',
+    animatedBy: 'animated by @angular-gsap/core',
+    theme: 'Toggle theme',
+    lang: 'ES',
+    langLabel: 'Leer en español',
+  },
+  es: {
+    basics: 'Básicos',
+    directives: 'Directivas',
+    timeline: 'Timeline',
+    scroll: 'ScrollTrigger',
+    text: 'SplitText',
+    flip: 'Flip',
+    pointer: 'quickTo',
+    svg: 'SVG',
+    webgl: 'WebGL',
+    api: 'API',
+    mit: 'Licencia MIT',
+    animatedBy: 'animado por @angular-gsap/core',
+    theme: 'Cambiar tema',
+    lang: 'EN',
+    langLabel: 'Read in English',
+  },
+} as const;
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
     <header class="top">
-      <a routerLink="/" class="brand-wrap">
-        <img class="brand-logo" src="/favicon-192.png" alt="" width="30" height="30" />
-        <span class="brand"
-          >angular<span class="brand-tick">-</span>gsap</span
-        >
+      <a [routerLink]="p('/')" class="brand-wrap">
+        <img
+          class="brand-logo"
+          src="/favicon-192.png"
+          alt=""
+          width="42"
+          height="42"
+        />
+        <span class="brand">angular<span class="brand-tick">-</span>gsap</span>
       </a>
       <nav aria-label="Examples">
-        <a routerLink="/basics" routerLinkActive="on">Basics</a>
-        <a routerLink="/directives" routerLinkActive="on">Directives</a>
-        <a routerLink="/timeline" routerLinkActive="on">Timeline</a>
-        <a routerLink="/scroll" routerLinkActive="on">ScrollTrigger</a>
-        <a routerLink="/text" routerLinkActive="on">SplitText</a>
-        <a routerLink="/flip" routerLinkActive="on">Flip</a>
-        <a routerLink="/pointer" routerLinkActive="on">quickTo</a>
-        <a routerLink="/svg" routerLinkActive="on">SVG</a>
-        <a routerLink="/webgl" routerLinkActive="on">WebGL</a>
-        <a routerLink="/reference" routerLinkActive="on">API</a>
+        <a [routerLink]="p('/basics')" routerLinkActive="on">{{
+          t().basics
+        }}</a>
+        <a [routerLink]="p('/directives')" routerLinkActive="on">{{
+          t().directives
+        }}</a>
+        <a [routerLink]="p('/timeline')" routerLinkActive="on">{{
+          t().timeline
+        }}</a>
+        <a [routerLink]="p('/scroll')" routerLinkActive="on">{{
+          t().scroll
+        }}</a>
+        <a [routerLink]="p('/text')" routerLinkActive="on">{{ t().text }}</a>
+        <a [routerLink]="p('/flip')" routerLinkActive="on">{{ t().flip }}</a>
+        <a [routerLink]="p('/pointer')" routerLinkActive="on">{{
+          t().pointer
+        }}</a>
+        <a [routerLink]="p('/svg')" routerLinkActive="on">{{ t().svg }}</a>
+        <a [routerLink]="p('/webgl')" routerLinkActive="on">{{
+          t().webgl
+        }}</a>
+        <a [routerLink]="p('/reference')" routerLinkActive="on">{{
+          t().api
+        }}</a>
+        <a
+          class="pill"
+          [routerLink]="otherLocaleUrl()"
+          [attr.aria-label]="t().langLabel"
+          >{{ t().lang }}</a
+        >
+        <button
+          type="button"
+          class="pill theme"
+          (click)="toggleTheme()"
+          [attr.aria-label]="t().theme"
+        >
+          ◐
+        </button>
         <a
           class="gh"
           href="https://github.com/angular-gsap/angular-gsap"
           target="_blank"
           rel="noreferrer"
-          ><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          ><svg
+            viewBox="0 0 16 16"
+            width="15"
+            height="15"
+            aria-hidden="true"
+            fill="currentColor"
+          >
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+            /></svg>
           GitHub</a
         >
       </nav>
@@ -39,8 +126,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     </main>
 
     <footer class="bottom">
-      <span>MIT licensed</span>
-      <span>animated by &#64;angular-gsap/core</span>
+      <span>{{ t().mit }}</span>
+      <span>{{ t().animatedBy }}</span>
     </footer>
   `,
   styles: `
@@ -120,6 +207,23 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         }
       }
 
+      .pill {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        border: 2px solid var(--ink);
+        border-radius: 10px;
+        box-shadow: 2px 2px 0 var(--ink);
+        background: var(--card);
+        color: var(--ink);
+        padding: 0.22rem 0.6rem;
+        cursor: pointer;
+      }
+
+      .theme {
+        font-size: 0.95rem;
+        line-height: 1;
+      }
+
       .gh {
         display: inline-flex;
         align-items: center;
@@ -146,4 +250,49 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     }
   `,
 })
-export class AppComponent {}
+export class AppComponent {
+  private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
+
+  private readonly url = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects)
+    ),
+    { initialValue: this.router.url }
+  );
+
+  protected readonly locale = computed<DocsLocale>(() =>
+    this.url() === '/es' || this.url().startsWith('/es/') ? 'es' : 'en'
+  );
+
+  protected readonly t = computed(() => NAV[this.locale()]);
+
+  protected p(path: string): string {
+    return this.locale() === 'es' ? `/es${path === '/' ? '' : path}` : path;
+  }
+
+  protected readonly otherLocaleUrl = computed(() => {
+    const u = this.url();
+    return this.locale() === 'es'
+      ? u.replace(/^\/es/, '') || '/'
+      : `/es${u === '/' ? '' : u}`;
+  });
+
+  protected toggleTheme(): void {
+    const root = this.document.documentElement;
+    const view = this.document.defaultView;
+    const current =
+      root.dataset['theme'] ??
+      (view?.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+    root.dataset['theme'] = next;
+    try {
+      view?.localStorage.setItem('theme', next);
+    } catch {
+      /* private mode */
+    }
+  }
+}

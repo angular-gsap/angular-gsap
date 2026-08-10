@@ -21,6 +21,13 @@
     <link rel="stylesheet" href="/src/styles.scss" />
   </head>
   <body>
+    <script>
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || t === 'light')
+          document.documentElement.dataset['theme'] = t;
+      } catch (e) {}
+    </script>
     <app-root></app-root>
     <script type="module" src="/src/main.ts"></script>
   </body>

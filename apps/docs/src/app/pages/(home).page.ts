@@ -3,26 +3,69 @@ import { RouterLink } from '@angular/router';
 import { Stagger, injectGsap, type GsapTimeline } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
   title: 'angular-gsap · GSAP for Angular',
 };
 
+const COPY = {
+  en: {
+    eyebrow: 'gsap × angular · every plugin, free',
+    lede: 'Write vanilla GSAP. The library handles the Angular part: host scoping, cleanup, signal reactivity, and SSR.',
+    replay: 'Replay intro',
+    howEyebrow: 'The whole idea',
+    howTitle: 'One composable. Vanilla GSAP inside.',
+    howBody:
+      '<code>injectGsap()</code> runs your GSAP code in a context that belongs to the component. Target elements with <code>viewChild</code> queries or component-scoped selectors, read signals to make it reactive, and the context reverts everything when the component is destroyed. On the server it never runs.',
+    howCta: 'Start with the basics →',
+    basicsLink: '/basics',
+    featEyebrow: 'What it handles for you',
+    features: [
+      { title: 'Scoped by default', body: "Selectors match inside your component's host and nowhere else." },
+      { title: 'Signal-reactive', body: 'Read a signal in the callback; the animation reverts and re-runs when it changes.' },
+      { title: 'Cleans up after itself', body: 'Tweens, timelines, ScrollTriggers, and SplitText all revert on destroy.' },
+      { title: 'SSR-safe', body: 'On the server the context never runs. No platform checks in your code.' },
+      { title: 'Nothing wrapped', body: "It's the real GSAP API, plus preset directives for the common template cases." },
+      { title: 'Tree-shakeable', body: '<code>sideEffects: false</code> and a tiny surface: unused exports drop out of your bundle, and GSAP plugins are only bundled when you import them.' },
+      { title: 'Cheap at runtime', body: "Tweens run on GSAP's ticker outside change detection. No rxjs, no zone.js, zoneless-ready." },
+    ],
+  },
+  es: {
+    eyebrow: 'gsap × angular · todos los plugins, gratis',
+    lede: 'Escribe GSAP puro. La librería se encarga de la parte de Angular: scoping al host, limpieza, reactividad con signals y SSR.',
+    replay: 'Repetir intro',
+    howEyebrow: 'La idea completa',
+    howTitle: 'Un composable. GSAP puro adentro.',
+    howBody:
+      '<code>injectGsap()</code> ejecuta tu código GSAP en un contexto que pertenece al componente. Apunta a elementos con queries <code>viewChild</code> o selectores limitados al componente, lee signals para hacerlo reactivo, y el contexto revierte todo cuando el componente se destruye. En el servidor nunca se ejecuta.',
+    howCta: 'Empieza con los básicos →',
+    basicsLink: '/es/basics',
+    featEyebrow: 'Lo que resuelve por ti',
+    features: [
+      { title: 'Scoped por defecto', body: 'Los selectores solo aplican dentro del host de tu componente, en ningún otro lado.' },
+      { title: 'Reactivo con signals', body: 'Lee un signal en el callback; la animación se revierte y se vuelve a ejecutar cuando cambia.' },
+      { title: 'Limpia solo', body: 'Tweens, timelines, ScrollTriggers y SplitText se revierten al destruir el componente.' },
+      { title: 'Seguro en SSR', body: 'En el servidor el contexto nunca corre. Sin checks de plataforma en tu código.' },
+      { title: 'Nada envuelto', body: 'Es la API real de GSAP, más directivas preset para los casos comunes en templates.' },
+      { title: 'Tree-shakeable', body: '<code>sideEffects: false</code> y una superficie mínima: lo que no usas sale del bundle, y los plugins de GSAP solo se incluyen cuando los importas.' },
+      { title: 'Barato en runtime', body: 'Los tweens corren en el ticker de GSAP fuera de change detection. Sin rxjs, sin zone.js, listo para zoneless.' },
+    ],
+  },
+} as const;
+
 @Component({
   selector: 'app-home',
   imports: [RouterLink, CodeSnippet, Stagger],
   template: `
     <section class="hero">
-      <p class="eyebrow">gsap × angular · every plugin, free</p>
+      <p class="eyebrow">{{ c.eyebrow }}</p>
       <h1 class="logotype" aria-label="angular-gsap">angular-gsap</h1>
-      <p class="lede">
-        Write vanilla GSAP. The library handles the Angular part: host
-        scoping, cleanup, signal reactivity, and SSR.
-      </p>
+      <p class="lede">{{ c.lede }}</p>
       <div class="hero-actions">
         <code class="install">pnpm add &#64;angular-gsap/core gsap</code>
-        <button class="btn" (click)="replay()">Replay intro</button>
+        <button class="btn" (click)="replay()">{{ c.replay }}</button>
       </div>
     </section>
 
@@ -41,17 +84,10 @@ export const routeMeta: RouteMeta = {
       <div class="how-inner">
         <div class="how-grid">
           <div class="how-copy">
-            <p class="eyebrow">The whole idea</p>
-            <h2>One composable. Vanilla GSAP inside.</h2>
-            <p>
-              <code>injectGsap()</code> runs your GSAP code in a context that
-              belongs to the component. Target elements with
-              <code>viewChild</code> queries or component-scoped selectors,
-              read signals to make it reactive, and the context reverts
-              everything when the component is destroyed. On the server it
-              never runs.
-            </p>
-            <a routerLink="/basics">Start with the basics →</a>
+            <p class="eyebrow">{{ c.howEyebrow }}</p>
+            <h2>{{ c.howTitle }}</h2>
+            <p [innerHTML]="c.howBody"></p>
+            <a [routerLink]="c.basicsLink">{{ c.howCta }}</a>
           </div>
           <app-code [code]="snippet" />
         </div>
@@ -59,55 +95,14 @@ export const routeMeta: RouteMeta = {
     </section>
 
     <section class="features">
-      <p class="eyebrow">What it handles for you</p>
+      <p class="eyebrow">{{ c.featEyebrow }}</p>
       <ul stagger="0.08" on="scroll" preset="fade-up">
-        <li class="feature">
-          <h3>Scoped by default</h3>
-          <p>Selectors match inside your component's host and nowhere else.</p>
-        </li>
-        <li class="feature">
-          <h3>Signal-reactive</h3>
-          <p>
-            Read a signal in the callback; the animation reverts and re-runs
-            when it changes.
-          </p>
-        </li>
-        <li class="feature">
-          <h3>Cleans up after itself</h3>
-          <p>
-            Tweens, timelines, ScrollTriggers, and SplitText all revert on
-            destroy.
-          </p>
-        </li>
-        <li class="feature">
-          <h3>SSR-safe</h3>
-          <p>
-            On the server the context never runs. No platform checks in your
-            code.
-          </p>
-        </li>
-        <li class="feature">
-          <h3>Nothing wrapped</h3>
-          <p>
-            It's the real GSAP API, plus five preset directives for the
-            common template cases.
-          </p>
-        </li>
-        <li class="feature">
-          <h3>Tree-shakeable</h3>
-          <p>
-            <code>sideEffects: false</code> and a tiny surface: unused exports
-            drop out of your bundle, and GSAP plugins are only bundled when
-            you import them.
-          </p>
-        </li>
-        <li class="feature">
-          <h3>Cheap at runtime</h3>
-          <p>
-            Tweens run on GSAP's ticker outside change detection. No rxjs, no
-            zone.js, zoneless-ready.
-          </p>
-        </li>
+        @for (f of c.features; track f.title) {
+          <li class="feature">
+            <h3>{{ f.title }}</h3>
+            <p [innerHTML]="f.body"></p>
+          </li>
+        }
       </ul>
     </section>
   `,
@@ -203,7 +198,7 @@ export const routeMeta: RouteMeta = {
         margin-bottom: 1rem;
       }
 
-      p {
+      p:not(.eyebrow) {
         color: var(--ink-soft);
       }
 
@@ -255,7 +250,9 @@ export const routeMeta: RouteMeta = {
     }
   `,
 })
+
 export default class HomePage {
+  protected readonly c = COPY[injectLocale()];
   private intro?: GsapTimeline;
 
   protected readonly snippet = [

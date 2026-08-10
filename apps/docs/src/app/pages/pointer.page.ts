@@ -1,11 +1,43 @@
 import { Component, ElementRef, viewChild } from '@angular/core';
 import { injectGsap, target, type GsapTween } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
   title: 'quickTo · angular-gsap',
 };
+
+const COPY = {
+  en: {
+    eyebrow: 'Advanced · gsap.quickTo',
+    title: 'Pointer tracking with quickTo',
+    intro:
+      "<code>quickTo()</code> builds one reusable tween per property, so a pointermove handler can feed it coordinates hundreds of times per second without creating garbage. The handler is wrapped in <code>contextSafe</code>, and the tween itself runs on GSAP's ticker, outside change detection.",
+    hint: 'move the pointer around this stage',
+    pulse: 'Pulse',
+    how: 'How this works',
+    explain: [
+      '<code>gsap.to()</code> inside a pointermove handler would allocate a new tween on every event. <code>quickTo()</code> builds the tween once; the handler just feeds it coordinates.',
+      'The chaser and the stage come from <code>viewChild</code> queries. <code>target()</code> unwraps them for GSAP.',
+      "The quickTo tweens live in the context like everything else, so they're cleaned up when you leave the page.",
+    ],
+  },
+  es: {
+    eyebrow: 'Avanzado · gsap.quickTo',
+    title: 'Seguir el puntero con quickTo',
+    intro:
+      '<code>quickTo()</code> construye un tween reutilizable por propiedad, así que un handler de pointermove puede alimentarlo con coordenadas cientos de veces por segundo sin generar basura. El handler va envuelto en <code>contextSafe</code>, y el tween corre en el ticker de GSAP, fuera de change detection.',
+    hint: 'mueve el puntero por este escenario',
+    pulse: 'Pulso',
+    how: 'Cómo funciona',
+    explain: [
+      '<code>gsap.to()</code> dentro de un handler de pointermove crearía un tween nuevo en cada evento. <code>quickTo()</code> construye el tween una vez; el handler solo le pasa coordenadas.',
+      'El perseguidor y el escenario vienen de queries <code>viewChild</code>. <code>target()</code> los desenvuelve para GSAP.',
+      'Los tweens de quickTo viven en el contexto como todo lo demás, así que se limpian al salir de la página.',
+    ],
+  },
+} as const;
 
 @Component({
   selector: 'app-pointer',
@@ -13,15 +45,9 @@ export const routeMeta: RouteMeta = {
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Advanced · gsap.quickTo</p>
-        <h1>Pointer tracking with quickTo</h1>
-        <p>
-          <code>quickTo()</code> builds one reusable tween per property, so a
-          pointermove handler can feed it coordinates hundreds of times per
-          second without creating garbage. The handler is wrapped in
-          <code>contextSafe</code>, and the tween itself runs on GSAP's
-          ticker, outside change detection.
-        </p>
+        <p class="eyebrow">{{ c.eyebrow }}</p>
+        <h1>{{ c.title }}</h1>
+        <p [innerHTML]="c.intro"></p>
         <div class="api-chips">
           <span>gsap.quickTo</span><span>viewChild</span
           ><span>contextSafe</span>
@@ -37,7 +63,7 @@ export const routeMeta: RouteMeta = {
             (pointerleave)="onLeave()"
           >
             <span #chaser class="chaser"></span>
-            <p class="hint">move the pointer around this stage</p>
+            <p class="hint">{{ c.hint }}</p>
           </div>
         </div>
         <div class="panels">
@@ -47,21 +73,11 @@ export const routeMeta: RouteMeta = {
       </div>
 
       <section class="explain">
-        <h2>How this works</h2>
+        <h2>{{ c.how }}</h2>
         <ul>
-          <li>
-            <code>gsap.to()</code> inside a pointermove handler would allocate
-            a new tween on every event. <code>quickTo()</code> builds the
-            tween once; the handler just feeds it coordinates.
-          </li>
-          <li>
-            The chaser and the stage come from <code>viewChild</code> queries.
-            <code>target()</code> unwraps them for GSAP.
-          </li>
-          <li>
-            The quickTo tweens live in the context like everything else, so
-            they're cleaned up when you leave the page.
-          </li>
+          @for (item of c.explain; track $index) {
+            <li [innerHTML]="item"></li>
+          }
         </ul>
       </section>
     </div>
@@ -98,6 +114,8 @@ export const routeMeta: RouteMeta = {
   `,
 })
 export default class PointerPage {
+  protected readonly c = COPY[injectLocale()];
+
   private readonly stage =
     viewChild.required<ElementRef<HTMLElement>>('stage');
   private readonly chaser =

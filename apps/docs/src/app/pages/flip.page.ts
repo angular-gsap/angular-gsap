@@ -2,6 +2,7 @@ import { Component, computed, signal } from '@angular/core';
 import { injectGsap } from '@angular-gsap/core';
 import { Flip } from 'gsap/Flip';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
@@ -27,20 +28,42 @@ const CARDS: Card[] = [
   { id: 8, label: 'MorphSVG', tag: 'plugin', color: '#ffb627' },
 ];
 
+const COPY = {
+  en: {
+    eyebrow: 'Advanced · plugin: Flip',
+    title: 'FLIP layout transitions',
+    intro:
+      'Filter the grid and the reflow is FLIP-animated. The whole trick is ordering: capture the layout <em>before</em> the signal changes the DOM, animate <em>after</em> Angular renders. Those are exactly the two moments this library hands you.',
+    how: 'How this works',
+    explain: [
+      'Flip needs two snapshots: the layout before the change and after. <code>Flip.getState()</code> runs in the click handler, before the signal updates. The callback runs after Angular renders, so <code>Flip.from()</code> measures the new layout. That ordering is the hard part, and it falls out of how <code>injectGsap</code> works.',
+      '<code>track card.id</code> keeps the DOM nodes of surviving cards, so Flip matches them by identity. <code>data-flip-id</code> covers the ones that enter.',
+      'Click filters as fast as you want; each re-run reverts the previous one first.',
+    ],
+  },
+  es: {
+    eyebrow: 'Avanzado · plugin: Flip',
+    title: 'Transiciones de layout con FLIP',
+    intro:
+      'Filtra la cuadrícula y el reacomodo se anima con FLIP. Todo el truco es el orden: capturar el layout <em>antes</em> de que el signal cambie el DOM, animar <em>después</em> de que Angular pinte. Esos son exactamente los dos momentos que esta librería te entrega.',
+    how: 'Cómo funciona',
+    explain: [
+      'Flip necesita dos instantáneas: el layout antes del cambio y después. <code>Flip.getState()</code> corre en el handler del click, antes de que el signal se actualice. El callback corre después de que Angular pinta, así que <code>Flip.from()</code> mide el layout nuevo. Ese orden es la parte difícil, y sale gratis de cómo funciona <code>injectGsap</code>.',
+      '<code>track card.id</code> conserva los nodos del DOM de las tarjetas que sobreviven, así Flip las empareja por identidad. <code>data-flip-id</code> cubre las que entran.',
+      'Filtra tan rápido como quieras; cada re-ejecución revierte la anterior primero.',
+    ],
+  },
+} as const;
+
 @Component({
   selector: 'app-flip',
   imports: [CodeSnippet],
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Advanced · plugin: Flip</p>
-        <h1>FLIP layout transitions</h1>
-        <p>
-          Filter the grid and the reflow is FLIP-animated. The whole trick is
-          ordering: capture the layout <em>before</em> the signal changes the
-          DOM, animate <em>after</em> Angular renders. Those are exactly the
-          two moments this library hands you.
-        </p>
+        <p class="eyebrow">{{ c.eyebrow }}</p>
+        <h1>{{ c.title }}</h1>
+        <p [innerHTML]="c.intro"></p>
         <div class="api-chips">
           <span>injectGsap</span><span>Flip</span><span>&#64;for track</span>
         </div>
@@ -80,25 +103,11 @@ const CARDS: Card[] = [
       </div>
 
       <section class="explain">
-        <h2>How this works</h2>
+        <h2>{{ c.how }}</h2>
         <ul>
-          <li>
-            Flip needs two snapshots: the layout before the change and after.
-            <code>Flip.getState()</code> runs in the click handler, before the
-            signal updates. The callback runs after Angular renders, so
-            <code>Flip.from()</code> measures the new layout. That ordering is
-            the hard part, and it falls out of how <code>injectGsap</code>
-            works.
-          </li>
-          <li>
-            <code>track card.id</code> keeps the DOM nodes of surviving cards,
-            so Flip matches them by identity. <code>data-flip-id</code> covers
-            the ones that enter.
-          </li>
-          <li>
-            Click filters as fast as you want; each re-run reverts the previous
-            one first.
-          </li>
+          @for (item of c.explain; track $index) {
+            <li [innerHTML]="item"></li>
+          }
         </ul>
       </section>
     </div>
@@ -139,6 +148,8 @@ const CARDS: Card[] = [
   `,
 })
 export default class FlipPage {
+  protected readonly c = COPY[injectLocale()];
+
   protected readonly tags: Tag[] = ['all', 'core', 'plugin'];
   protected readonly filter = signal<Tag>('all');
 

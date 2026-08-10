@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { injectGsap, targets } from '@angular-gsap/core';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { RouteMeta } from '@analogjs/router';
 
 export const routeMeta: RouteMeta = {
@@ -15,20 +16,48 @@ export const routeMeta: RouteMeta = {
 
 const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
 
+const COPY = {
+  en: {
+    eyebrow: 'Example · core',
+    title: 'Signal-driven animations',
+    intro:
+      "The dots come from a <code>viewChildren()</code> query, read inside the callback. Move the slider and the query updates, the context reverts, and the entrance replays. It's the same mental model as any other signal-driven view.",
+    dots: 'dots',
+    burst: 'Burst',
+    how: 'How this works',
+    explain: [
+      "<code>viewChildren('dot')</code> is a signal. Move the slider, <code>count()</code> changes, the <code>@for</code> renders new dots, the query updates, and the callback runs again with the new elements already in the DOM.",
+      'Every re-run starts from a <code>revert()</code>, so there are no leftover inline styles from the previous entrance.',
+      'Burst is a normal event handler wrapped in <code>contextSafe</code>: its tween joins the same context and dies with the component.',
+      "Selector strings work too. <code>gsap.from('.dot', …)</code> is scoped to this component, so the same class elsewhere on the page isn't touched.",
+    ],
+  },
+  es: {
+    eyebrow: 'Ejemplo · core',
+    title: 'Animaciones dirigidas por signals',
+    intro:
+      'Los puntos vienen de una query <code>viewChildren()</code> leída dentro del callback. Mueve el slider y la query se actualiza, el contexto se revierte y la entrada se repite. Es el mismo modelo mental que cualquier vista dirigida por signals.',
+    dots: 'puntos',
+    burst: 'Explotar',
+    how: 'Cómo funciona',
+    explain: [
+      "<code>viewChildren('dot')</code> es un signal. Mueves el slider, <code>count()</code> cambia, el <code>@for</code> pinta puntos nuevos, la query se actualiza y el callback vuelve a correr con los elementos ya en el DOM.",
+      'Cada re-ejecución parte de un <code>revert()</code>, así que no quedan estilos inline de la entrada anterior.',
+      'Explotar es un handler normal envuelto en <code>contextSafe</code>: su tween se une al mismo contexto y muere con el componente.',
+      "Los selectores también funcionan. <code>gsap.from('.dot', …)</code> está limitado a este componente; la misma clase en otra parte de la página no se toca.",
+    ],
+  },
+} as const;
+
 @Component({
   selector: 'app-basics',
   imports: [CodeSnippet],
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Example · core</p>
-        <h1>Signal-driven animations</h1>
-        <p>
-          The dots come from a <code>viewChildren()</code> query, read inside
-          the callback. Move the slider and the query updates, the context
-          reverts, and the entrance replays. It's the same mental model as any
-          other signal-driven view.
-        </p>
+        <p class="eyebrow">{{ c.eyebrow }}</p>
+        <h1>{{ c.title }}</h1>
+        <p [innerHTML]="c.intro"></p>
         <div class="api-chips">
           <span>injectGsap</span><span>viewChildren</span><span>targets</span>
         </div>
@@ -49,7 +78,7 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
           </div>
           <div class="stage-controls">
             <label class="range">
-              dots · {{ count() }}
+              {{ c.dots }} · {{ count() }}
               <input
                 type="range"
                 min="3"
@@ -58,7 +87,7 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
                 (input)="count.set(+$any($event.target).value)"
               />
             </label>
-            <button class="btn" (click)="burst()">Burst</button>
+            <button class="btn" (click)="burst()">{{ c.burst }}</button>
           </div>
         </div>
         <div class="panels">
@@ -68,28 +97,11 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
       </div>
 
       <section class="explain">
-        <h2>How this works</h2>
+        <h2>{{ c.how }}</h2>
         <ul>
-          <li>
-            <code>viewChildren('dot')</code> is a signal. Move the slider,
-            <code>count()</code> changes, the <code>&#64;for</code> renders new
-            dots, the query updates, and the callback runs again with the new
-            elements already in the DOM.
-          </li>
-          <li>
-            Every re-run starts from a <code>revert()</code>, so there are no
-            leftover inline styles from the previous entrance.
-          </li>
-          <li>
-            Burst is a normal event handler wrapped in
-            <code>contextSafe</code>: its tween joins the same context and dies
-            with the component.
-          </li>
-          <li>
-            Selector strings work too. <code>gsap.from('.dot', …)</code> is
-            scoped to this component, so the same class elsewhere on the page
-            isn't touched.
-          </li>
+          @for (item of c.explain; track $index) {
+            <li [innerHTML]="item"></li>
+          }
         </ul>
       </section>
     </div>
@@ -108,7 +120,10 @@ const RING_COLORS = ['#e23b80', '#5b4be8', '#ffb627', '#0ae448'];
     }
   `,
 })
+
 export default class BasicsPage {
+  protected readonly c = COPY[injectLocale()];
+
   protected readonly count = signal(8);
 
   protected readonly dots = computed(() => {

@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { CodeSnippet } from '../code-snippet';
+import { injectLocale } from '../i18n';
 import { injectGsap } from '@angular-gsap/core';
 import { SplitText } from 'gsap/SplitText';
 import { RouteMeta } from '@analogjs/router';
@@ -16,20 +17,48 @@ const STAGGER: Record<SplitMode, number> = {
   lines: 0.14,
 };
 
+const COPY = {
+  en: {
+    eyebrow: 'Example · plugin: SplitText',
+    title: 'Text splitting',
+    intro:
+      '<code>mode()</code> and <code>run()</code> are both read in the callback, so switching the split granularity (or hitting replay) reverts the previous split and starts over. On destroy the paragraph is restored exactly as it was.',
+    passage:
+      'Great interfaces move with intent. Split this paragraph into characters, words, or lines, then choreograph the pieces with the full GSAP toolbox. Leave the page, and every piece is stitched back together exactly as it was.',
+    replay: 'Replay',
+    how: 'How this works',
+    explain: [
+      "<code>mode()</code> and <code>run()</code> are both read in the callback. Change either one and it re-runs. That's the entire replay mechanism.",
+      'SplitText created inside the context is reverted with it: leave the page and the paragraph is back to its original markup, no leftover spans.',
+      "Each re-split works on the restored paragraph, not on the previous run's spans, because the re-run reverts first.",
+    ],
+  },
+  es: {
+    eyebrow: 'Ejemplo · plugin: SplitText',
+    title: 'División de texto',
+    intro:
+      '<code>mode()</code> y <code>run()</code> se leen en el callback, así que cambiar la granularidad (o darle a repetir) revierte la división anterior y empieza de nuevo. Al destruir, el párrafo queda restaurado tal cual estaba.',
+    passage:
+      'Las buenas interfaces se mueven con intención. Divide este párrafo en caracteres, palabras o líneas, y coreografía las piezas con toda la caja de herramientas de GSAP. Sal de la página y cada pieza vuelve a coserse exactamente como estaba.',
+    replay: 'Repetir',
+    how: 'Cómo funciona',
+    explain: [
+      '<code>mode()</code> y <code>run()</code> se leen en el callback. Cambia cualquiera y se vuelve a ejecutar. Ese es todo el mecanismo de repetición.',
+      'El SplitText creado dentro del contexto se revierte con él: sal de la página y el párrafo vuelve a su marcado original, sin spans sobrantes.',
+      'Cada nueva división trabaja sobre el párrafo restaurado, no sobre los spans de la ejecución anterior, porque cada re-ejecución revierte primero.',
+    ],
+  },
+} as const;
+
 @Component({
   imports: [CodeSnippet],
   selector: 'app-text',
   template: `
     <div class="page">
       <header class="page-head">
-        <p class="eyebrow">Example · plugin: SplitText</p>
-        <h1>Text splitting</h1>
-        <p>
-          <code>mode()</code> and <code>run()</code> are both read in the
-          callback, so switching the split granularity (or hitting replay)
-          reverts the previous split and starts over. On destroy the paragraph
-          is restored exactly as it was.
-        </p>
+        <p class="eyebrow">{{ c.eyebrow }}</p>
+        <h1>{{ c.title }}</h1>
+        <p [innerHTML]="c.intro"></p>
         <div class="api-chips">
           <span>SplitText</span><span>injectGsap</span><span>signal</span>
         </div>
@@ -38,12 +67,7 @@ const STAGGER: Record<SplitMode, number> = {
       <div class="example">
         <div>
           <div class="stage text-stage">
-            <p class="passage">
-              Great interfaces move with intent. Split this paragraph into
-              characters, words, or lines, then choreograph the pieces with
-              the full GSAP toolbox. Leave the page, and every piece is
-              stitched back together exactly as it was.
-            </p>
+            <p class="passage">{{ c.passage }}</p>
           </div>
           <div class="stage-controls">
             @for (m of modes; track m) {
@@ -55,7 +79,7 @@ const STAGGER: Record<SplitMode, number> = {
                 {{ m }}
               </button>
             }
-            <button class="btn" (click)="replay()">Replay</button>
+            <button class="btn" (click)="replay()">{{ c.replay }}</button>
           </div>
         </div>
         <div class="panels">
@@ -65,22 +89,11 @@ const STAGGER: Record<SplitMode, number> = {
       </div>
 
       <section class="explain">
-        <h2>How this works</h2>
+        <h2>{{ c.how }}</h2>
         <ul>
-          <li>
-            <code>mode()</code> and <code>run()</code> are both read in the
-            callback. Change either one and it re-runs. That's the entire
-            replay mechanism.
-          </li>
-          <li>
-            SplitText created inside the context is reverted with it: leave the
-            page and the paragraph is back to its original markup, no leftover
-            spans.
-          </li>
-          <li>
-            Each re-split works on the restored paragraph, not on the previous
-            run's spans, because the re-run reverts first.
-          </li>
+          @for (item of c.explain; track $index) {
+            <li [innerHTML]="item"></li>
+          }
         </ul>
       </section>
     </div>
@@ -104,6 +117,8 @@ const STAGGER: Record<SplitMode, number> = {
   `,
 })
 export default class TextPage {
+  protected readonly c = COPY[injectLocale()];
+
   protected readonly modes: SplitMode[] = ['chars', 'words', 'lines'];
   protected readonly mode = signal<SplitMode>('words');
   protected readonly run = signal(0);
@@ -133,7 +148,9 @@ export default class TextPage {
   ].join('\n');
 
   protected readonly snippet = [
-    `export default class TextPage {`,
+    `export default class TextPage {
+  protected readonly c = COPY[injectLocale()];
+`,
     `  mode = signal<'chars' | 'words' | 'lines'>('words');`,
     `  run = signal(0);`,
     ``,

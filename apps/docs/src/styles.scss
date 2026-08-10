@@ -18,10 +18,31 @@
   --bw: 3px;
   --shadow: 7px 7px 0 var(--ink);
   --shadow-sm: 4px 4px 0 var(--ink);
+  /* code blocks stay dark in both themes (shiki colors are fixed) */
+  --code-bg: #131316;
 
   --font-display: 'Archivo', sans-serif;
   --font-body: 'Instrument Sans', sans-serif;
   --font-mono: 'Spline Sans Mono', monospace;
+}
+
+/* dark: the ink/paper roles flip; the motion palette stays loud */
+@mixin dark-tokens {
+  --paper: #17171b;
+  --ink: #f2efe6;
+  --ink-soft: #b9b6ac;
+  --hairline: #33333a;
+  --card: #1f1f25;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
 }
 
 * {
@@ -96,7 +117,7 @@ a:hover {
     letter-spacing: -0.01em;
   }
 
-  p {
+  p:not(.eyebrow) {
     color: var(--ink-soft);
     margin: 1rem 0 0;
   }
@@ -180,7 +201,7 @@ a:hover {
 }
 
 .snippet pre {
-  background: var(--ink) !important;
+  background: var(--code-bg) !important;
   border: var(--bw) solid var(--ink);
   border-radius: 0 10px 10px 10px;
   box-shadow: var(--shadow-sm);
