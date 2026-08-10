@@ -354,7 +354,7 @@ export const routeMeta: RouteMeta = {
               <td>GSDevTools, MotionPathHelper</td>
               <td>
                 Dev tools: create them in the callback during development
-                (<code>GSDevTools.create({ animation: tl })</code>); the
+                (<code>GSDevTools.create({{ '{' }} animation: tl {{ '}' }})</code>); the
                 context cleans them up.
               </td>
             </tr>
