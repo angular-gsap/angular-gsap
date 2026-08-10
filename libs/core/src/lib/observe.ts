@@ -1,4 +1,12 @@
-import { Directive, ElementRef, inject, input, numberAttribute, output } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  booleanAttribute,
+  inject,
+  input,
+  numberAttribute,
+  output,
+} from '@angular/core';
 import { injectGsap } from './inject-gsap';
 import { findObserver, warnMissingPlugin } from './internal';
 import { GSAP_OPTIONS } from './provide-gsap';
@@ -30,6 +38,8 @@ export class Observe {
   });
   /** Minimum px of movement before a direction fires. */
   readonly tolerance = input(10, { transform: numberAttribute });
+  /** Prevent the captured events' default action (page scroll, drag select). */
+  readonly preventDefault = input(false, { transform: booleanAttribute });
   readonly up = output<void>();
   readonly down = output<void>();
   readonly left = output<void>();
@@ -47,6 +57,7 @@ export class Observe {
       target: this.host.nativeElement,
       type: this.type(),
       tolerance: this.tolerance(),
+      preventDefault: this.preventDefault(),
       onUp: () => this.up.emit(),
       onDown: () => this.down.emit(),
       onLeft: () => this.left.emit(),

@@ -19,7 +19,7 @@ class DragHost {}
 
 @Component({
   imports: [Observe],
-  template: `<section observe (up)="ups = ups + 1"></section>`,
+  template: `<section observe [preventDefault]="true" (up)="ups = ups + 1"></section>`,
 })
 class ObserveHost {
   ups = 0;
@@ -82,6 +82,10 @@ describe('extra directives', () => {
     const fixture = TestBed.createComponent(ObserveHost);
     await settle(fixture);
     expect(Observer.getAll().length).toBe(before + 1);
+    const instance = Observer.getAll().at(-1) as Observer & {
+      vars: { preventDefault?: boolean };
+    };
+    expect(instance.vars.preventDefault).toBe(true);
     fixture.destroy();
     expect(Observer.getAll().length).toBe(before);
   });
