@@ -70,6 +70,7 @@ const NAV = {
         label: 'Advanced',
         links: [
           { path: '/sections', label: 'Sections' },
+          { path: '/radial', label: 'Radial menu' },
           { path: '/webgl', label: 'WebGL' },
         ],
       },
@@ -119,6 +120,7 @@ const NAV = {
         label: 'Avanzado',
         links: [
           { path: '/sections', label: 'Secciones' },
+          { path: '/radial', label: 'Menú radial' },
           { path: '/webgl', label: 'WebGL' },
         ],
       },
@@ -535,6 +537,9 @@ export class AppComponent {
 
   protected readonly open = signal(true);
 
+  // the user's desktop preference: open until they close it
+  private desktopOpen = true;
+
   private readonly url = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -564,18 +569,41 @@ export class AppComponent {
     return !!this.document.defaultView?.matchMedia(DESKTOP).matches;
   }
 
-  // sidebar: starts open on desktop, closed on mobile; GSAP owns the motion
+  // sidebar: starts open on desktop, closed on mobile; GSAP owns the motion.
+  // Inline styles from one mode break the other, so crossing the breakpoint
+  // re-normalizes the panel, backdrop, and hamburger for the new mode.
   readonly ctx = injectGsap(({ gsap }) => {
-    const desktop = this.isDesktop();
-    this.open.set(desktop);
-    const panel = target(this.panel);
-    if (desktop) {
-      gsap.set(panel, { width: '15.5rem', borderRightWidth: 'var(--bw)' });
-    } else {
-      // normalize: GSAP parses the CSS translateX(-104%) as x, so zero it
-      gsap.set(panel, { x: 0, xPercent: -104 });
-      gsap.set(target(this.backdrop), { autoAlpha: 0 });
-    }
+    const applyMode = (desktop: boolean) => {
+      const panel = target(this.panel);
+      const backdrop = target(this.backdrop);
+      const bars = [target(this.bar1), target(this.bar2), target(this.bar3)];
+      gsap.killTweensOf([panel, backdrop, ...bars]);
+      // open by default on desktop, but respect an explicit close
+      const show = desktop && this.desktopOpen;
+      this.open.set(show);
+      if (desktop) {
+        gsap.set(panel, { clearProps: 'transform' });
+        gsap.set(panel, {
+          width: show ? '15.5rem' : 0,
+          borderRightWidth: show ? 'var(--bw)' : '0rem',
+        });
+        gsap.set(backdrop, { clearProps: 'all' });
+      } else {
+        gsap.set(panel, { clearProps: 'width,borderRightWidth' });
+        // normalize: GSAP parses the CSS translateX(-104%) as x, so zero it
+        gsap.set(panel, { x: 0, xPercent: -104 });
+        gsap.set(backdrop, { autoAlpha: 0 });
+      }
+      gsap.set(bars, { clearProps: 'all' });
+      this.backdrop().nativeElement.classList.remove('show');
+    };
+
+    applyMode(this.isDesktop());
+
+    const media = this.document.defaultView?.matchMedia(DESKTOP);
+    const onChange = (event: MediaQueryListEvent) => applyMode(event.matches);
+    media?.addEventListener('change', onChange);
+    return () => media?.removeEventListener('change', onChange);
   });
 
   private animate = this.ctx.contextSafe((show: boolean) => {
@@ -642,6 +670,9 @@ export class AppComponent {
   protected toggle(): void {
     const next = !this.open();
     this.open.set(next);
+    if (this.isDesktop()) {
+      this.desktopOpen = next;
+    }
     this.animate(next);
     if (next && !this.isDesktop()) {
       // move focus into the drawer for keyboard users
