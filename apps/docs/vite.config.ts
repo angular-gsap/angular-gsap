@@ -1,8 +1,41 @@
 /// <reference types="vitest" />
 
 import analog from '@analogjs/platform';
+import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
+
+/**
+ * `vite build` finishes but never exits: sass-embedded's compiler keeps the
+ * event loop alive (https://github.com/vitejs/vite/issues/18127). Analog runs
+ * its ssr and prerender builds nested inside the client build's closeBundle,
+ * and this config (plugin instances included) is reused across them, so the
+ * only safe exit signal is the prerendered output existing fresh on disk:
+ * that is true exactly once, after the whole pipeline is done.
+ */
+function exitAfterBuild(): Plugin {
+  const started = Date.now();
+  const marker = resolve(__dirname, '../../dist/apps/docs/analog/public/index.html');
+  return {
+    name: 'docs-exit-after-build',
+    apply: 'build',
+    enforce: 'post',
+    buildApp: {
+      order: 'post',
+      async handler() {
+        let fresh = false;
+        try {
+          fresh = statSync(marker).mtimeMs >= started;
+        } catch {
+          // prerender output missing: don't exit, something else is going on
+        }
+        if (fresh) {
+          setTimeout(() => process.exit(0), 10);
+        }
+      },
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -74,6 +107,7 @@ export default defineConfig(() => {
           inlineStylesExtension: 'scss',
         },
       }),
+      exitAfterBuild(),
     ],
     test: {
       watch: false,
