@@ -8,6 +8,9 @@
     "test": "nx run-many -t test",
     "lint": "nx run-many -t lint"
   },
+  "nx": {
+    "includedScripts": []
+  },
   "private": true,
   "dependencies": {
     "@angular-devkit/build-angular": "22.0.6",
