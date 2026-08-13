@@ -1,0 +1,353 @@
+/* angular-gsap docs: neo-brutalist take on "color belongs to motion".
+   Cream paper, thick ink borders, hard offset shadows; saturated color
+   stays reserved for things the library animates. */
+
+:root {
+  --paper: #f4f1e9;
+  --ink: #131316;
+  --ink-soft: #4c4c55;
+  --hairline: #d8d4c8;
+  --card: #fffdf7;
+
+  /* motion palette, only ever applied to animated elements */
+  --pulse: #e23b80; /* angular side */
+  --kinetic: #0ae448; /* gsap side */
+  --arc: #5b4be8; /* the bridge; also interactive text */
+  --ember: #ffb627;
+
+  --bw: 3px;
+  --shadow: 7px 7px 0 var(--ink);
+  --shadow-sm: 4px 4px 0 var(--ink);
+  /* code blocks stay dark in both themes (shiki colors are fixed) */
+  --code-bg: #131316;
+
+  --font-display: 'Archivo', sans-serif;
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-mono: 'Spline Sans Mono', monospace;
+}
+
+/* dark: the ink/paper roles flip and the motion palette dims with the lights */
+@mixin dark-tokens {
+  --paper: #17171b;
+  --ink: #f2efe6;
+  --ink-soft: #b9b6ac;
+  --hairline: #33333a;
+  --card: #1f1f25;
+  --pulse: #b13566;
+  --kinetic: #17b048;
+  --arc: #7d74d2;
+  --ember: #d3982f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-stretch: 115%;
+  line-height: 1.05;
+  margin: 0;
+}
+
+a {
+  color: var(--arc);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: var(--bw) solid var(--arc);
+  outline-offset: 2px;
+}
+
+/* ---- shared furniture ---- */
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 0.2rem 0.6rem;
+  margin: 0 0 1rem;
+}
+
+.page {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 5rem;
+}
+
+.page-head {
+  max-width: 44rem;
+  margin-bottom: 2.5rem;
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  p:not(.eyebrow) {
+    color: var(--ink-soft);
+    margin: 1rem 0 0;
+  }
+}
+
+.api-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+
+  span {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    border: 2px solid var(--ink);
+    padding: 0.2rem 0.7rem;
+    background: var(--card);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+}
+
+.example {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 56rem) {
+  .example {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* the stage: where motion (and therefore color) lives */
+.stage {
+  position: relative;
+  background: var(--card);
+  border: var(--bw) solid var(--ink);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  min-height: 22rem;
+  overflow: hidden;
+  background-image: radial-gradient(var(--hairline) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+.stage-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1.4rem;
+}
+
+/* labeled snippet panels */
+.snippet-panel {
+  margin: 0;
+
+  figcaption {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 0.25rem 0.7rem;
+    margin-bottom: 0;
+    border: var(--bw) solid var(--ink);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+.panels {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.snippet pre {
+  background: var(--code-bg) !important;
+  border: var(--bw) solid var(--ink);
+  border-radius: 0 10px 10px 10px;
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem 1.4rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  margin: 0;
+
+  code {
+    font-family: inherit;
+    background: transparent;
+    white-space: pre;
+  }
+}
+
+.btn {
+  font-family: var(--font-display);
+  font-stretch: 110%;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  background: var(--kinetic);
+  border: var(--bw) solid var(--ink);
+  border-radius: 10px;
+  padding: 0.5rem 1.15rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 90ms ease, box-shadow 90ms ease;
+}
+
+.btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.btn--quiet {
+  background: var(--card);
+}
+
+label.range {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  background: var(--card);
+  box-shadow: 3px 3px 0 var(--ink);
+  border-radius: 10px;
+  padding: 0.35rem 0.8rem;
+}
+
+input[type='range'] {
+  accent-color: var(--pulse);
+  width: 11rem;
+}
+
+/* per-example "how this works" block */
+.explain {
+  margin-top: 3rem;
+  max-width: 46rem;
+  border-top: var(--bw) solid var(--ink);
+  padding-top: 1.5rem;
+
+  h2 {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 0.2rem 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  li {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    padding-left: 1rem;
+    border-left: var(--bw) solid var(--ember);
+  }
+
+  strong {
+    color: var(--ink);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--ink);
+  }
+}
+
+/* theme switch: the WAAPI clip-path circle owns the animation */
+/* the hero logotype's tick lands on this class after the entrance,
+   so it follows the theme instead of a baked inline color */
+.hero-tick {
+  color: var(--kinetic);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .btn,
+  .btn:hover,
+  .btn:active {
+    transition: none;
+  }
+}
