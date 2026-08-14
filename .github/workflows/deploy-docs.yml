@@ -8,20 +8,18 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: deploy-docs
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
       - uses: actions/setup-node@v5
         with:
@@ -33,22 +31,13 @@ jobs:
 
       - name: Build docs
         run: pnpm nx build docs
+
+      - name: Deploy to Netlify
+        run: >
+          pnpm dlx netlify-cli deploy
+          --prod
+          --dir dist/apps/docs/analog/public
+          --message "${{ github.event_name }}: ${{ github.sha }}"
         env:
-          DOCS_BASE: /angular-gsap/
-
-      - name: SPA fallback
-        run: cp dist/apps/docs/analog/public/index.html dist/apps/docs/analog/public/404.html
-
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: dist/apps/docs/analog/public
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
