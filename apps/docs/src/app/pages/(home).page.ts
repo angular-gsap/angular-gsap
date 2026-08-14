@@ -35,34 +35,13 @@ const COPY = {
     featNote:
       "You could write all of this glue yourself. Most Angular apps that animate end up doing exactly that, one component at a time.",
     features: [
-      {
-        title: 'Scoped by default',
-        body: "Fifty instances of a component, each animating <code>'.icon'</code>? Each one only touches its own. Selectors stop at the host, just like component styles.",
-      },
-      {
-        title: 'Signal-driven',
-        body: 'Your signals already drive the template. Read one in the callback and it drives the animation too: change it and the animation replays against the freshly rendered DOM.',
-      },
-      {
-        title: 'No cleanup needed',
-        body: 'Leave the route and every tween, ScrollTrigger, and text split reverts, the same way Angular tears down the view. Forgetting cleanup stops being a bug you can write.',
-      },
-      {
-        title: 'SSR ready',
-        body: "No 'window is not defined' at build time, no isPlatformBrowser guards. Animation code waits until there's a browser.",
-      },
-      {
-        title: 'Nothing new to learn',
-        body: "You're writing GSAP, not a translation of it. Docs, forum answers, and CodePens work verbatim.",
-      },
-      {
-        title: 'Tree-shakeable',
-        body: 'Use two directives and the other ten leave your bundle. Plugins cost bytes only when you import them.',
-      },
-      {
-        title: 'Zero change detection cost',
-        body: "A tween at 60fps never schedules a change detection pass. GSAP's ticker does the work; no zone.js, no rxjs in the library.",
-      },
+      'Scoped by default',
+      'Signal-driven',
+      'No cleanup needed',
+      'SSR ready',
+      'Nothing new to learn',
+      'Tree-shakeable',
+      'Zero change detection cost',
     ],
   },
   es: {
@@ -83,34 +62,13 @@ const COPY = {
     featNote:
       'Todo este pegamento lo podrías escribir tú. La mayoría de las apps Angular que animan terminan haciendo justo eso, componente por componente.',
     features: [
-      {
-        title: 'Scoped por defecto',
-        body: "¿Cincuenta instancias de un componente, cada una animando <code>'.icon'</code>? Cada una toca solo el suyo. Los selectores se detienen en el host, igual que los estilos del componente.",
-      },
-      {
-        title: 'Dirigido por signals',
-        body: 'Tus signals ya dirigen el template. Lee uno en el callback y dirige también la animación: cámbialo y la animación se repite contra el DOM recién pintado.',
-      },
-      {
-        title: 'Sin limpieza manual',
-        body: 'Sal de la ruta y cada tween, ScrollTrigger y división de texto se revierte, igual que Angular desmonta la vista. Olvidar la limpieza deja de ser un bug posible.',
-      },
-      {
-        title: 'Listo para SSR',
-        body: "Sin 'window is not defined' al compilar, sin isPlatformBrowser. El código de animación espera a que haya navegador.",
-      },
-      {
-        title: 'Nada nuevo que aprender',
-        body: 'Escribes GSAP, no una traducción. Docs, respuestas de foros y CodePens funcionan tal cual.',
-      },
-      {
-        title: 'Tree-shakeable',
-        body: 'Usa dos directivas y las otras diez salen del bundle. Los plugins cuestan bytes solo cuando los importas.',
-      },
-      {
-        title: 'Cero costo en change detection',
-        body: 'Un tween a 60fps nunca agenda un pase de change detection. El ticker de GSAP hace el trabajo; sin zone.js, sin rxjs en la librería.',
-      },
+      'Scoped por defecto',
+      'Dirigido por signals',
+      'Sin limpieza manual',
+      'Listo para SSR',
+      'Nada nuevo que aprender',
+      'Tree-shakeable',
+      'Cero costo en change detection',
     ],
   },
 } as const;
@@ -180,11 +138,16 @@ const COPY = {
       <p class="eyebrow">{{ c.featEyebrow }}</p>
       <h2 class="feat-title">{{ c.featTitle }}</h2>
       <p class="feat-note">{{ c.featNote }}</p>
-      <ul stagger="0.08" on="scroll" preset="fade-up" [distance]="40">
-        @for (f of c.features; track f.title) {
+      <ul
+        stagger="0.07"
+        on="scroll"
+        preset="scale-in"
+        ease="back.out(2.2)"
+        [duration]="0.5"
+      >
+        @for (f of c.features; track f) {
           <li class="feature" hover>
-            <h3>{{ f.title }}</h3>
-            <p [innerHTML]="f.body"></p>
+            <h3>{{ f }}</h3>
           </li>
         }
       </ul>
@@ -370,22 +333,19 @@ const COPY = {
       }
 
       .feature {
+        display: grid;
+        place-items: center;
+        text-align: center;
         background: var(--card);
         border: var(--bw) solid var(--ink);
         border-radius: 12px;
         box-shadow: var(--shadow-sm);
-        padding: 1.4rem;
+        padding: 1.6rem 1.2rem;
 
         h3 {
-          font-size: 1.05rem;
-          font-weight: 700;
-          margin-bottom: 0.5rem;
-        }
-
-        p {
+          font-size: 1.15rem;
+          font-weight: 800;
           margin: 0;
-          font-size: 0.92rem;
-          color: var(--ink-soft);
         }
       }
     }

@@ -10,8 +10,13 @@ export const routeMeta: RouteMeta = {
 
 const SHAPES = [
   {
-    d: 'M200 170 C 225 120, 300 125, 305 165 C 310 205, 250 235, 215 210 C 185 190, 175 195, 200 170 Z',
+    // the Angular mark (apps/docs/public/angular-icon.svg), rescaled into this viewBox
+    d: 'M302.8 130.6l-4 59.8L262.3 111.7l40.5 18.9ZM277.3 208l-27.3 15.8 -27.7 -15.8 5.3 -13.6h44.4l5.3 13.6ZM250 141.6l14.1 35.2H235.5l14.5 -35.2ZM200.7 190.4L196.8 130.6 237.2 111.7 200.7 190.4Z',
     fill: '--pulse',
+  },
+  {
+    d: 'M200 170 C 225 120, 300 125, 305 165 C 310 205, 250 235, 215 210 C 185 190, 175 195, 200 170 Z',
+    fill: '--arc',
   },
   {
     d: 'M250 110 L262 150 L305 150 L272 176 L284 216 L250 192 L216 216 L228 176 L195 150 L238 150 Z',
@@ -19,7 +24,7 @@ const SHAPES = [
   },
   {
     d: 'M262 108 L214 170 L244 170 L226 218 L288 152 L254 152 Z',
-    fill: '--arc',
+    fill: '--kinetic',
   },
 ] as const;
 
@@ -28,7 +33,7 @@ const COPY = {
     eyebrow: 'Example · SVG',
     title: 'SVG animation',
     intro:
-      'SVG is regular DOM to GSAP: strokes draw in with DrawSVG, shapes morph with MorphSVG, and elements ride paths with MotionPath. All three plugins are registered once in <code>provideGsap</code>.',
+      'SVG is regular DOM to GSAP: strokes draw in with DrawSVG, shapes morph with MorphSVG, and elements ride paths with MotionPath. All three plugins are registered once in <code>provideGsap</code>. The floating shape starts as the Angular mark; Morph cycles it through the others.',
     morph: 'Morph',
     how: 'How this works',
     explain: [
@@ -41,7 +46,7 @@ const COPY = {
     eyebrow: 'Ejemplo · SVG',
     title: 'Animación de SVG',
     intro:
-      'Para GSAP el SVG es DOM normal: los trazos se dibujan con DrawSVG, las formas se transforman con MorphSVG y los elementos recorren rutas con MotionPath. Los tres plugins se registran una vez en <code>provideGsap</code>.',
+      'Para GSAP el SVG es DOM normal: los trazos se dibujan con DrawSVG, las formas se transforman con MorphSVG y los elementos recorren rutas con MotionPath. Los tres plugins se registran una vez en <code>provideGsap</code>. La forma flotante empieza como el logo de Angular; Transformar la pasa por las demás.',
     morph: 'Transformar',
     how: 'Cómo funciona',
     explain: [
