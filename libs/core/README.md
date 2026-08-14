@@ -52,6 +52,6 @@ Every GSAP plugin is free and ships in the `gsap` npm package: ScrollTrigger, Sp
 
 ## Documentation
 
-Full docs, patterns, and a live example app: [github.com/angular-gsap/core](https://github.com/angular-gsap/core)
+Live docs and examples: [angular-gsap.netlify.app](https://angular-gsap.netlify.app) · source: [github.com/angular-gsap/core](https://github.com/angular-gsap/core)
 
 MIT licensed.

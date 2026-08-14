@@ -206,7 +206,7 @@ replay = () => this.run.update((n) => n + 1);
 
 ## Docs & examples
 
-Live docs with every example's full source, in English and Spanish: signal-driven tweens, timelines, ScrollTrigger, SplitText, Flip, Draggable with inertia, Observer, SVG drawing and morphing, a WebGL cube, and a complete directive reference with running demos.
+**[angular-gsap.netlify.app](https://angular-gsap.netlify.app)** — live docs with every example's full source, in English and Spanish: signal-driven tweens, timelines, ScrollTrigger, SplitText, Flip, Draggable with inertia, Observer, SVG drawing and morphing, a WebGL cube, and a complete directive reference with running demos.
 
 To run them locally:
 

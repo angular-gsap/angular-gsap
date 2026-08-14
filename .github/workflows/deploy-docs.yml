@@ -16,6 +16,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: netlify
+      url: https://angular-gsap.netlify.app
     steps:
       - uses: actions/checkout@v5
 
