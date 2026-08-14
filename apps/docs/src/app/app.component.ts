@@ -184,7 +184,7 @@ const DESKTOP = '(min-width: 64rem)';
         <a
           class="gh"
           hover="grow"
-          href="https://github.com/angular-gsap/angular-gsap"
+          href="https://github.com/angular-gsap/core"
           target="_blank"
           rel="noreferrer"
           ><svg

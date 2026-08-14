@@ -33,6 +33,8 @@ export class Hero {
 
 ```sh
 pnpm add @angular-gsap/core gsap
+# npm install @angular-gsap/core gsap
+# yarn add @angular-gsap/core gsap
 ```
 
 ## Plugins and global defaults
@@ -50,6 +52,6 @@ Every GSAP plugin is free and ships in the `gsap` npm package: ScrollTrigger, Sp
 
 ## Documentation
 
-Full docs, patterns, and a live example app: [github.com/angular-gsap/angular-gsap](https://github.com/angular-gsap/angular-gsap)
+Full docs, patterns, and a live example app: [github.com/angular-gsap/core](https://github.com/angular-gsap/core)
 
 MIT licensed.
