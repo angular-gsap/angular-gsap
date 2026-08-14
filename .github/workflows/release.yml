@@ -1,0 +1,52 @@
+name: Release
+
+# Publishes @angular-gsap/core to npm via trusted publishing (OIDC):
+# no npm token is stored anywhere. npm verifies this workflow's identity
+# against the trusted publisher registered on the package's npm settings
+# (repo angular-gsap/angular-gsap, workflow release.yml).
+#
+# Flow: run `pnpm nx release --skip-publish` locally (version, changelog,
+# tag, GitHub release); publishing the GitHub release triggers this.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      # trusted publishing needs npm >= 11.5.1
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm nx build core
+
+      # nx release only writes the version into the local dist manifest,
+      # so a fresh CI build still carries the source version; the release
+      # tag (v1.2.3) is the source of truth here
+      - name: Stamp version from tag
+        run: npm pkg set version="${GITHUB_REF_NAME#v}"
+        working-directory: dist/libs/core
+
+      - name: Publish to npm
+        run: npm publish
+        working-directory: dist/libs/core

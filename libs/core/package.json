@@ -7,6 +7,9 @@
     "gsap": ">=3.12.0"
   },
   "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "GSAP integration for Angular — host-scoped, signal-reactive, SSR-safe animation contexts",
   "license": "MIT",
   "repository": {
