@@ -34,7 +34,7 @@ jobs:
 
       - name: Deploy to Netlify
         run: >
-          pnpm dlx netlify-cli deploy
+          pnpm dlx --package=netlify-cli netlify deploy
           --prod
           --dir dist/apps/docs/analog/public
           --message "${{ github.event_name }}: ${{ github.sha }}"
