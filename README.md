@@ -3,6 +3,7 @@
 **Write vanilla GSAP inside Angular.** `@angular-gsap/core` gives your GSAP code an Angular-managed context (host-scoped, signal-reactive, SSR-safe, cleaned up automatically) without wrapping a single GSAP API.
 
 [![npm](https://img.shields.io/npm/v/%40angular-gsap%2Fcore)](https://www.npmjs.com/package/@angular-gsap/core)
+[![CI](https://github.com/angular-gsap/core/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/angular-gsap/core/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
 ```ts
