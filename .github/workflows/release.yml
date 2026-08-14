@@ -11,6 +11,12 @@ name: Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish (e.g. v0.1.1)"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -21,14 +27,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - uses: pnpm/action-setup@v6
 
+      # no registry-url here: it writes an .npmrc auth-token placeholder
+      # that preempts the OIDC trusted-publishing exchange
       - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
 
       # trusted publishing needs npm >= 11.5.1
       - name: Update npm
@@ -44,7 +53,9 @@ jobs:
       # so a fresh CI build still carries the source version; the release
       # tag (v1.2.3) is the source of truth here
       - name: Stamp version from tag
-        run: npm pkg set version="${GITHUB_REF_NAME#v}"
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          npm pkg set version="${TAG#v}"
         working-directory: dist/libs/core
 
       - name: Publish to npm
