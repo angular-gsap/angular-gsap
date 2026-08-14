@@ -57,7 +57,7 @@ const COPY = {
       },
       {
         title: 'Tree-shakeable',
-        body: 'Use two directives and the other nine leave your bundle. Plugins cost bytes only when you import them.',
+        body: 'Use two directives and the other ten leave your bundle. Plugins cost bytes only when you import them.',
       },
       {
         title: 'Zero change detection cost',
@@ -105,7 +105,7 @@ const COPY = {
       },
       {
         title: 'Tree-shakeable',
-        body: 'Usa dos directivas y las otras nueve salen del bundle. Los plugins cuestan bytes solo cuando los importas.',
+        body: 'Usa dos directivas y las otras diez salen del bundle. Los plugins cuestan bytes solo cuando los importas.',
       },
       {
         title: 'Cero costo en change detection',

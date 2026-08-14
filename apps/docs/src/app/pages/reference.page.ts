@@ -144,6 +144,13 @@ export const routeMeta: RouteMeta = {
               tween.
             </td>
           </tr>
+<tr>
+            <td><code>effects</code></td>
+            <td>
+              Registered with <code>gsap.registerEffect()</code>, usable as
+              <code>gsap.effects.name()</code> in any callback.
+            </td>
+          </tr>
           </tbody>
         </table>
       </section>
