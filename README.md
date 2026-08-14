@@ -40,7 +40,7 @@ GSAP itself is framework-agnostic and runs in any Angular app today, no wrapper 
 
 GSAP's surface is enormous: tweens, timelines, position parameters, staggers, ScrollTrigger, SplitText, getters, utilities. Wrappers that re-expose it as directives or per-tween helpers cover a fraction of it awkwardly and go stale as GSAP evolves. What Angular actually makes hard is **lifecycle**: create animations after the DOM exists, scope selectors to your component, react to state, and clean everything up.
 
-That is the approach GSAP itself endorses with [`@gsap/react`'s `useGSAP()`](https://gsap.com/resources/React/). `injectGsap()` is its Angular equivalent, with signals replacing React's dependency arrays. It also adds something hard to hand-roll: signals read in the callback re-run it *after* the DOM has updated (`afterRenderEffect`), so animations always see fresh `@if`/`@for` output. The [Flip example](https://github.com/angular-gsap/angular-gsap/blob/main/apps/docs/src/app/pages/flip.page.ts) leans on this hard: capture layout before a signal changes the DOM, FLIP-animate after Angular renders.
+That is the approach GSAP itself endorses with [`@gsap/react`'s `useGSAP()`](https://gsap.com/resources/React/). `injectGsap()` is its Angular equivalent, with signals replacing React's dependency arrays. It also adds something hard to hand-roll: signals read in the callback re-run it *after* the DOM has updated (`afterRenderEffect`), so animations always see fresh `@if`/`@for` output. The [Flip example](https://github.com/angular-gsap/core/blob/main/apps/docs/src/app/pages/flip.page.ts) leans on this hard: capture layout before a signal changes the DOM, FLIP-animate after Angular renders.
 
 ## Install
 

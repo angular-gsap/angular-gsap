@@ -3,7 +3,7 @@ name: Release
 # Publishes @angular-gsap/core to npm via trusted publishing (OIDC):
 # no npm token is stored anywhere. npm verifies this workflow's identity
 # against the trusted publisher registered on the package's npm settings
-# (repo angular-gsap/angular-gsap, workflow release.yml).
+# (repo angular-gsap/core, workflow release.yml).
 #
 # Flow: run `pnpm nx release --skip-publish` locally (version, changelog,
 # tag, GitHub release); publishing the GitHub release triggers this.

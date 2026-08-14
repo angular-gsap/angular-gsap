@@ -87,7 +87,7 @@
   "description": "GSAP integration for Angular — signal-reactive, SSR-safe animation contexts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/angular-gsap/angular-gsap.git"
+    "url": "https://github.com/angular-gsap/core.git"
   },
   "author": "Luis Castro <luish.castroc@gmail.com>",
   "packageManager": "pnpm@11.21.0",
