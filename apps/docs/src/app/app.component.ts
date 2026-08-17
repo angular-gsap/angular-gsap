@@ -327,6 +327,13 @@ const DESKTOP = '(min-width: 64rem)';
       color: var(--kinetic);
     }
 
+    /* phones: the logo tile alone is the home link */
+    @media (max-width: 40rem) {
+      .brand {
+        display: none;
+      }
+    }
+
     .top-actions {
       margin-left: auto;
       display: flex;
