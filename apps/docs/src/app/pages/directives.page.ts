@@ -54,7 +54,7 @@ const COPY = {
       reveal: 'Entradas para un solo elemento, al pintar o con scroll. Presets: <code>fade</code>, <code>fade-up/down/left/right</code>, <code>scale-in</code>. El demo hace scroll dentro de su propio marco vía <code>[scroller]</code>.',
       stagger: 'Las mismas entradas sobre los hijos de un elemento. Funciona natural con <code>@for</code>: los items nuevos repiten la entrada.',
       splitReveal: 'Divide el texto en caracteres, palabras o líneas y escalona las piezas. El marcado original se restaura al destruir.',
-      scrambleText: 'Descodifica el texto en su lugar. Sin texto objetivo, descodifica el contenido propio del elemento.',
+      scrambleText: 'Revuelve el texto hasta que cae en su lugar. Sin un texto objetivo, descifra el contenido del propio elemento.',
       counter: 'Cuenta el texto del elemento hasta un número, con el formato del locale del usuario.',
       parallax: 'Deriva ligada al scroll mientras el elemento cruza el viewport. Velocidades negativas van contra el scroll. Aquí sigue al marco, no a la página: eso es <code>[scroller]</code>.',
       drawSvg: 'Dibuja trazos de SVG. En un contenedor, cada descendiente con trazo se dibuja, escalonado.',
@@ -65,7 +65,7 @@ const COPY = {
       hover: 'Microinteracciones de puntero. Los tweens de entrada y salida se sobreescriben: los pases rápidos no se acumulan.',
     },
     explain: [
-      'Cada directiva aquí es un preset sobre <code>injectGsap</code>: mismo scoping, misma limpieza, mismos inputs de signal. Cubren los casos comunes; para cualquier cosa más rica, usa el composable.',
+      'Cada directiva aquí es un preset sobre <code>injectGsap</code>: mismo scoping, misma limpieza, mismos inputs de signal. Cubren los casos comunes; para cualquier cosa más elaborada, usa el composable.',
       'El ejemplo de sequence envuelve a sus hijos en <code>sequence="0.1"</code>: el título, las etiquetas y la línea partida entran una tras otra sin contabilidad de <code>[delay]</code>. Anidar en el template es la coreografía; <code>[at]</code> acepta cualquier parámetro de posición de GSAP.',
       'Los inputs son signals: cambia cualquiera y la entrada se repite. El botón Repetir solo recrea el subárbol.',
       'Los demos de reveal y parallax hacen scroll dentro de su propio marco en lugar de la página: <code>[scroller]</code> apunta ScrollTrigger a cualquier contenedor con scroll.',

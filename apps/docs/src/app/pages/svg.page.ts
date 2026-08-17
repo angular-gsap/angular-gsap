@@ -46,7 +46,7 @@ const COPY = {
     eyebrow: 'Ejemplo · SVG',
     title: 'Animación de SVG',
     intro:
-      'Para GSAP el SVG es DOM normal: los trazos se dibujan con DrawSVG, las formas se transforman con MorphSVG y los elementos recorren rutas con MotionPath. Los tres plugins se registran una vez en <code>provideGsap</code>. La forma flotante empieza como el logo de Angular; Transformar la pasa por las demás.',
+      'Para GSAP el SVG es DOM normal: los trazos se dibujan con DrawSVG, las formas se transforman con MorphSVG y los elementos recorren rutas con MotionPath. Los tres plugins se registran una vez en <code>provideGsap</code>. La forma flotante empieza como el logo de Angular; el botón Transformar la va cambiando por las demás.',
     morph: 'Transformar',
     how: 'Cómo funciona',
     explain: [

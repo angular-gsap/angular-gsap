@@ -52,7 +52,7 @@ const COPY = {
     frame:
       'GSAP es agnóstico al framework y corre en cualquier app Angular hoy, sin wrapper. Lo que no puede saber es Angular: cuándo se pintó un template, qué posee un componente, cuándo se destruye, si el código corre en un servidor. Esta librería resuelve exactamente esas fricciones y nada más.',
     howEyebrow: 'La idea completa',
-    howTitle: 'Un composable. GSAP puro adentro.',
+    howTitle: 'Un solo composable. Adentro escribes GSAP puro.',
     howBody:
       '<code>injectGsap()</code> ejecuta tu código GSAP en un contexto que pertenece al componente. Apunta a elementos con queries <code>viewChild</code> o selectores limitados al componente, lee signals para hacerlo reactivo, y el contexto revierte todo cuando el componente se destruye. En el servidor nunca se ejecuta.',
     howCta: 'Empieza con los básicos →',
@@ -62,7 +62,7 @@ const COPY = {
     featNote:
       'Todo este pegamento lo podrías escribir tú. La mayoría de las apps Angular que animan terminan haciendo justo eso, componente por componente.',
     features: [
-      'Scoped por defecto',
+      'Acotado a tu componente',
       'Dirigido por signals',
       'Sin limpieza manual',
       'Listo para SSR',
