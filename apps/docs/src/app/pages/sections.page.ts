@@ -32,7 +32,7 @@ const COPY = {
       'Un port del demo <a href="https://codepen.io/GreenSock/pen/XWzRraJ" target="_blank" rel="noreferrer">Animated Continuous Sections</a> de GreenSock: cada tick de rueda, deslizamiento o arrastre mueve una sección completa, con envoltorios en capas que se deslizan en direcciones opuestas, un fondo con parallax y títulos que entran carácter por carácter. El original es GSAP puro; esta versión usa queries de signal e <code>injectGsap</code>, sin cambiar nada más.',
     hint: 'rueda o desliza dentro del marco',
     how: 'Cómo funciona',
-    slides: ['Con scope', 'Reactivo', 'Limpio', 'Tuyo'],
+    slides: ['Acotado', 'Reactivo', 'Limpio', 'Tuyo'],
     explain: [
       'La capa deslizante son dos envoltorios anidados animados en direcciones opuestas (<code>yPercent</code> 100 y −100 encontrándose en 0), mientras el fondo se mueve 15% en contra. La dirección decide el signo, así que subir y bajar se sienten igual de bien.',
       "Un Observer convierte rueda, touch y puntero en 'siguiente' y 'anterior'. Una bandera <code>animating</code> ignora la entrada a mitad de transición; <code>gsap.utils.wrap</code> hace que los extremos den la vuelta.",

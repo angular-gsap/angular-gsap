@@ -35,7 +35,7 @@ const COPY = {
       'Cada ficha tiene un tween <code>motionPath</code> pausado usado como setter de posición: el estado del bucle es un número <code>p</code>, y cada ficha se pinta en <code>p</code> más su desfase. Mueves el número, se mueve todo el tren.',
       'Observer fusiona rueda, touch y puntero en un solo stream. Mientras arrastras suma deltas a <code>p</code>; al soltar, la velocidad del gesto pasa a InertiaPlugin.',
       'A InertiaPlugin no le importa que <code>p</code> no sea un elemento: <code>gsap.to(state, { inertia: { p: { velocity } } })</code> desliza cualquier propiedad con fricción física, igual que los ladrillos lanzados en la página de Draggable.',
-      'Todo se crea dentro del callback: sal de la página y el Observer, los setters y la deriva ambiental se desmontan.',
+      'Todo se crea dentro del callback: sal de la página y el Observer, los setters y el movimiento de fondo se desmontan.',
     ],
   },
 } as const;

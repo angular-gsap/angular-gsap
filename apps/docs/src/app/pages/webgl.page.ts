@@ -27,7 +27,7 @@ const COPY = {
     eyebrow: 'Ejemplo · WebGL',
     title: 'Un cubo movido por tweens',
     intro:
-      'La rotación, inclinación y escala del cubo viven en un objeto plano; GSAP lo anima como cualquier otra cosa. Un tween lineal infinito lo gira, dos setters <code>quickTo</code> lo inclinan hacia el puntero, Pulso golpea la escala, y el loop de render es un callback de <code>gsap.ticker</code> que la limpieza devuelta se encarga de quitar.',
+      'La rotación, inclinación y escala del cubo viven en un objeto plano; GSAP lo anima como cualquier otra cosa. Un tween lineal infinito lo gira, dos setters <code>quickTo</code> lo inclinan hacia el puntero, el botón Pulso le da un empujón a la escala, y el loop de render es un callback de <code>gsap.ticker</code> que se quita con la limpieza devuelta.',
     hint: 'mueve el puntero para inclinar el cubo',
     pulse: 'Pulso',
     how: 'Cómo funciona',
